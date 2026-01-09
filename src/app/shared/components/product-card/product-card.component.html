@@ -1,0 +1,86 @@
+<article class="product-card">
+  <a 
+    [routerLink]="routeLink()"
+    class="product-link"
+    [attr.aria-label]="'View details for ' + vm().name"
+  >
+    <div class="product-image-container">
+      <img
+        [src]="vm().imageUrl ?? '/have a place holder for image not found'"
+        [alt]="vm().name"
+        class="product-image"
+        loading="lazy"
+      />
+      <button
+        type="button"
+        class="favorite-button"
+        [class.favorite-button--active]="isFavorite()"
+        (click)="handleFavoriteClick($event)"
+        [attr.aria-label]="
+          isFavorite() 
+            ? 'Remove ' + vm().name + ' from favorites' 
+            : 'Add ' + vm().name + ' to favorites'
+        "
+        [attr.aria-pressed]="isFavorite()"
+      >
+        <svg 
+          width="20" 
+          height="20" 
+          viewBox="0 0 24 24" 
+          fill="none" 
+          stroke="currentColor"
+          aria-hidden="true"
+        >
+          <path 
+            d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+            [attr.fill]="isFavorite() ? 'currentColor' : 'none'"
+            stroke-width="2"
+          />
+        </svg>
+      </button>
+    </div>
+
+    <div class="product-content">
+      <div class="product-header">
+        <h2 class="product-name">{{ vm().name }}</h2>
+        <span class="product-category">{{ vm().category }}</span>
+      </div>
+
+      <p class="product-description">{{ vm().description }}</p>
+
+      <div class="product-footer">
+        <div class="product-rating">
+          <svg 
+            width="16" 
+            height="16" 
+            viewBox="0 0 24 24" 
+            fill="currentColor"
+            aria-hidden="true"
+          >
+            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+          </svg>
+          <span>{{ vm().rating }}</span>
+        </div>
+
+        <div class="product-price">
+          <span class="price-label">Price:</span>
+          <span class="price-value">\${{ vm().price.toFixed(2) }}</span>
+        </div>
+      </div>
+
+      <div 
+        class="product-stock"
+        [class.product-stock--low]="vm().stock < 10"
+        [class.product-stock--out]="vm().stock === 0"
+      >
+        @if (vm().stock === 0) {
+          Out of stock
+        } @else if (vm().stock < 10) {
+          Only {{ vm().stock }} left
+        } @else {
+          In stock
+        }
+      </div>
+    </div>
+  </a>
+</article>
