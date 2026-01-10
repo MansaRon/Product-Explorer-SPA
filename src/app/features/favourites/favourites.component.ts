@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { ProductCardComponent } from '../../shared/components/product-card/product-card.component';
 import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state.component';
-import { FavouriteService } from '../../core/services/favourite.service';
-import { ProductService } from '../../core/services/product.service';
+import { FavouriteService } from '../../core/services/favourite/favourite.service';
+import { ProductService } from '../../core/services/product/product.service';
 
 @Component({
   selector: 'app-favourites',

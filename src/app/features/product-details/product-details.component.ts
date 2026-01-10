@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { ErrorMessageComponent } from '../../shared/components/error-message/error-message.component';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FavouriteService } from '../../core/services/favourite.service';
-import { ProductService } from '../../core/services/product.service';
+import { FavouriteService } from '../../core/services/favourite/favourite.service';
+import { ProductService } from '../../core/services/product/product.service';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { map } from 'rxjs';
 

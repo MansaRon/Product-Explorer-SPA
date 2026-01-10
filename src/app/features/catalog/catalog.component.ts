@@ -4,8 +4,8 @@ import { LoaderComponent } from '../../shared/components/loader/loader.component
 import { ErrorMessageComponent } from '../../shared/components/error-message/error-message.component';
 import { ProductCardComponent } from '../../shared/components/product-card/product-card.component';
 import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state.component';
-import { ProductService } from '../../core/services/product.service';
-import { FavouriteService } from '../../core/services/favourite.service';
+import { ProductService } from '../../core/services/product/product.service';
+import { FavouriteService } from '../../core/services/favourite/favourite.service';
 import { SortField, SortOrder } from '../../core/models/filter-params';
 
 @Component({
