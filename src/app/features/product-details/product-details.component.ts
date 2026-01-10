@@ -1,7 +1,6 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { ErrorMessageComponent } from '../../shared/components/error-message/error-message.component';
-import { LoaderComponent } from '../../shared/components/loader/loader.component';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { FavouriteService } from '../../core/services/favourite.service';
 import { ProductService } from '../../core/services/product.service';
 
@@ -11,8 +10,6 @@ import { ProductService } from '../../core/services/product.service';
   styleUrls: ['./product-details.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    RouterLink, 
-    LoaderComponent, 
     ErrorMessageComponent
   ],
 })

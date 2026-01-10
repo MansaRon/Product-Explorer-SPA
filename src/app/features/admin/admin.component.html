@@ -1,3 +1,167 @@
-<p>
-  admin works!
-</p>
+<div class="container">
+  <div class="page-header">
+    <div class="header-content">
+      <div>
+        <h1 class="page-title">Admin Dashboard</h1>
+        <p class="page-description">Overview of products and system statistics</p>
+      </div>
+      
+      <div class="header-actions">
+        <button type="button" class="toggle-button" (click)="toggleAdminAccess()">
+          {{ isAdmin() ? 'Disable' : 'Enable' }} Admin Access
+        </button>
+        
+        <button type="button" class="logout-button" (click)="logout()">
+          Logout
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon stat-icon--primary">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+          <rect x="3" y="3" width="18" height="18" rx="2" stroke-width="2"/>
+          <path d="M3 9h18" stroke-width="2"/>
+          <path d="M9 21V9" stroke-width="2"/>
+        </svg>
+      </div>
+      <div class="stat-content">
+        <p class="stat-label">Total Products</p>
+        <p class="stat-value">{{ stats().totalProducts }}</p>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon stat-icon--success">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+          <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="stat-content">
+        <p class="stat-label">Total Inventory Value</p>
+        <p class="stat-value">{{ stats().totalValue.toFixed(2) }}</p>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon stat-icon--warning">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" stroke-width="2"/>
+          <path d="M12 9v4M12 17h.01" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="stat-content">
+        <p class="stat-label">Low Stock Items</p>
+        <p class="stat-value">{{ stats().lowStock }}</p>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon stat-icon--danger">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+          <circle cx="12" cy="12" r="10" stroke-width="2"/>
+          <path d="M15 9l-6 6M9 9l6 6" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="stat-content">
+        <p class="stat-label">Out of Stock</p>
+        <p class="stat-value">{{ stats().outOfStock }}</p>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon stat-icon--primary">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+        </svg>
+      </div>
+      <div class="stat-content">
+        <p class="stat-label">Average Rating</p>
+        <p class="stat-value">{{ stats().avgRating.toFixed(1) }}</p>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon stat-icon--secondary">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+          <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" stroke-width="2"/>
+        </svg>
+      </div>
+      <div class="stat-content">
+        <p class="stat-label">Total Favorites</p>
+        <p class="stat-value">{{ stats().totalFavorites }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2 class="section-title">Top Rated Products</h2>
+    <div class="table-container">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Product Name</th>
+            <th>Category</th>
+            <th>Rating</th>
+            <th>Price</th>
+            <th>Stock</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (product of topRatedProducts(); track product.id) {
+            <tr>
+              <td class="product-name">{{ product.name }}</td>
+              <td>
+                <span class="category-badge">{{ product.category }}</span>
+              </td>
+              <td>
+                <div class="rating">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                  </svg>
+                  {{ product.rating }}
+                </div>
+              </td>
+              <td class="price">{{ product.price.toFixed(2) }}</td>
+              <td>
+                <span class="stock-badge"
+                  [class.stock-badge--low]="product.stock < 10"
+                  [class.stock-badge--out]="product.stock === 0">
+                  {{ product.stock }}
+                </span>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2 class="section-title">Category Statistics</h2>
+    <div class="table-container">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Category</th>
+            <th>Product Count</th>
+            <th>Total Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (stat of categoryStats(); track stat.category) {
+            <tr>
+              <td>
+                <span class="category-badge">{{ stat.category }}</span>
+              </td>
+              <td>{{ stat.count }}</td>
+              <td class="price">{{ stat.totalValue.toFixed(2) }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

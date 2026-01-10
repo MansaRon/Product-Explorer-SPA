@@ -1,6 +1,5 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
 import { LoaderComponent } from '../../shared/components/loader/loader.component';
 import { ErrorMessageComponent } from '../../shared/components/error-message/error-message.component';
 import { ProductCardComponent } from '../../shared/components/product-card/product-card.component';
@@ -15,7 +14,6 @@ import { SortField, SortOrder } from '../../core/models/filter-params';
   styleUrls: ['./catalog.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    RouterLink,
     ReactiveFormsModule,
     LoaderComponent,
     ErrorMessageComponent,
