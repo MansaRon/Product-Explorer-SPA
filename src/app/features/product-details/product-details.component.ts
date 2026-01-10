@@ -1,8 +1,10 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { ErrorMessageComponent } from '../../shared/components/error-message/error-message.component';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FavouriteService } from '../../core/services/favourite.service';
 import { ProductService } from '../../core/services/product.service';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { map } from 'rxjs';
 
 @Component({
   selector: 'app-product-details',
@@ -17,22 +19,33 @@ export class ProductDetailsComponent {
   private readonly productService = inject(ProductService);
   private readonly favouriteService = inject(FavouriteService);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
   
-  readonly id = input.required<string>();
+  protected readonly id = toSignal(
+    this.route.paramMap.pipe(
+      map(params => params.get('id') ?? '')
+    )
+  );
   
   protected readonly product = computed(() => {
-    return this.productService.getProductById(this.id());
+    const productId = this.id();
+    if (!productId) return undefined;
+    return this.productService.getProductById(productId);
   });
   
   protected readonly isFavorite = computed(() => {
     const productId = this.id();
+    if (!productId) return false;
     return this.favouriteService.isFavorite(productId);
   });
   
   protected readonly notFound = computed(() => !this.product());
 
   protected toggleFavorite(): void {
-    this.favouriteService.toggleFavorite(this.id());
+    const productId = this.id();
+    if (productId) {
+      this.favouriteService.toggleFavorite(productId);
+    }
   }
   
   protected goBack(): void {
