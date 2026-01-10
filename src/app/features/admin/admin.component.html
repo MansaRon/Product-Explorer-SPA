@@ -6,11 +6,7 @@
         <p class="page-description">Overview of products and system statistics</p>
       </div>
       
-      <div class="header-actions">
-        <button type="button" class="toggle-button" (click)="toggleAdminAccess()">
-          {{ isAdmin() ? 'Disable' : 'Enable' }} Admin Access
-        </button>
-        
+      <div class="header-actions">        
         <button type="button" class="logout-button" (click)="logout()">
           Logout
         </button>
@@ -29,7 +25,7 @@
       </div>
       <div class="stat-content">
         <p class="stat-label">Total Products</p>
-        <p class="stat-value">{{ stats().totalProducts }}</p>
+        <p class="stat-value">{{ stats().totalProducts | currency: "R" }}</p>
       </div>
     </div>
 
@@ -124,7 +120,7 @@
                   {{ product.rating }}
                 </div>
               </td>
-              <td class="price">{{ product.price.toFixed(2) }}</td>
+              <td class="price">{{ product.price.toFixed(2) | currency: "R" }}</td>
               <td>
                 <span class="stock-badge"
                   [class.stock-badge--low]="product.stock < 10"
@@ -157,7 +153,7 @@
                 <span class="category-badge">{{ stat.category }}</span>
               </td>
               <td>{{ stat.count }}</td>
-              <td class="price">{{ stat.totalValue.toFixed(2) }}</td>
+              <td class="price">{{ stat.totalValue.toFixed(2) | currency: "R"  }}</td>
             </tr>
           }
         </tbody>

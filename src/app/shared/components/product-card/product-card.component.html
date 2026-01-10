@@ -64,7 +64,7 @@
 
         <div class="product-price">
           <span class="price-label">Price:</span>
-          <span class="price-value">\${{ vm().price.toFixed(2) }}</span>
+          <span class="price-value">{{ vm().price.toFixed(2) | currency: "R" }}</span>
         </div>
       </div>
 

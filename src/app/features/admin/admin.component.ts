@@ -2,19 +2,25 @@ import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@a
 import { ProductService } from '../../core/services/product.service';
 import { FavouriteService } from '../../core/services/favourite.service';
 import { Router } from '@angular/router';
+import { AuthService } from '../../core/services/auth.service';
+import { CurrencyPipe } from '@angular/common';
 
 @Component({
   selector: 'app-admin',
   templateUrl: './admin.component.html',
   styleUrls: ['./admin.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    CurrencyPipe
+  ]
 })
 export class AdminComponent {
   private readonly productService = inject(ProductService);
   private readonly favouriteService = inject(FavouriteService);
   private readonly router = inject(Router);
+  private readonly authService = inject(AuthService);
   
-  protected readonly isAdmin = signal(sessionStorage.getItem('isAdmin') === 'true');
+  protected readonly isAdmin = this.authService.isAdmin;
   
   protected readonly products = this.productService.filterProducts;
   protected readonly categories = this.productService.categories;
@@ -67,19 +73,11 @@ export class AdminComponent {
   });
   
   protected toggleAdminAccess(): void {
-    const newValue = !this.isAdmin();
-    this.isAdmin.set(newValue);
-    sessionStorage.setItem('isAdmin', newValue.toString());
-    
-    if (!newValue) {
-      this.router.navigate(['/catalog']);
-    }
+    this.authService.toggleAdmin();
   }
   
   protected logout(): void {
-    this.isAdmin.set(false);
-    sessionStorage.removeItem('isAdmin');
-    this.router.navigate(['/catalog']);
+    this.authService.logoutAndRedirect();
   }
 
 }
