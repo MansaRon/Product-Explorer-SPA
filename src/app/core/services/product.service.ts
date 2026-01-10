@@ -4,6 +4,7 @@ import { Product } from '../models/product';
 import { FilterParams, SortField, SortOrder } from '../models/filter-params';
 import { initialFilterParams } from '../const/filter-params';
 import { catchError, delay, of } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Injectable({
   providedIn: 'root'
@@ -76,6 +77,7 @@ export class ProductService {
     this.httpClient.get<Product[]>('/assets/data/products.json')
     .pipe(
       delay(800),
+      takeUntilDestroyed(),
       catchError(error => {
         this.errorSignal.set('Failed to load products. Please try again.');
         console.error('Error loading products:', error);
