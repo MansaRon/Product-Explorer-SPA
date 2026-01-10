@@ -1,12 +1,19 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { HeaderComponent } from './shared/components/header/header.component';
+import { NavItem } from './core/models/navigation';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, HeaderComponent],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.scss'
+  styleUrl: './app.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AppComponent {
-  title = 'product-explorer';
+  readonly navItems: NavItem[] = [
+    { label: 'Catalog', link: '/catalog' },
+    { label: 'Favorites', link: '/favourites' },
+    { label: 'Admin', link: '/admin' }
+  ];
 }

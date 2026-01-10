@@ -1,3 +1,117 @@
-<p>
-  catalog works!
-</p>
+<div class="container">
+  <div class="page-header">
+    <h1 class="page-title">Product Catalog</h1>
+    <p class="page-description">Browse our collection of quality products</p>
+  </div>
+
+  <div class="filters-section">
+    <div class="filters-grid">
+      <div class="filter-group">
+        <label for="search" class="filter-label">Search</label>
+        <input
+          id="search"
+          type="search"
+          class="filter-input"
+          placeholder="Search products..."
+          [value]="searchTerm()"
+          (input)="onSearchChange($any($event.target).value)"
+          aria-label="Search products by name or description"
+        />
+      </div>
+
+      <div class="filter-group">
+        <label for="category" class="filter-label">Category</label>
+        <select
+          id="category"
+          class="filter-select"
+          [value]="selectedCategory()"
+          (change)="onCategoryChange($any($event.target).value)"
+          aria-label="Filter by category"
+        >
+          <option value="">All Categories</option>
+          @for (category of categories(); track category) {
+            <option [value]="category">{{ category }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="sortBy" class="filter-label">Sort By</label>
+        <select
+          id="sortBy"
+          class="filter-select"
+          [value]="selectedSort()"
+          (change)="onSortChange($any($event.target).value)"
+          aria-label="Sort products by field"
+        >
+          <option value="name">Name</option>
+          <option value="price">Price</option>
+          <option value="rating">Rating</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="sortOrder" class="filter-label">Order</label>
+        <select
+          id="sortOrder"
+          class="filter-select"
+          [value]="selectedOrder()"
+          (change)="onOrderChange($any($event.target).value)"
+          aria-label="Sort order"
+        >
+          <option value="asc">Ascending</option>
+          <option value="desc">Descending</option>
+        </select>
+      </div>
+    </div>
+
+    <button
+      type="button"
+      class="reset-button"
+      (click)="resetFilters()"
+      aria-label="Reset all filters"
+    >
+      Reset Filters
+    </button>
+  </div>
+
+  @if (loading()) {
+    <app-loader label="Loading products" />
+  }
+
+  @if (error() && !loading()) {
+    <app-error-message 
+      [message]="error()!" 
+      [showRetry]="true"
+      (retry)="handleRetry()"
+    />
+  }
+
+  @if (!loading() && !error()) {
+    @if (products().length === 0) {
+      <app-empty-state 
+        icon="search"
+        title="No products found"
+        description="Try adjusting your filters or search terms"
+      />
+    } @else {
+      <div class="results-header">
+        <p class="results-count">
+          Showing {{ products().length }} 
+          {{ products().length === 1 ? 'product' : 'products' }}
+        </p>
+      </div>
+
+      <div class="products-grid">
+        @for (product of products(); track product.id) {
+          <app-product-card
+            [product]="product"
+            [isFavorite]="isFavorite(product.id)"
+            [routeLink]="['/catalog', product.id]"
+            (favoriteToggled)="toggleFavorite($event)"
+          />
+        }
+      </div>
+    }
+  }
+</div>

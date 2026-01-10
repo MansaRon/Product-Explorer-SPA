@@ -15,7 +15,7 @@ export class ProductCardComponent {
   readonly product = input.required<Product>();
   readonly isFavorite = input<boolean>(false);
   readonly favoriteToggled = output<string>();
-  readonly routeLink = input<string>();
+  readonly routeLink = input<string[]>();
 
   readonly vm = computed(() => this.product());
   

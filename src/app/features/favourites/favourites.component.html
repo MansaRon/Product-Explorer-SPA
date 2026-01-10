@@ -1,3 +1,39 @@
-<p>
-  favourites works!
-</p>
+<div class="container">
+  <div class="page-header">
+    <div class="header-content">
+      <div>
+        <h1 class="page-title">My Favorites</h1>
+        <p class="page-description">
+          @if (hasFavorites()) {
+            You have {{ favoriteCount() }} 
+            {{ favoriteCount() === 1 ? 'favorite product' : 'favorite products' }}
+          } @else {
+            No favorites yet
+          }
+        </p>
+      </div>
+      
+      @if (hasFavorites()) {
+        <button type="button" class="clear-button" (click)="clearAllFavorites()" aria-label="Clear all favorites">
+          Clear All
+        </button>
+      }
+    </div>
+  </div>
+
+  @if (!hasFavorites()) {
+    <app-empty-state icon="heart" title="No favorites yet"
+      description="Start adding products to your favorites by clicking the heart icon on any product">
+      <a routerLink="/catalog" class="browse-link">
+        Browse Catalog
+      </a>
+    </app-empty-state>
+  } @else {
+    <div class="favorites-grid">
+      @for (product of favoriteProducts(); track product.id) {
+        <app-product-card [product]="product" [isFavorite]="isFavorite(product.id)"
+          [routeLink]="['/catalog', product.id]" (favoriteToggled)="toggleFavorite($event)" />
+      }
+    </div>
+  }
+</div>
