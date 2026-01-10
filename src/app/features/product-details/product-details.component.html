@@ -1,0 +1,101 @@
+<div class="container">
+  @if (notFound()) {
+    <div class="not-found">
+      <app-error-message  message="Product not found" [showRetry]="false"/>
+      <button type="button" class="back-button" (click)="goBack()">
+        Back to Catalog
+      </button>
+    </div>
+  } @else {
+    <div class="product-detail">
+      <button type="button" class="back-link" (click)="goBack()" aria-label="Back to catalog">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+          <path d="M19 12H5M12 19l-7-7 7-7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Back to Catalog
+      </button>
+
+      <div class="product-content">
+        <div class="product-image-section">
+          <img [src]="product()!.imageUrl ?? '/assets/placeholder.jpg'" 
+            [alt]="product()!.name" class="product-image" />
+        </div>
+
+        <div class="product-info">
+          <div class="product-header">
+            <div>
+              <span class="product-category">
+                {{ product()!.category }}
+              </span>
+              <h1 class="product-name">
+                {{ product()!.name }}
+              </h1>
+            </div>
+            
+            <button type="button" class="favorite-button"
+              [class.favorite-button--active]="isFavorite()" (click)="toggleFavorite()"
+              [attr.aria-label]="isFavorite() ? 'Remove from favorites' : 'Add to favorites'"
+              [attr.aria-pressed]="isFavorite()">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                <path 
+                  d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+                  [attr.fill]="isFavorite() ? 'currentColor' : 'none'"
+                  stroke-width="2"
+                />
+              </svg>
+              {{ isFavorite() ? 'Remove from Favorites' : 'Add to Favorites' }}
+            </button>
+          </div>
+
+          <div class="product-rating">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+            </svg>
+            <span class="rating-value">{{ product()!.rating }}</span>
+            <span class="rating-text">({{ product()!.rating }} out of 5)</span>
+          </div>
+
+          <div class="product-price">
+            <span class="price-label">Price:</span>
+            <span class="price-value">\${{ product()!.price.toFixed(2) }}</span>
+          </div>
+
+          <div class="product-stock">
+            <span class="stock-label">Availability:</span>
+            <span class="stock-value"
+              [class.stock-value--low]="product()!.stock < 10"
+              [class.stock-value--out]="product()!.stock === 0"
+            >
+              @if (product()!.stock === 0) {
+                Out of Stock
+              } 
+              @else if (product()!.stock < 10) {
+                Only {{ product()!.stock }} left in stock
+              } 
+              @else {
+                In Stock ({{ product()!.stock }} available)
+              }
+            </span>
+          </div>
+
+          <div class="product-description">
+            <h2 class="description-title">Description</h2>
+            <p class="description-text">{{ product()!.description }}</p>
+          </div>
+
+          <div class="product-actions">
+            <button type="button" class="add-to-cart-button"
+              [disabled]="product()!.stock === 0">
+              @if (product()!.stock === 0) {
+                Out of Stock
+              } 
+              @else {
+                Add to Cart
+              }
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</div>
