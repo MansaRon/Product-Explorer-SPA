@@ -1,14 +1,9 @@
-import { ChangeDetectionStrategy, Component, input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
 @Component({
   selector: 'app-loader',
   template: `
-    <div
-      class="spinner-container"
-      role="status"
-      aria-live="polite"
-      aria-atomic="true"
-    >
+    <div class="spinner-container" role="status" aria-live="polite" aria-atomic="true">
       <div class="spinner" aria-hidden="true"></div>
       <span class="visually-hidden">{{ label() }}</span>
     </div>

@@ -1,6 +1,5 @@
 import { computed, Injectable, signal } from '@angular/core';
-
-const FAV_KEY = 'product-fav-key';
+import { FAV_KEY } from '../const/service-keys';
 
 @Injectable({
   providedIn: 'root'

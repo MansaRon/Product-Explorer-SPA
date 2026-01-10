@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { ErrorMessageComponent } from '../../shared/components/error-message/error-message.component';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FavouriteService } from '../../core/services/favourite.service';
