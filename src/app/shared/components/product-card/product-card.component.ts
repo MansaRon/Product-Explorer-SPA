@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, input, OnInit, output } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Product } from '../../../core/models/product';
+import { CurrencyPipe } from '@angular/common';
 
 @Component({
   selector: 'app-product-card',
@@ -8,7 +9,8 @@ import { Product } from '../../../core/models/product';
   styleUrls: ['./product-card.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    RouterLink
+    RouterLink,
+    CurrencyPipe
   ]
 })
 export class ProductCardComponent {

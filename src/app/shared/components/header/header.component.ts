@@ -1,6 +1,7 @@
-import { ChangeDetectionStrategy, Component, computed, ElementRef, input, OnInit, signal, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, ElementRef, inject, input, OnInit, signal, viewChild } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { NavItem } from '../../../core/models/navigation';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-header',
@@ -10,25 +11,23 @@ import { NavItem } from '../../../core/models/navigation';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HeaderComponent {
+  private readonly authService = inject(AuthService);
 
   readonly navItems = input<NavItem[]>([]);
+
   protected readonly mobileMenuOpen = signal(false);
   protected readonly isOpen = computed(() => this.mobileMenuOpen());
-  private readonly navRef = viewChild<ElementRef<HTMLElement>>('nav');
+  protected readonly isAdmin = this.authService.isAdmin;
 
   protected toggleMobileMenu(): void {
     this.mobileMenuOpen.update(open => !open);
-
-    if (!this.mobileMenuOpen()) {
-      return;
-    }
-    queueMicrotask(() => {
-      this.navRef()?.nativeElement.querySelector<HTMLElement>('a')?.focus();
-    });
   }
 
   protected closeMobileMenu(): void {
     this.mobileMenuOpen.set(false);
   }
 
+  protected toggleAdmin(): void {
+    this.authService.toggleAdmin();
+  }
 }

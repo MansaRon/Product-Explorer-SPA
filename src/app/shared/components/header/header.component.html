@@ -29,7 +29,6 @@
       </button>
 
       <nav
-        #nav
         id="main-navigation"
         class="nav"
         [class.nav--open]="isOpen()"
@@ -43,6 +42,19 @@
             {{ item.label }}
           </a>
         }
+
+        <button
+          type="button"
+          class="admin-toggle"
+          (click)="toggleAdmin()"
+          [class.admin-toggle--active]="isAdmin()"
+          aria-label="Toggle admin access">
+          @if (isAdmin()) {
+            🔓 Admin Mode
+          } @else {
+            🔒 Guest Mode
+          }
+        </button>
       </nav>
     </div>
   </div>
