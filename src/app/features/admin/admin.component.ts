@@ -1,7 +1,6 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { ProductService } from '../../core/services/product.service';
 import { FavouriteService } from '../../core/services/favourite.service';
-import { Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { CurrencyPipe } from '@angular/common';
 
@@ -17,7 +16,6 @@ import { CurrencyPipe } from '@angular/common';
 export class AdminComponent {
   private readonly productService = inject(ProductService);
   private readonly favouriteService = inject(FavouriteService);
-  private readonly router = inject(Router);
   private readonly authService = inject(AuthService);
   
   protected readonly isAdmin = this.authService.isAdmin;
