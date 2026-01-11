@@ -2,22 +2,22 @@
 
 ```yaml
 - generic [ref=e2]:
-  - link "Skip to main content" [ref=e3]:
+  - link "Skip to main content" [ref=e3] [cursor=pointer]:
     - /url: "#main-content"
   - banner [ref=e5]:
     - generic [ref=e7]:
-      - link "Product Explorer Home" [ref=e8]:
+      - link "Product Explorer Home" [ref=e8] [cursor=pointer]:
         - /url: /
         - img [ref=e9]
         - generic [ref=e12]: Product Explorer
       - navigation [ref=e13]:
-        - link [ref=e14]:
+        - link [ref=e14] [cursor=pointer]:
           - /url: /catalog
           - text: Catalog
-        - link [ref=e15]:
+        - link [ref=e15] [cursor=pointer]:
           - /url: /favourites
           - text: Favorites
-        - link [ref=e16]:
+        - link [ref=e16] [cursor=pointer]:
           - /url: /admin
           - text: Admin
         - button [ref=e17] [cursor=pointer]: 🔒 Guest Mode
@@ -27,27 +27,27 @@
         - img [ref=e23]
         - text: Back to Catalog
       - generic [ref=e25]:
-        - img "Wireless Headphones" [ref=e27]
+        - img "Cable Management Kit" [ref=e27]
         - generic [ref=e28]:
           - generic [ref=e29]:
             - generic [ref=e30]:
-              - generic [ref=e31]: Electronics
-              - heading "Wireless Headphones" [level=1] [ref=e32]
-            - button "Remove from favorites" [pressed] [ref=e33] [cursor=pointer]:
+              - generic [ref=e31]: Accessories
+              - heading "Cable Management Kit" [level=1] [ref=e32]
+            - button "Add to favorites" [ref=e33] [cursor=pointer]:
               - img [ref=e34]
-              - text: Remove from Favorites
+              - text: Add to Favorites
           - generic [ref=e36]:
             - img [ref=e37]
-            - generic [ref=e39]: "4.5"
-            - generic [ref=e40]: (4.5 out of 5)
+            - generic [ref=e39]: "4"
+            - generic [ref=e40]: (4 out of 5)
           - generic [ref=e41]:
             - generic [ref=e42]: "Price:"
-            - generic [ref=e43]: \$199.99
+            - generic [ref=e43]: \$24.99
           - generic [ref=e44]:
             - generic [ref=e45]: "Availability:"
-            - generic [ref=e46]: In Stock (45 available)
+            - generic [ref=e46]: In Stock (92 available)
           - generic [ref=e47]:
             - heading "Description" [level=2] [ref=e48]
-            - paragraph [ref=e49]: High-quality wireless headphones with noise cancellation and 30-hour battery life.
+            - paragraph [ref=e49]: Complete cable management solution for desk setup.
           - button "Add to Cart" [ref=e51] [cursor=pointer]
 ```

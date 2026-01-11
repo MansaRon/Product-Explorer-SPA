@@ -14,7 +14,7 @@
         - link [ref=e14] [cursor=pointer]:
           - /url: /catalog
           - text: Catalog
-        - link [ref=e15] [cursor=pointer]:
+        - link [active] [ref=e15] [cursor=pointer]:
           - /url: /favourites
           - text: Favorites
         - link [ref=e16] [cursor=pointer]:
@@ -22,32 +22,30 @@
           - text: Admin
         - button [ref=e17] [cursor=pointer]: 🔒 Guest Mode
   - main [ref=e18]:
-    - generic [ref=e21]:
-      - button "Back to catalog" [ref=e22] [cursor=pointer]:
-        - img [ref=e23]
-        - text: Back to Catalog
-      - generic [ref=e25]:
-        - img "Wireless Headphones" [ref=e27]
-        - generic [ref=e28]:
-          - generic [ref=e29]:
-            - generic [ref=e30]:
-              - generic [ref=e31]: Electronics
-              - heading "Wireless Headphones" [level=1] [ref=e32]
-            - button "Remove from favorites" [active] [pressed] [ref=e33] [cursor=pointer]:
+    - generic [ref=e20]:
+      - generic [ref=e22]:
+        - generic [ref=e23]:
+          - heading "My Favorites" [level=1] [ref=e24]
+          - paragraph [ref=e25]: You have 1 favorite product
+        - button "Clear all favorites" [ref=e26] [cursor=pointer]: Clear All
+      - article [ref=e29]:
+        - link "View details for Wireless Headphones" [ref=e30] [cursor=pointer]:
+          - /url: /catalog/1
+          - generic [ref=e31]:
+            - img "Wireless Headphones" [ref=e32]
+            - button "Remove Wireless Headphones from favorites" [pressed] [ref=e33]:
               - img [ref=e34]
-              - text: Remove from Favorites
           - generic [ref=e36]:
-            - img [ref=e37]
-            - generic [ref=e39]: "4.5"
-            - generic [ref=e40]: (4.5 out of 5)
-          - generic [ref=e41]:
-            - generic [ref=e42]: "Price:"
-            - generic [ref=e43]: \$199.99
-          - generic [ref=e44]:
-            - generic [ref=e45]: "Availability:"
-            - generic [ref=e46]: In Stock (45 available)
-          - generic [ref=e47]:
-            - heading "Description" [level=2] [ref=e48]
-            - paragraph [ref=e49]: High-quality wireless headphones with noise cancellation and 30-hour battery life.
-          - button "Add to Cart" [ref=e51] [cursor=pointer]
+            - generic [ref=e37]:
+              - heading "Wireless Headphones" [level=2] [ref=e38]
+              - generic [ref=e39]: Electronics
+            - paragraph [ref=e40]: High-quality wireless headphones with noise cancellation and 30-hour battery life.
+            - generic [ref=e41]:
+              - generic [ref=e42]:
+                - img [ref=e43]
+                - generic [ref=e45]: "4.5"
+              - generic [ref=e46]:
+                - generic [ref=e47]: "Price:"
+                - generic [ref=e48]: R199.99
+            - generic [ref=e49]: In stock
 ```
