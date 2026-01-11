@@ -1,124 +1,141 @@
 .page-header {
-    margin-bottom: var(--spacing-xl);
-  }
+  margin-bottom: var(--spacing-xl);
+}
   
-  .page-title {
-    font-size: var(--font-size-3xl);
-    font-weight: 700;
-    color: var(--color-text);
-    margin-bottom: var(--spacing-sm);
-  }
+.page-title {
+  font-size: var(--font-size-3xl);
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: var(--spacing-sm);
+}
   
-  .page-description {
-    font-size: var(--font-size-lg);
-    color: var(--color-text-secondary);
-  }
+.page-description {
+  font-size: var(--font-size-lg);
+  color: var(--color-text-secondary);
+}
   
-  .filters-section {
-    background-color: var(--color-bg-secondary);
-    border-radius: var(--radius-lg);
-    padding: var(--spacing-lg);
-    margin-bottom: var(--spacing-xl);
-  }
+.filters-section {
+  background-color: var(--color-bg-secondary);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-xl);
+}
   
-  .filters-grid {
-    display: grid;
-    gap: var(--spacing-md);
-    margin-bottom: var(--spacing-md);
+.filters-grid {
+  display: grid;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
     
-    @media (min-width: 640px) {
-      grid-template-columns: repeat(2, 1fr);
-    }
+  @media (min-width: 640px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
     
-    @media (min-width: 1024px) {
-      grid-template-columns: repeat(4, 1fr);
-    }
+  @media (min-width: 1024px) {
+    grid-template-columns: repeat(4, 1fr);
   }
+}
   
-  .filter-group {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-xs);
-  }
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
   
-  .filter-label {
-    font-size: var(--font-size-sm);
-    font-weight: 500;
-    color: var(--color-text);
-  }
+.filter-label {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-text);
+}
   
-  .filter-input,
-  .filter-select {
-    padding: var(--spacing-sm) var(--spacing-md);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
-    background-color: var(--color-bg);
-    color: var(--color-text);
-    font-size: var(--font-size-base);
-    transition: border-color var(--transition-fast);
+.filter-input,
+.filter-select {
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-size: var(--font-size-base);
+  transition: border-color var(--transition-fast);
     
-    &:focus {
-      outline: none;
-      border-color: var(--color-border-focus);
-    }
+  &:focus {
+    outline: none;
+    border-color: var(--color-border-focus);
+  }
     
-    &:hover {
-      border-color: var(--color-text-muted);
-    }
+  &:hover {
+    border-color: var(--color-text-muted);
   }
+}
   
-  .filter-input {
-    &[type="search"]::-webkit-search-cancel-button {
-      -webkit-appearance: none;
-      appearance: none;
-      height: 1rem;
-      width: 1rem;
-      background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%2394a3b8" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>');
-      background-size: contain;
-      cursor: pointer;
-    }
+.filter-input {
+  &[type="search"]::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 1rem;
+    width: 1rem;
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%2394a3b8" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>');
+    background-size: contain;
+    cursor: pointer;
   }
+}
   
-  .reset-button {
-    padding: var(--spacing-sm) var(--spacing-lg);
-    background-color: var(--color-bg);
-    color: var(--color-text);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
-    font-weight: 500;
-    transition: background-color var(--transition-fast), 
-                border-color var(--transition-fast);
+.reset-button {
+  padding: var(--spacing-sm) var(--spacing-lg);
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-weight: 500;
+  transition: background-color var(--transition-fast), 
+              border-color var(--transition-fast);
     
-    &:hover {
-      background-color: var(--color-bg-tertiary);
-      border-color: var(--color-text-muted);
-    }
+  &:hover {
+    background-color: var(--color-bg-tertiary);
+    border-color: var(--color-text-muted);
+  }
     
-    &:focus-visible {
-      outline: 2px solid var(--color-border-focus);
-      outline-offset: 2px;
-    }
+  &:focus-visible {
+    outline: 2px solid var(--color-border-focus);
+    outline-offset: 2px;
   }
+}
   
-  .results-header {
-    margin-bottom: var(--spacing-md);
-  }
+.results-header {
+  margin-bottom: var(--spacing-md);
+}
   
-  .results-count {
-    font-size: var(--font-size-sm);
-    color: var(--color-text-secondary);
-    font-weight: 500;
-  }
+.results-count {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  font-weight: 500;
+}
   
-  .products-grid {
-    display: grid;
-    gap: var(--spacing-lg);
+.products-grid {
+  display: grid;
+  gap: var(--spacing-lg);
     
-    @media (min-width: 640px) {
-      grid-template-columns: repeat(2, 1fr);
-    }
-    
-    @media (min-width: 1024px) {
-      grid-template-columns: repeat(3, 1fr);
-    }
+  @media (min-width: 640px) {
+    grid-template-columns: repeat(2, 1fr);
   }
+    
+  @media (min-width: 1024px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: var(--color-bg);
+  color: var(--color-text);
+  padding: var(--spacing-sm) var(--spacing-md);
+  text-decoration: none;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  z-index: 100;
+}
+
+.skip-link:focus {
+  top: 0;
+}

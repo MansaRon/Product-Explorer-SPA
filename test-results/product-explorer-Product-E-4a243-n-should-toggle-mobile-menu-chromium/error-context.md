@@ -9,7 +9,7 @@
       - link "Product Explorer Home" [ref=e8] [cursor=pointer]:
         - /url: /
         - img [ref=e9]
-      - button "Toggle navigation menu" [ref=e12] [cursor=pointer]:
+      - button "Toggle navigation menu" [expanded] [active] [ref=e12] [cursor=pointer]:
         - img [ref=e13]
   - main [ref=e15]:
     - generic [ref=e16]:

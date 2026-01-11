@@ -12,7 +12,7 @@ export const routes: Routes = [
         loadChildren: () => import('./features/catalog/catalog.routing').then(c => c.CATALOG)
     },
     {
-        path: 'favourites',
+        path: 'favorites',
         loadChildren: () => import('./features/favourites/favourites.routing').then(f => f.FAVOURITE)
     },
     {
