@@ -13,7 +13,7 @@ import { NavItem } from './core/models/navigation';
 export class AppComponent {
   readonly navItems: NavItem[] = [
     { label: 'Catalog', link: '/catalog' },
-    { label: 'Favorites', link: '/favourites' },
+    { label: 'Favorites', link: '/favorites' },
     { label: 'Admin', link: '/admin' }
   ];
 }

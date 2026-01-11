@@ -1,0 +1,55 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - link "Skip to main content" [ref=e3] [cursor=pointer]:
+    - /url: "#main-content"
+  - banner [ref=e5]:
+    - generic [ref=e7]:
+      - link "Product Explorer Home" [ref=e8] [cursor=pointer]:
+        - /url: /
+        - img [ref=e9]
+        - generic [ref=e12]: Product Explorer
+      - navigation [ref=e13]:
+        - link [ref=e14] [cursor=pointer]:
+          - /url: /catalog
+          - text: Catalog
+        - link [ref=e15] [cursor=pointer]:
+          - /url: /favorites
+          - text: Favorites
+        - link [ref=e16] [cursor=pointer]:
+          - /url: /admin
+          - text: Admin
+        - button [ref=e17] [cursor=pointer]: 🔒 Guest Mode
+  - main [ref=e18]:
+    - generic [ref=e19]:
+      - link "Skip to main content" [ref=e20] [cursor=pointer]:
+        - /url: "#main-content"
+      - generic [ref=e21]:
+        - generic [ref=e22]:
+          - heading "Product Catalog" [level=1] [ref=e23]
+          - paragraph [ref=e24]: Browse our collection of quality products
+        - generic [ref=e25]:
+          - generic [ref=e26]:
+            - generic [ref=e27]:
+              - generic [ref=e28]: Search
+              - searchbox "Search products by name or description" [ref=e29]
+            - generic [ref=e30]:
+              - generic [ref=e31]: Category
+              - combobox "Filter by category" [ref=e32]:
+                - option "All Categories" [selected]
+            - generic [ref=e33]:
+              - generic [ref=e34]: Sort By
+              - combobox "Sort products by field" [ref=e35]:
+                - option "Name" [selected]
+                - option "Price"
+                - option "Rating"
+            - generic [ref=e36]:
+              - generic [ref=e37]: Order
+              - combobox "Sort order" [ref=e38]:
+                - option "Ascending" [selected]
+                - option "Descending"
+          - button "Reset all filters" [ref=e39] [cursor=pointer]: Reset Filters
+        - status [ref=e41]:
+          - generic [ref=e43]: Loading products
+```

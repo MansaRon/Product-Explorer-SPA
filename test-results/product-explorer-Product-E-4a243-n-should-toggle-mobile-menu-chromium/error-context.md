@@ -1,0 +1,248 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - link "Skip to main content" [ref=e3] [cursor=pointer]:
+    - /url: "#main-content"
+  - banner [ref=e5]:
+    - generic [ref=e7]:
+      - link "Product Explorer Home" [ref=e8] [cursor=pointer]:
+        - /url: /
+        - img [ref=e9]
+      - button "Toggle navigation menu" [expanded] [active] [ref=e12] [cursor=pointer]:
+        - img [ref=e13]
+  - main [ref=e15]:
+    - generic [ref=e16]:
+      - link "Skip to main content" [ref=e17] [cursor=pointer]:
+        - /url: "#main-content"
+      - generic [ref=e18]:
+        - generic [ref=e19]:
+          - heading "Product Catalog" [level=1] [ref=e20]
+          - paragraph [ref=e21]: Browse our collection of quality products
+        - generic [ref=e22]:
+          - generic [ref=e23]:
+            - generic [ref=e24]:
+              - generic [ref=e25]: Search
+              - searchbox "Search products by name or description" [ref=e26]
+            - generic [ref=e27]:
+              - generic [ref=e28]: Category
+              - combobox "Filter by category" [ref=e29]:
+                - option "All Categories" [selected]
+                - option "Accessories"
+                - option "Electronics"
+                - option "Storage"
+            - generic [ref=e30]:
+              - generic [ref=e31]: Sort By
+              - combobox "Sort products by field" [ref=e32]:
+                - option "Name" [selected]
+                - option "Price"
+                - option "Rating"
+            - generic [ref=e33]:
+              - generic [ref=e34]: Order
+              - combobox "Sort order" [ref=e35]:
+                - option "Ascending" [selected]
+                - option "Descending"
+          - button "Reset all filters" [ref=e36] [cursor=pointer]: Reset Filters
+        - paragraph [ref=e38]: Showing 10 products
+        - generic [ref=e39]:
+          - article [ref=e41]:
+            - link "View details for Cable Management Kit" [ref=e42] [cursor=pointer]:
+              - /url: /catalog/10
+              - generic [ref=e43]:
+                - img "Cable Management Kit" [ref=e44]
+                - button "Add Cable Management Kit to favorites" [ref=e45]:
+                  - img [ref=e46]
+              - generic [ref=e48]:
+                - generic [ref=e49]:
+                  - heading "Cable Management Kit" [level=2] [ref=e50]
+                  - generic [ref=e51]: Accessories
+                - paragraph [ref=e52]: Complete cable management solution for desk setup.
+                - generic [ref=e53]:
+                  - generic [ref=e54]:
+                    - img [ref=e55]
+                    - generic [ref=e57]: "4"
+                  - generic [ref=e58]:
+                    - generic [ref=e59]: "Price:"
+                    - generic [ref=e60]: R24.99
+                - generic [ref=e61]: In stock
+          - article [ref=e63]:
+            - link "View details for Laptop Stand" [ref=e64] [cursor=pointer]:
+              - /url: /catalog/3
+              - generic [ref=e65]:
+                - img "Laptop Stand" [ref=e66]
+                - button "Add Laptop Stand to favorites" [ref=e67]:
+                  - img [ref=e68]
+              - generic [ref=e70]:
+                - generic [ref=e71]:
+                  - heading "Laptop Stand" [level=2] [ref=e72]
+                  - generic [ref=e73]: Accessories
+                - paragraph [ref=e74]: Ergonomic aluminum laptop stand with adjustable height.
+                - generic [ref=e75]:
+                  - generic [ref=e76]:
+                    - img [ref=e77]
+                    - generic [ref=e79]: "4.3"
+                  - generic [ref=e80]:
+                    - generic [ref=e81]: "Price:"
+                    - generic [ref=e82]: R49.99
+                - generic [ref=e83]: In stock
+          - article [ref=e85]:
+            - link "View details for Mechanical Keyboard" [ref=e86] [cursor=pointer]:
+              - /url: /catalog/4
+              - generic [ref=e87]:
+                - img "Mechanical Keyboard" [ref=e88]
+                - button "Add Mechanical Keyboard to favorites" [ref=e89]:
+                  - img [ref=e90]
+              - generic [ref=e92]:
+                - generic [ref=e93]:
+                  - heading "Mechanical Keyboard" [level=2] [ref=e94]
+                  - generic [ref=e95]: Electronics
+                - paragraph [ref=e96]: RGB backlit mechanical keyboard with blue switches.
+                - generic [ref=e97]:
+                  - generic [ref=e98]:
+                    - img [ref=e99]
+                    - generic [ref=e101]: "4.6"
+                  - generic [ref=e102]:
+                    - generic [ref=e103]: "Price:"
+                    - generic [ref=e104]: R129.99
+                - generic [ref=e105]: In stock
+          - article [ref=e107]:
+            - link "View details for Monitor 27 inch" [ref=e108] [cursor=pointer]:
+              - /url: /catalog/9
+              - generic [ref=e109]:
+                - img "Monitor 27 inch" [ref=e110]
+                - button "Add Monitor 27 inch to favorites" [ref=e111]:
+                  - img [ref=e112]
+              - generic [ref=e114]:
+                - generic [ref=e115]:
+                  - heading "Monitor 27 inch" [level=2] [ref=e116]
+                  - generic [ref=e117]: Electronics
+                - paragraph [ref=e118]: 27-inch 4K UHD monitor with HDR support.
+                - generic [ref=e119]:
+                  - generic [ref=e120]:
+                    - img [ref=e121]
+                    - generic [ref=e123]: "4.9"
+                  - generic [ref=e124]:
+                    - generic [ref=e125]: "Price:"
+                    - generic [ref=e126]: R399.99
+                - generic [ref=e127]: In stock
+          - article [ref=e129]:
+            - link "View details for Portable SSD" [ref=e130] [cursor=pointer]:
+              - /url: /catalog/7
+              - generic [ref=e131]:
+                - img "Portable SSD" [ref=e132]
+                - button "Add Portable SSD to favorites" [ref=e133]:
+                  - img [ref=e134]
+              - generic [ref=e136]:
+                - generic [ref=e137]:
+                  - heading "Portable SSD" [level=2] [ref=e138]
+                  - generic [ref=e139]: Storage
+                - paragraph [ref=e140]: 1TB portable solid-state drive with USB-C connectivity.
+                - generic [ref=e141]:
+                  - generic [ref=e142]:
+                    - img [ref=e143]
+                    - generic [ref=e145]: "4.8"
+                  - generic [ref=e146]:
+                    - generic [ref=e147]: "Price:"
+                    - generic [ref=e148]: R149.99
+                - generic [ref=e149]: In stock
+          - article [ref=e151]:
+            - link "View details for Smart Watch" [ref=e152] [cursor=pointer]:
+              - /url: /catalog/2
+              - generic [ref=e153]:
+                - img "Smart Watch" [ref=e154]
+                - button "Add Smart Watch to favorites" [ref=e155]:
+                  - img [ref=e156]
+              - generic [ref=e158]:
+                - generic [ref=e159]:
+                  - heading "Smart Watch" [level=2] [ref=e160]
+                  - generic [ref=e161]: Electronics
+                - paragraph [ref=e162]: Feature-rich smartwatch with fitness tracking and heart rate monitor.
+                - generic [ref=e163]:
+                  - generic [ref=e164]:
+                    - img [ref=e165]
+                    - generic [ref=e167]: "4.7"
+                  - generic [ref=e168]:
+                    - generic [ref=e169]: "Price:"
+                    - generic [ref=e170]: R299.99
+                - generic [ref=e171]: In stock
+          - article [ref=e173]:
+            - link "View details for USB-C Hub" [ref=e174] [cursor=pointer]:
+              - /url: /catalog/6
+              - generic [ref=e175]:
+                - img "USB-C Hub" [ref=e176]
+                - button "Add USB-C Hub to favorites" [ref=e177]:
+                  - img [ref=e178]
+              - generic [ref=e180]:
+                - generic [ref=e181]:
+                  - heading "USB-C Hub" [level=2] [ref=e182]
+                  - generic [ref=e183]: Accessories
+                - paragraph [ref=e184]: 7-in-1 USB-C hub with HDMI, USB 3.0, and SD card reader.
+                - generic [ref=e185]:
+                  - generic [ref=e186]:
+                    - img [ref=e187]
+                    - generic [ref=e189]: "4.2"
+                  - generic [ref=e190]:
+                    - generic [ref=e191]: "Price:"
+                    - generic [ref=e192]: R59.99
+                - generic [ref=e193]: In stock
+          - article [ref=e195]:
+            - link "View details for Webcam HD" [ref=e196] [cursor=pointer]:
+              - /url: /catalog/8
+              - generic [ref=e197]:
+                - img "Webcam HD" [ref=e198]
+                - button "Add Webcam HD to favorites" [ref=e199]:
+                  - img [ref=e200]
+              - generic [ref=e202]:
+                - generic [ref=e203]:
+                  - heading "Webcam HD" [level=2] [ref=e204]
+                  - generic [ref=e205]: Electronics
+                - paragraph [ref=e206]: 1080p HD webcam with auto-focus and dual microphones.
+                - generic [ref=e207]:
+                  - generic [ref=e208]:
+                    - img [ref=e209]
+                    - generic [ref=e211]: "4.1"
+                  - generic [ref=e212]:
+                    - generic [ref=e213]: "Price:"
+                    - generic [ref=e214]: R79.99
+                - generic [ref=e215]: In stock
+          - article [ref=e217]:
+            - link "View details for Wireless Headphones" [ref=e218] [cursor=pointer]:
+              - /url: /catalog/1
+              - generic [ref=e219]:
+                - img "Wireless Headphones" [ref=e220]
+                - button "Add Wireless Headphones to favorites" [ref=e221]:
+                  - img [ref=e222]
+              - generic [ref=e224]:
+                - generic [ref=e225]:
+                  - heading "Wireless Headphones" [level=2] [ref=e226]
+                  - generic [ref=e227]: Electronics
+                - paragraph [ref=e228]: High-quality wireless headphones with noise cancellation and 30-hour battery life.
+                - generic [ref=e229]:
+                  - generic [ref=e230]:
+                    - img [ref=e231]
+                    - generic [ref=e233]: "4.5"
+                  - generic [ref=e234]:
+                    - generic [ref=e235]: "Price:"
+                    - generic [ref=e236]: R199.99
+                - generic [ref=e237]: In stock
+          - article [ref=e239]:
+            - link "View details for Wireless Mouse" [ref=e240] [cursor=pointer]:
+              - /url: /catalog/5
+              - generic [ref=e241]:
+                - img "Wireless Mouse" [ref=e242]
+                - button "Add Wireless Mouse to favorites" [ref=e243]:
+                  - img [ref=e244]
+              - generic [ref=e246]:
+                - generic [ref=e247]:
+                  - heading "Wireless Mouse" [level=2] [ref=e248]
+                  - generic [ref=e249]: Accessories
+                - paragraph [ref=e250]: Precision wireless mouse with ergonomic design.
+                - generic [ref=e251]:
+                  - generic [ref=e252]:
+                    - img [ref=e253]
+                    - generic [ref=e255]: "4.4"
+                  - generic [ref=e256]:
+                    - generic [ref=e257]: "Price:"
+                    - generic [ref=e258]: R39.99
+                - generic [ref=e259]: In stock
+```
