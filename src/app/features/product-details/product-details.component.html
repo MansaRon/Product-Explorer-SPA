@@ -57,7 +57,7 @@
 
           <div class="product-price">
             <span class="price-label">Price:</span>
-            <span class="price-value">\${{ product()!.price.toFixed(2) }}</span>
+            <span class="price-value">{{ product()!.price.toFixed(2) | currency: "R"}}</span>
           </div>
 
           <div class="product-stock">
@@ -81,18 +81,6 @@
           <div class="product-description">
             <h2 class="description-title">Description</h2>
             <p class="description-text">{{ product()!.description }}</p>
-          </div>
-
-          <div class="product-actions">
-            <button type="button" class="add-to-cart-button"
-              [disabled]="product()!.stock === 0">
-              @if (product()!.stock === 0) {
-                Out of Stock
-              } 
-              @else {
-                Add to Cart
-              }
-            </button>
           </div>
         </div>
       </div>

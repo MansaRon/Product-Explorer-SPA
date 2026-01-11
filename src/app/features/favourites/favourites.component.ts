@@ -3,6 +3,7 @@ import { ProductCardComponent } from '../../shared/components/product-card/produ
 import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state.component';
 import { FavouriteService } from '../../core/services/favourite/favourite.service';
 import { ProductService } from '../../core/services/product/product.service';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-favourites',
@@ -17,6 +18,8 @@ import { ProductService } from '../../core/services/product/product.service';
 export class FavouritesComponent {
   private readonly favouriteService = inject(FavouriteService);
   private readonly productService = inject(ProductService);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
   
   protected readonly favoriteIds = this.favouriteService.favouritesId;
   protected readonly favoriteCount = this.favouriteService.count;
@@ -42,5 +45,11 @@ export class FavouritesComponent {
     if (confirm('Are you sure you want to remove all favorites?')) {
       this.favouriteService.clearAll();
     }
+  }
+
+  protected back(): void {
+    void this.router.navigate(['/catalog'], {
+      relativeTo: this.route
+    })
   }
 }
