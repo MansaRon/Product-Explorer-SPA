@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { Product } from '../models/product';
-import { FilterParams, SortField, SortOrder } from '../models/filter-params';
-import { initialFilterParams } from '../const/filter-params';
+import { Product } from '../../models/product';
+import { FilterParams, SortField, SortOrder } from '../../models/filter-params';
+import { initialFilterParams } from '../../const/filter-params';
 import { catchError, delay, of } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
@@ -54,7 +54,7 @@ export class ProductService {
       if (aVal < bVal) comparison = -1;
       if (aVal > bVal) comparison = 1;
 
-      return params.sortOrder === 'asc' ? comparison : -comparison;
+      return params.sortOrder == 'asc' ? comparison : -comparison;
     });
 
     return filtered;

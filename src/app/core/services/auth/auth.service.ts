@@ -1,6 +1,6 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { AUTH_STORAGE_KEY } from '../const/service-keys';
+import { AUTH_STORAGE_KEY } from '../../const/service-keys';
 
 @Injectable({
   providedIn: 'root'

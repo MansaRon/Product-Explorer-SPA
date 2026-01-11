@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
-import { ProductService } from '../../core/services/product.service';
-import { FavouriteService } from '../../core/services/favourite.service';
-import { AuthService } from '../../core/services/auth.service';
+import { ProductService } from '../../core/services/product/product.service';
+import { FavouriteService } from '../../core/services/favourite/favourite.service';
+import { AuthService } from '../../core/services/auth/auth.service';
 import { CurrencyPipe } from '@angular/common';
 
 @Component({
