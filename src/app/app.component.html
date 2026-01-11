@@ -1,7 +1,9 @@
-<a href="#main-content" class="skip-link">Skip to main content</a>
+<a href="#main-content" class="skip-link" tabindex="0">Skip to main content</a>
 
-<app-header [navItems]="navItems" />
+<div class="app-wrapper">
+  <app-header [navItems]="navItems" />
+  <main id="main-content">
+    <router-outlet />
+  </main>
+</div>
 
-<main id="main-content">
-  <router-outlet />
-</main>

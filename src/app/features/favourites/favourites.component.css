@@ -65,6 +65,7 @@
     font-weight: 500;
     text-decoration: none;
     transition: background-color var(--transition-fast);
+    cursor: pointer;
     
     &:hover {
       background-color: var(--color-primary-dark);

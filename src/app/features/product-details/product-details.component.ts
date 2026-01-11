@@ -5,6 +5,8 @@ import { FavouriteService } from '../../core/services/favourite/favourite.servic
 import { ProductService } from '../../core/services/product/product.service';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { map } from 'rxjs';
+import { CurrencyPipe } from '@angular/common';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-product-details',
@@ -12,13 +14,14 @@ import { map } from 'rxjs';
   styleUrls: ['./product-details.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    ErrorMessageComponent
+    ErrorMessageComponent,
+    CurrencyPipe
   ],
 })
 export class ProductDetailsComponent {
   private readonly productService = inject(ProductService);
   private readonly favouriteService = inject(FavouriteService);
-  private readonly router = inject(Router);
+  private readonly location = inject(Location);
   private readonly route = inject(ActivatedRoute);
   
   protected readonly id = toSignal(
@@ -49,6 +52,6 @@ export class ProductDetailsComponent {
   }
   
   protected goBack(): void {
-    this.router.navigate(['/catalog']);
+    this.location.back();
   }
 }

@@ -24,7 +24,7 @@
   @if (!hasFavorites()) {
     <app-empty-state icon="heart" title="No favorites yet"
       description="Start adding products to your favorites by clicking the heart icon on any product">
-      <a routerLink="/catalog" class="browse-link">
+      <a (click)="back()" class="browse-link">
         Browse Catalog
       </a>
     </app-empty-state>
