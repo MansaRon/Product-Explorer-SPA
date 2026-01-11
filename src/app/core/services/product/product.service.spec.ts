@@ -4,6 +4,7 @@ import { ProductService } from './product.service';
 import { createHttpFactory, HttpMethod, mockProvider, SpectatorHttp } from '@ngneat/spectator/jest';
 import { HttpClient } from '@angular/common/http';
 import { Product } from '../../models/product';
+import { DestroyRef } from '@angular/core';
 
 describe('Service: Product', () => {
   let spectator: SpectatorHttp<ProductService>;
@@ -34,7 +35,13 @@ describe('Service: Product', () => {
   const createHttp = createHttpFactory({
     service: ProductService,
     providers: [
-      mockProvider(HttpClient)
+      mockProvider(HttpClient),
+      {
+        provide: DestroyRef,
+        useValue: {
+          onDestroy: jest.fn()
+        }
+      }
     ]
   });
 

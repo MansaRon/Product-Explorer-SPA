@@ -54,7 +54,7 @@ export class ProductService {
       if (aVal < bVal) comparison = -1;
       if (aVal > bVal) comparison = 1;
 
-      return params.sortOrder === 'asc' ? comparison : -comparison;
+      return params.sortOrder == 'asc' ? comparison : -comparison;
     });
 
     return filtered;
