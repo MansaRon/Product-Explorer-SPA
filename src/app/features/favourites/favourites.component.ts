@@ -8,7 +8,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 @Component({
   selector: 'app-favourites',
   templateUrl: './favourites.component.html',
-  styleUrls: ['./favourites.component.css'],
+  styleUrls: ['./favourites.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ProductCardComponent, 
