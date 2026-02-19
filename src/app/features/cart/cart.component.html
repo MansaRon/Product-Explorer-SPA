@@ -1,0 +1,115 @@
+<div class="container">
+  <div class="page-header">
+    <h1 class="page-title">Shopping Cart</h1>
+    <p class="page-description">Review your items before checkout</p>
+  </div>
+
+  @if (cartWithProducts().length === 0) {
+    <app-empty-state 
+      icon="cart"
+      title="Your cart is empty"
+      description="Add some products to your cart to see them here"
+      [showButton]="true"
+      buttonText="Browse Catalog"
+      buttonRoute="/catalog" />
+  } @else {
+    <div class="cart-layout">
+      <div class="cart-items">
+        <h2 class="section-title">Cart Items ({{ cartWithProducts().length }})</h2>
+        
+        @for (item of cartWithProducts(); track item.productId) {
+          <div class="cart-item">
+            <div class="item-image">
+              <img 
+                [src]="item.product!.imageUrl ?? '/assets/placeholder.jpg'" 
+                [alt]="item.product!.name"
+              />
+            </div>
+
+            <div class="item-details">
+              <h3 class="item-name">{{ item.product!.name }}</h3>
+              <p class="item-category">{{ item.product!.category }}</p>
+              
+              <div class="item-meta">
+                <span class="item-price">
+                  {{ item.product!.price | currency: 'R' }}
+                </span>
+                <span class="item-quantity">
+                  Qty: {{ item.quantity }}
+                </span>
+              </div>
+
+              @if (item.product!.stock < 10 && item.product!.stock > 0) {
+                <p class="item-stock-warning">
+                  ⚠️ Only {{ item.product!.stock }} left in stock
+                </p>
+              }
+              @if (item.product!.stock === 0) {
+                <p class="item-out-of-stock">
+                  ❌ Out of stock
+                </p>
+              }
+            </div>
+
+            <div class="item-actions">
+              <div class="item-total">
+                {{ (item.product!.price * item.quantity) | currency: 'R' }}
+              </div>
+              <button 
+                type="button" 
+                class="remove-button"
+                (click)="removeFromCart(item.productId)">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                  <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M10 11v6M14 11v6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Remove
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+
+      <div class="order-summary">
+        <h2 class="summary-title">Order Summary</h2>
+
+        <div class="summary-line">
+          <span class="summary-label">Subtotal</span>
+          <span class="summary-value">{{ subTotal() | currency: 'R' }}</span>
+        </div>
+
+        <div class="summary-line">
+          <span class="summary-label">Tax (15% VAT)</span>
+          <span class="summary-value">{{ tax() | currency: 'R' }}</span>
+        </div>
+
+        <div class="summary-divider"></div>
+
+        <div class="summary-line summary-total">
+          <span class="summary-label">Total</span>
+          <span class="summary-value">{{ total() | currency: 'R' }}</span>
+        </div>
+
+        <div class="summary-actions">
+          <button 
+            type="button" 
+            class="checkout-button"
+            (click)="goToCheckout()">
+            Proceed to Checkout
+          </button>
+          
+          <button 
+            type="button" 
+            class="continue-button"
+            (click)="continueShopping()">
+            Continue Shopping
+          </button>
+        </div>
+
+        <p class="summary-note">
+          💳 Secure checkout powered by our payment gateway
+        </p>
+      </div>
+    </div>
+  }
+</div>
