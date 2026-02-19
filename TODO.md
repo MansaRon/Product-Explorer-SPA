@@ -7,4 +7,4 @@
 * Template for commits
 * Create seperate project for end 2 end testing with functional CI/CD
 * Add IDs in selectors for robust end 2 end testing
-* Add light and dark mode
+* Add a global interceptor for API calls
