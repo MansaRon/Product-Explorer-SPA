@@ -7,11 +7,12 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { map } from 'rxjs';
 import { CurrencyPipe } from '@angular/common';
 import { Location } from '@angular/common';
+import { CartService } from '../../core/services/cart/cart.service';
 
 @Component({
   selector: 'app-product-details',
   templateUrl: './product-details.component.html',
-  styleUrls: ['./product-details.component.css'],
+  styleUrls: ['./product-details.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ErrorMessageComponent,
@@ -23,6 +24,8 @@ export class ProductDetailsComponent {
   private readonly favouriteService = inject(FavouriteService);
   private readonly location = inject(Location);
   private readonly route = inject(ActivatedRoute);
+  private readonly cartService = inject(CartService);
+  private readonly router = inject(Router);
   
   protected readonly id = toSignal(
     this.route.paramMap.pipe(
@@ -41,6 +44,12 @@ export class ProductDetailsComponent {
     if (!productId) return false;
     return this.favouriteService.isFavorite(productId);
   });
+
+  protected readonly isInCart = computed(() => {
+    const productId = this.id();
+    if (!productId) return false;
+    return this.cartService.isInCart(productId);
+  });
   
   protected readonly notFound = computed(() => !this.product());
 
@@ -52,6 +61,17 @@ export class ProductDetailsComponent {
   }
   
   protected goBack(): void {
-    this.location.back();
+    if (window.history.length > 1) {
+      this.location.back();
+    } else {
+      this.router.navigate(['catalog']);
+    }
+  }
+
+  protected toggleCart(): void {
+    const productId = this.id();
+    if (productId) {
+      this.cartService.toggleCart(productId);
+    }
   }
 }

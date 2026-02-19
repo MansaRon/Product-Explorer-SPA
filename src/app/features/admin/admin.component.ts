@@ -7,7 +7,7 @@ import { CurrencyPipe } from '@angular/common';
 @Component({
   selector: 'app-admin',
   templateUrl: './admin.component.html',
-  styleUrls: ['./admin.component.css'],
+  styleUrls: ['./admin.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CurrencyPipe

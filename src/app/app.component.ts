@@ -14,6 +14,7 @@ export class AppComponent {
   readonly navItems: NavItem[] = [
     { label: 'Catalog', link: '/catalog' },
     { label: 'Favorites', link: '/favorites' },
-    { label: 'Admin', link: '/admin' }
+    { label: 'Admin', link: '/admin' },
+    // { label: 'Cart', link: '/cart' }
   ];
 }

@@ -21,6 +21,10 @@ export const routes: Routes = [
         loadChildren: () => import('./features/admin/admin.routing').then(a => a.ADMIN)
     },
     {
+        path: 'cart',
+        loadChildren: () => import('./features/cart/cart.routing').then(c => c.CART)
+    },
+    {
         path: '**',
         redirectTo: '/catalog'
     }
