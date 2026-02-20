@@ -26,6 +26,11 @@ export const routes: Routes = [
     },
     {
         path: '**',
-        redirectTo: '/catalog'
+        loadChildren: () => import('./features/page-not-found/page-not-found.routing').then(r => r.PAGE_NOT_FOUND)
+    },
+    {
+        path: '',
+        redirectTo: '/catalog',
+        pathMatch: 'full'
     }
 ];
