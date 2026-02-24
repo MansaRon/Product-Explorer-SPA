@@ -1,0 +1,69 @@
+<div class="payment-methods" role="radiogroup" aria-label="Payment method options">
+  @for (method of methods(); track method.id) {
+    <label 
+      class="payment-method"
+      [class.payment-method--selected]="isSelected(method.id)"
+    >
+      <input
+        type="radio"
+        [name]="'payment'"
+        [value]="method.id"
+        [checked]="isSelected(method.id)"
+        (change)="selectMethod(method)"
+        class="payment-radio"
+        [attr.aria-label]="method.label"
+      />
+      <div class="method-content">
+        <div class="method-icon" aria-hidden="true">
+          @switch (method.type) {
+            @case ('card') {
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <rect x="1" y="4" width="22" height="16" rx="2" stroke-width="2"/>
+                <path d="M1 10h22" stroke-width="2"/>
+              </svg>
+            }
+            @case ('eft') {
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <rect x="2" y="5" width="20" height="14" rx="2" stroke-width="2"/>
+                <path d="M2 10h20" stroke-width="2"/>
+              </svg>
+            }
+            @case ('cash') {
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <rect x="2" y="7" width="20" height="10" rx="2" stroke-width="2"/>
+                <circle cx="12" cy="12" r="3" stroke-width="2"/>
+              </svg>
+            }
+          }
+        </div>
+        <span class="method-label">{{ method.label }}</span>
+      </div>
+    </label>
+  }
+</div>
+
+@if (getSelectedMethod(); as selected) {
+  @if (selected.type === 'card') {
+    <div class="payment-note">
+      <p class="note-text">
+        💳 You'll enter your card details on our secure payment page in the next step.
+      </p>
+    </div>
+  }
+
+  @if (selected.type === 'eft') {
+    <div class="payment-note">
+      <p class="note-text">
+        🏦 Bank details will be provided after order confirmation. Payment must be received within 24 hours.
+      </p>
+    </div>
+  }
+
+  @if (selected.type === 'cash') {
+    <div class="payment-note">
+      <p class="note-text">
+        💵 Pay cash when your order is delivered. Please have exact change ready.
+      </p>
+    </div>
+  }
+}

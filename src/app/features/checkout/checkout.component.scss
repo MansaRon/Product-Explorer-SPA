@@ -1,0 +1,102 @@
+.checkout-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: var(--spacing-xl) var(--spacing-md);
+}
+  
+.progress-bar {
+    height: 4px;
+    background-color: var(--color-bg-tertiary);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: var(--spacing-xl);
+}
+  
+.progress-fill {
+    height: 100%;
+    background-color: var(--color-primary);
+    transition: width 0.3s ease-in-out;
+}
+  
+.step-navigator {
+    margin-bottom: var(--spacing-2xl);
+}
+  
+.steps-list {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--spacing-sm);
+    list-style: none;
+    
+    @media (max-width: 640px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+}
+  
+.step-item {
+    position: relative;
+}
+  
+.step-button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-xs);
+    width: 100%;
+    padding: var(--spacing-md);
+    background-color: var(--color-bg-secondary);
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    transition: all var(--transition-fast);
+    
+    &:hover:not(:disabled) {
+      background-color: var(--color-bg-tertiary);
+      border-color: var(--color-primary);
+    }
+    
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    
+    &:focus-visible {
+      outline: 2px solid var(--color-border-focus);
+      outline-offset: 2px;
+    }
+}
+  
+.step-item--active .step-button {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+    color: white;
+}
+  
+.step-item--completed .step-button {
+    background-color: var(--color-success);
+    border-color: var(--color-success);
+    color: white;
+}
+  
+.step-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+}
+  
+.step-item--active .step-icon,
+.step-item--completed .step-icon {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+  
+.step-label {
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+}
+  
+.checkout-content {
+    min-height: 400px;
+}

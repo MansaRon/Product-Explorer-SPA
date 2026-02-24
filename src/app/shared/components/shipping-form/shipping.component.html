@@ -1,0 +1,224 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="shipping-form">
+  <!-- Contact Information -->
+  <fieldset class="form-section">
+    <legend class="section-title">Contact Information</legend>
+
+    <div class="form-row">
+      <div class="form-field">
+        <label for="fullName" class="form-label">
+          Full Name
+          <span class="required" aria-label="required">*</span>
+        </label>
+        <input
+          type="text"
+          id="fullName"
+          formControlName="fullName"
+          class="form-input"
+          [class.form-input--error]="hasError('fullName')"
+          [attr.aria-invalid]="hasError('fullName')"
+          [attr.aria-describedby]="
+            hasError('fullName') ? 'fullName-error' : null
+          "
+          placeholder="John Doe"
+        />
+        @if (hasError('fullName')) {
+        <span id="fullName-error" class="error-message" role="alert">
+          {{ getErrorMessage("fullName") }}
+        </span>
+        }
+      </div>
+    </div>
+
+    <div class="form-row form-row--two-columns">
+      <div class="form-field">
+        <label for="phoneNumber" class="form-label">
+          Phone Number
+          <span class="required" aria-label="required">*</span>
+        </label>
+        <input
+          type="tel"
+          id="phoneNumber"
+          formControlName="phoneNumber"
+          class="form-input"
+          [class.form-input--error]="hasError('phoneNumber')"
+          [attr.aria-invalid]="hasError('phoneNumber')"
+          [attr.aria-describedby]="
+            hasError('phoneNumber') ? 'phoneNumber-error' : null
+          "
+          placeholder="0821234567"
+        />
+        @if (hasError('phoneNumber')) {
+        <span id="phoneNumber-error" class="error-message" role="alert">
+          {{ getErrorMessage("phoneNumber") }}
+        </span>
+        }
+      </div>
+
+      <div class="form-field">
+        <label for="email" class="form-label">
+          Email Address
+          <span class="required" aria-label="required">*</span>
+        </label>
+        <input
+          type="email"
+          id="email"
+          formControlName="email"
+          class="form-input"
+          [class.form-input--error]="hasError('email')"
+          [attr.aria-invalid]="hasError('email')"
+          [attr.aria-describedby]="hasError('email') ? 'email-error' : null"
+          placeholder="john@example.com"
+        />
+        @if (hasError('email')) {
+        <span id="email-error" class="error-message" role="alert">
+          {{ getErrorMessage("email") }}
+        </span>
+        }
+      </div>
+    </div>
+  </fieldset>
+
+  <!-- Delivery Address -->
+  <fieldset class="form-section">
+    <legend class="section-title">Delivery Address</legend>
+
+    <div class="form-row">
+      <div class="form-field">
+        <label for="streetAddress" class="form-label">
+          Street Address
+          <span class="required" aria-label="required">*</span>
+        </label>
+        <input
+          type="text"
+          id="streetAddress"
+          formControlName="streetAddress"
+          class="form-input"
+          [class.form-input--error]="hasError('streetAddress')"
+          [attr.aria-invalid]="hasError('streetAddress')"
+          [attr.aria-describedby]="
+            hasError('streetAddress') ? 'streetAddress-error' : null
+          "
+          placeholder="123 Main Street"
+        />
+        @if (hasError('streetAddress')) {
+        <span id="streetAddress-error" class="error-message" role="alert">
+          {{ getErrorMessage("streetAddress") }}
+        </span>
+        }
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-field">
+        <label for="apartment" class="form-label">
+          Apartment, Suite, etc. (Optional)
+        </label>
+        <input
+          type="text"
+          id="apartment"
+          formControlName="apartment"
+          class="form-input"
+          placeholder="Apt 4B"
+        />
+      </div>
+    </div>
+
+    <div class="form-row form-row--two-columns">
+      <div class="form-field">
+        <label for="city" class="form-label">
+          City
+          <span class="required" aria-label="required">*</span>
+        </label>
+        <input
+          type="text"
+          id="city"
+          formControlName="city"
+          class="form-input"
+          [class.form-input--error]="hasError('city')"
+          [attr.aria-invalid]="hasError('city')"
+          [attr.aria-describedby]="hasError('city') ? 'city-error' : null"
+          placeholder="Johannesburg"
+        />
+        @if (hasError('city')) {
+        <span id="city-error" class="error-message" role="alert">
+          {{ getErrorMessage("city") }}
+        </span>
+        }
+      </div>
+
+      <div class="form-field">
+        <label for="province" class="form-label">
+          Province
+          <span class="required" aria-label="required">*</span>
+        </label>
+        <select
+          id="province"
+          formControlName="province"
+          class="form-select"
+          [class.form-select--error]="hasError('province')"
+          [attr.aria-invalid]="hasError('province')"
+          [attr.aria-describedby]="
+            hasError('province') ? 'province-error' : null
+          "
+        >
+          <option value="">Select Province</option>
+          @for (province of provinces; track province) {
+          <option [value]="province">{{ province }}</option>
+          }
+        </select>
+        @if (hasError('province')) {
+        <span id="province-error" class="error-message" role="alert">
+          {{ getErrorMessage("province") }}
+        </span>
+        }
+      </div>
+    </div>
+
+    <div class="form-row form-row--two-columns">
+      <div class="form-field">
+        <label for="postalCode" class="form-label">
+          Postal Code
+          <span class="required" aria-label="required">*</span>
+        </label>
+        <input
+          type="text"
+          id="postalCode"
+          formControlName="postalCode"
+          class="form-input"
+          [class.form-input--error]="hasError('postalCode')"
+          [attr.aria-invalid]="hasError('postalCode')"
+          [attr.aria-describedby]="
+            hasError('postalCode') ? 'postalCode-error' : null
+          "
+          placeholder="2000"
+          maxlength="4"
+        />
+        @if (hasError('postalCode')) {
+        <span id="postalCode-error" class="error-message" role="alert">
+          {{ getErrorMessage("postalCode") }}
+        </span>
+        }
+      </div>
+
+      <div class="form-field">
+        <label for="country" class="form-label">Country</label>
+        <input
+          type="text"
+          id="country"
+          formControlName="country"
+          class="form-input"
+          readonly
+        />
+      </div>
+    </div>
+  </fieldset>
+
+  <!-- Submit Button -->
+  <button
+    type="submit"
+    class="button button--primary"
+    [disabled]="submitting()"
+  >
+    {{ submitting() ? "Processing..." : "Continue to Delivery" }}
+  </button>
+</form>

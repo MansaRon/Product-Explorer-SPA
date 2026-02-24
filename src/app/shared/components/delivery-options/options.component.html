@@ -1,0 +1,28 @@
+<div class="delivery-options" role="radiogroup" aria-label="Delivery method options">
+  @for (option of options(); track option.id) {
+    <label 
+      class="delivery-option"
+      [class.delivery-option--selected]="isSelected(option.id)"
+    >
+      <input
+        type="radio"
+        [name]="'delivery'"
+        [value]="option.id"
+        [checked]="isSelected(option.id)"
+        (change)="selectOption(option)"
+        class="delivery-radio"
+        [attr.aria-label]="option.name + ' - ' + option.description"
+      />
+      <div class="option-content">
+        <div class="option-header">
+          <span class="option-name">{{ option.name }}</span>
+          <span class="option-price">
+            {{ option.price === 0 ? 'FREE' : (option.price | currency: 'R') }}
+          </span>
+        </div>
+        <p class="option-description">{{ option.description }}</p>
+        <p class="option-estimate">{{ option.estimatedDays }}</p>
+      </div>
+    </label>
+  }
+</div>

@@ -25,12 +25,12 @@ export const routes: Routes = [
         loadChildren: () => import('./features/cart/cart.routing').then(c => c.CART)
     },
     {
+        path:'checkout',
+        loadChildren: () => import('./features/checkout/checkout.routing').then(c => c.CHECKOUT)
+    },
+    // Must ALWAYS be last so that it does not cause a 404 whilst angular finds a route
+    {
         path: '**',
         loadChildren: () => import('./features/page-not-found/page-not-found.routing').then(r => r.PAGE_NOT_FOUND)
-    },
-    {
-        path: '',
-        redirectTo: '/catalog',
-        pathMatch: 'full'
     }
 ];

@@ -1,0 +1,77 @@
+.payment-methods {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+}
+  
+.payment-method {
+    position: relative;
+    display: block;
+    padding: var(--spacing-lg);
+    background-color: var(--color-bg-secondary);
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    
+    &:hover {
+      border-color: var(--color-primary);
+      box-shadow: var(--shadow-md);
+    }
+    
+    &:focus-within {
+      outline: 2px solid var(--color-border-focus);
+      outline-offset: 2px;
+    }
+}
+  
+.payment-method--selected {
+    background-color: rgba(37, 99, 235, 0.05);
+    border-color: var(--color-primary);
+    border-width: 2px;
+}
+  
+.payment-radio {
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+}
+  
+.method-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-sm);
+    text-align: center;
+}
+  
+.method-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    color: var(--color-primary);
+}
+  
+.method-label {
+    font-size: var(--font-size-base);
+    font-weight: 600;
+    color: var(--color-text);
+}
+  
+.payment-note {
+    padding: var(--spacing-md);
+    background-color: var(--color-bg-tertiary);
+    border-left: 4px solid var(--color-primary);
+    border-radius: var(--radius-md);
+    margin-top: var(--spacing-md);
+}
+  
+.note-text {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    margin: 0;
+}
