@@ -1,5 +1,4 @@
 <form [formGroup]="form" (ngSubmit)="onSubmit()" class="shipping-form">
-  <!-- Contact Information -->
   <fieldset class="form-section">
     <legend class="section-title">Contact Information</legend>
 
@@ -16,11 +15,8 @@
           class="form-input"
           [class.form-input--error]="hasError('fullName')"
           [attr.aria-invalid]="hasError('fullName')"
-          [attr.aria-describedby]="
-            hasError('fullName') ? 'fullName-error' : null
-          "
-          placeholder="John Doe"
-        />
+          [attr.aria-describedby]="hasError('fullName') ? 'fullName-error' : null"
+          placeholder="John Doe" />
         @if (hasError('fullName')) {
         <span id="fullName-error" class="error-message" role="alert">
           {{ getErrorMessage("fullName") }}
@@ -42,11 +38,8 @@
           class="form-input"
           [class.form-input--error]="hasError('phoneNumber')"
           [attr.aria-invalid]="hasError('phoneNumber')"
-          [attr.aria-describedby]="
-            hasError('phoneNumber') ? 'phoneNumber-error' : null
-          "
-          placeholder="0821234567"
-        />
+          [attr.aria-describedby]="hasError('phoneNumber') ? 'phoneNumber-error' : null"
+          placeholder="0821234567" />
         @if (hasError('phoneNumber')) {
         <span id="phoneNumber-error" class="error-message" role="alert">
           {{ getErrorMessage("phoneNumber") }}
@@ -67,8 +60,7 @@
           [class.form-input--error]="hasError('email')"
           [attr.aria-invalid]="hasError('email')"
           [attr.aria-describedby]="hasError('email') ? 'email-error' : null"
-          placeholder="john@example.com"
-        />
+          placeholder="john@example.com" />
         @if (hasError('email')) {
         <span id="email-error" class="error-message" role="alert">
           {{ getErrorMessage("email") }}
@@ -95,11 +87,8 @@
           class="form-input"
           [class.form-input--error]="hasError('streetAddress')"
           [attr.aria-invalid]="hasError('streetAddress')"
-          [attr.aria-describedby]="
-            hasError('streetAddress') ? 'streetAddress-error' : null
-          "
-          placeholder="123 Main Street"
-        />
+          [attr.aria-describedby]="hasError('streetAddress') ? 'streetAddress-error' : null"
+          placeholder="123 Main Street" />
         @if (hasError('streetAddress')) {
         <span id="streetAddress-error" class="error-message" role="alert">
           {{ getErrorMessage("streetAddress") }}
@@ -118,8 +107,7 @@
           id="apartment"
           formControlName="apartment"
           class="form-input"
-          placeholder="Apt 4B"
-        />
+          placeholder="Apt 4B" />
       </div>
     </div>
 
@@ -137,8 +125,7 @@
           [class.form-input--error]="hasError('city')"
           [attr.aria-invalid]="hasError('city')"
           [attr.aria-describedby]="hasError('city') ? 'city-error' : null"
-          placeholder="Johannesburg"
-        />
+          placeholder="Johannesburg" />
         @if (hasError('city')) {
         <span id="city-error" class="error-message" role="alert">
           {{ getErrorMessage("city") }}
@@ -158,9 +145,7 @@
           [class.form-select--error]="hasError('province')"
           [attr.aria-invalid]="hasError('province')"
           [attr.aria-describedby]="
-            hasError('province') ? 'province-error' : null
-          "
-        >
+            hasError('province') ? 'province-error' : null" >
           <option value="">Select Province</option>
           @for (province of provinces; track province) {
           <option [value]="province">{{ province }}</option>
@@ -191,8 +176,7 @@
             hasError('postalCode') ? 'postalCode-error' : null
           "
           placeholder="2000"
-          maxlength="4"
-        />
+          maxlength="4" />
         @if (hasError('postalCode')) {
         <span id="postalCode-error" class="error-message" role="alert">
           {{ getErrorMessage("postalCode") }}
@@ -207,18 +191,15 @@
           id="country"
           formControlName="country"
           class="form-input"
-          readonly
-        />
+          readonly />
       </div>
     </div>
   </fieldset>
 
-  <!-- Submit Button -->
   <button
     type="submit"
-    class="button button--primary"
-    [disabled]="submitting()"
-  >
+    class="form-submit"
+    [disabled]="submitting()">
     {{ submitting() ? "Processing..." : "Continue to Delivery" }}
   </button>
 </form>

@@ -30,12 +30,12 @@ export class PaymentComponent {
 
     this.checkoutService.setPaymentMethod(selected);
     this.checkoutService.nextStep();
-    this.router.navigate(['/checkout/payment']);
+    this.router.navigate(['/checkout/review']);
   }
 
   protected handleBack(): void {
     this.checkoutService.previousStep();
-    this.router.navigate(['/checkout/review']);
+    this.router.navigate(['/checkout/delivery']);
   }
 
 }

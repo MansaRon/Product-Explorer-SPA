@@ -24,6 +24,7 @@ export class ShippingComponent {
   }
 
   protected handleCancel(): void {
+    this.checkoutService.resetCheckout();
     this.router.navigate(['/cart']);
   }
 }

@@ -48,6 +48,7 @@
     border: 2px solid var(--color-border);
     border-radius: var(--radius-lg);
     transition: all var(--transition-fast);
+    color: var(--color-text);
     
     &:hover:not(:disabled) {
       background-color: var(--color-bg-tertiary);
@@ -62,6 +63,10 @@
     &:focus-visible {
       outline: 2px solid var(--color-border-focus);
       outline-offset: 2px;
+    }
+
+    svg {
+        stroke: currentColor
     }
 }
   
@@ -83,9 +88,13 @@
     justify-content: center;
     width: 40px;
     height: 40px;
-    background-color: rgba(255, 255, 255, 0.2);
+    background-color: rgba(0, 0, 0, 0.05);
     border-radius: 50%;
-}
+
+    [data-theme='dark'] & {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+}   
   
 .step-item--active .step-icon,
 .step-item--completed .step-icon {
@@ -95,6 +104,7 @@
 .step-label {
     font-size: var(--font-size-sm);
     font-weight: 600;
+    color: inherit
 }
   
 .checkout-content {
