@@ -1,0 +1,12 @@
+<div class="step-container">
+  <div class="step-header">
+    <h1 class="step-title">Shipping Information</h1>
+    <p class="step-description">Where should we deliver your order?</p>
+  </div>
+
+  <app-shipping [initialData]="initialData()" (formSubmit)="handleSubmit($event)" (cancel)="handleCancel()" />
+
+  <div class="form-actions">
+    <button type="button" class="button button--secondary" (click)="handleCancel()">Back To Cart</button>
+  </div>
+</div>

@@ -1,0 +1,117 @@
+<div class="review-sections">
+  <!-- Shipping Address -->
+  <section class="review-section" aria-labelledby="shipping-heading">
+    <div class="section-header">
+      <h2 id="shipping-heading" class="section-title">Shipping Address</h2>
+      <button
+        type="button"
+        class="edit-button"
+        (click)="handleEditShipping()"
+        aria-label="Edit shipping address">
+        Edit
+      </button>
+    </div>
+    <div class="section-content">
+      <p class="info-line"><strong>{{ summary().shipping.fullName }}</strong></p>
+      <p class="info-line">{{ summary().shipping.streetAddress }}</p>
+      @if (summary().shipping.apartment) {
+        <p class="info-line">{{ summary().shipping.apartment }}</p>
+      }
+      <p class="info-line">
+        {{ summary().shipping.city }}, {{ summary().shipping.province }} {{ summary().shipping.postalCode }}
+      </p>
+      <p class="info-line">{{ summary().shipping.country }}</p>
+      <p class="info-line contact">{{ summary().shipping.phoneNumber }}</p>
+      <p class="info-line contact">{{ summary().shipping.email }}</p>
+    </div>
+  </section>
+
+  <!-- Delivery Method -->
+  <section class="review-section" aria-labelledby="delivery-heading">
+    <div class="section-header">
+      <h2 id="delivery-heading" class="section-title">Delivery Method</h2>
+      <button
+        type="button"
+        class="edit-button"
+        (click)="handleEditDelivery()"
+        aria-label="Edit delivery method"
+      >
+        Edit
+      </button>
+    </div>
+    <div class="section-content">
+      <p class="info-line"><strong>{{ summary().delivery.name }}</strong></p>
+      <p class="info-line">{{ summary().delivery.description }}</p>
+      <p class="info-line">
+        Cost: {{ summary().delivery.price === 0 ? 'FREE' : (summary().delivery.price | currency: 'R') }}
+      </p>
+    </div>
+  </section>
+
+  <!-- Payment Method -->
+  <section class="review-section" aria-labelledby="payment-heading">
+    <div class="section-header">
+      <h2 id="payment-heading" class="section-title">Payment Method</h2>
+      <button
+        type="button"
+        class="edit-button"
+        (click)="handleEditPayment()"
+        aria-label="Edit payment method"
+      >
+        Edit
+      </button>
+    </div>
+    <div class="section-content">
+      <p class="info-line"><strong>{{ summary().payment.label }}</strong></p>
+    </div>
+  </section>
+
+  <!-- Order Items -->
+  <section class="review-section review-section--full" aria-labelledby="items-heading">
+    <h2 id="items-heading" class="section-title">Order Items</h2>
+    <div class="order-items">
+      @for (item of summary().items; track item.productId) {
+        <div class="order-item">
+          <img 
+            [src]="item.product.imageUrl ?? '/assets/placeholder.jpg'" 
+            [alt]="item.product.name"
+            class="item-image"
+          />
+          <div class="item-details">
+            <p class="item-name">{{ item.product.name }}</p>
+            <p class="item-quantity">Qty: {{ item.quantity }}</p>
+          </div>
+          <p class="item-price">
+            {{ (item.product.price * item.quantity) | currency: 'R' }}
+          </p>
+        </div>
+      }
+    </div>
+  </section>
+
+  <!-- Order Summary -->
+  <section class="review-section review-section--full" aria-labelledby="summary-heading">
+    <h2 id="summary-heading" class="section-title">Order Summary</h2>
+    <div class="order-summary-details">
+      <div class="summary-line">
+        <span class="summary-label">Subtotal</span>
+        <span class="summary-value">{{ summary().subtotal | currency: 'R' }}</span>
+      </div>
+      <div class="summary-line">
+        <span class="summary-label">Delivery</span>
+        <span class="summary-value">
+          {{ summary().deliveryCost === 0 ? 'FREE' : (summary().deliveryCost | currency: 'R') }}
+        </span>
+      </div>
+      <div class="summary-line">
+        <span class="summary-label">Tax (15% VAT)</span>
+        <span class="summary-value">{{ summary().tax | currency: 'R' }}</span>
+      </div>
+      <div class="summary-divider"></div>
+      <div class="summary-line summary-total">
+        <span class="summary-label">Total</span>
+        <span class="summary-value">{{ summary().total | currency: 'R' }}</span>
+      </div>
+    </div>
+  </section>
+</div>

@@ -1,0 +1,13 @@
+<div class="step-container">
+  <div class="step-header">
+    <h1 class="step-title">Payment Method</h1>
+    <p class="step-description">How would you like to pay?</p>
+  </div>
+
+  <app-payment-options [methods]="paymentMethods" [selectedMethodId]="selectedMethodId()" (methodSelected)="handleMethodSelected($event)" />
+
+  <div class="form-actions">
+    <button type="button" class="button button--secondary" (click)="handleBack()">Back</button>
+    <button type="button" class="button button--primary" [disabled]="!selectedMethod()" (click)="handleContinue()">Review Order</button>
+  </div>
+</div>

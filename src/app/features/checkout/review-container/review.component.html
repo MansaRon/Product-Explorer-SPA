@@ -1,0 +1,15 @@
+<div class="step-container">
+  <div class="step-header">
+    <h1 class="step-title">Review Your Order</h1>
+    <p class="step-description">Please review your order before placing it</p>
+  </div>
+
+  @if (summaryData(); as data) {
+    <app-order [summary]="data" (editShipping)="handleEditShipping()" (editDelivery)="handleEditDelivery()" (editPayment)="handleEditPayment()" />
+  }
+
+  <div class="form-actions">
+    <button type="button" class="button button--secondary" (click)="handleBack()" [disabled]="placing()">Back</button>
+    <button type="button" class="button button--primary" [disabled]="placing() || !canPlaceOrder()" (click)="handlePlaceOrder()">{{ placing() ? 'Placing Order...' : 'Place Order' }}</button>
+  </div>
+</div>

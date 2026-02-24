@@ -8,7 +8,7 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'app-cart',
   templateUrl: './cart.component.html',
-  styleUrls: ['./cart.component.css'],
+  styleUrls: ['./cart.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CurrencyPipe, EmptyStateComponent],
 })
@@ -52,6 +52,7 @@ export class CartComponent {
 
   protected goToCheckout(): void {
     alert('Going to checkout!');
+    this.router.navigate(['/checkout']);
   }
 
 }
