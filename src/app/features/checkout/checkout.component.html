@@ -15,8 +15,7 @@
             [disabled]="!step.isCompleted && !step.isActive"
             (click)="goToStep(step.id, step.route)"
             [attr.aria-current]="step.isActive ? 'step' : null"
-            [attr.aria-label]="step.label + ' step' + (step.isCompleted ? ', completed' : '')"
-          >
+            [attr.aria-label]="step.label + ' step' + (step.isCompleted ? ', completed' : '')">
             <span class="step-icon" aria-hidden="true">
               @if (step.isCompleted) {
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">

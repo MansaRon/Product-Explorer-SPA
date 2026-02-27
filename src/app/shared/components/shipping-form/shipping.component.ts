@@ -14,11 +14,11 @@ export class ShippingDumbComponent {
   private readonly fb = inject(FormBuilder);
 
   initialData = input<ShippingAddress | undefined>();
+  submitTrigger = input<number>(0);
 
   formSubmit = output<ShippingAddress>();
-  cancel = output<void>();
+  formValidility = output<boolean>();
 
-  protected readonly submitting = signal(false);
   protected readonly provinces = SOUTH_AFRICAN_PROVINCES;
   protected readonly form: FormGroup = this.fb.group({
     fullName: ['', [Validators.required, Validators.minLength(2)]],
@@ -39,19 +39,28 @@ export class ShippingDumbComponent {
         this.form.patchValue(data);
       }
     });
+
+    effect(() => {
+      this.form.statusChanges.subscribe(() => {
+        this.formValidility.emit(this.form.valid);
+      });
+      this.formValidility.emit(this.form.valid);
+    });
+
+    effect(() => {
+      const trigger = this.submitTrigger();
+      if (trigger > 0) {
+        this.onSubmit();
+      }
+    });
   }
 
   protected onSubmit(): void {
     if (this.form.invalid) {
       this.markAllTouched();
-      return;
+    } else {
+      this.formSubmit.emit(this.form.value as ShippingAddress);  
     }
-
-    this.formSubmit.emit(this.form.value as ShippingAddress);
-  }
-
-  protected onCancel(): void {
-    this.cancel.emit();
   }
 
   protected getErrorMessage(fieldName: string): string {

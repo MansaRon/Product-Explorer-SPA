@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component, input, output, signal } from '@angular/core';
-import { PaymentMethod } from '../../../core/models/checkout';
+import { ChangeDetectionStrategy, Component, effect, input, output, signal } from '@angular/core';
+import { PAYMENT_METHODS, PaymentMethod } from '../../../core/models/checkout';
 
 @Component({
   selector: 'app-payment-options',
@@ -8,22 +8,51 @@ import { PaymentMethod } from '../../../core/models/checkout';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PaymentMethodComponent {
-  methods = input.required<PaymentMethod[]>();
-  selectedMethodId = input<string | undefined>();
-  methodSelected = output<PaymentMethod>();
+  initialData = input<PaymentMethod | undefined>();
+  submitTrigger = input<number>(0);
 
-  protected readonly currentSelection = signal<string | undefined>(undefined);
+  methodSelected = output<PaymentMethod>();
+  formValidity = output<boolean>();
+
+  protected selectedMethod: PaymentMethod | undefined;
+  protected readonly paymentMethods: PaymentMethod[] = PAYMENT_METHODS;
+
+  constructor() {
+    effect(() => {
+      const data = this.initialData();
+      if (data) {
+        this.selectedMethod = data;
+        this.formValidity.emit(true);
+      } else {
+        this.formValidity.emit(false);
+      }
+    });
+
+    effect(() => {
+      const trigger = this.submitTrigger();
+      if (trigger > 0) {
+        this.onSubmit();
+      }
+    });
+  }
+
   protected selectMethod(method: PaymentMethod): void {
-  this.currentSelection.set(method.id);
+    this.selectedMethod = method;
+    this.formValidity.emit(true);
     this.methodSelected.emit(method);
   }
 
   protected isSelected(methodId: string): boolean {
-    return this.currentSelection() === methodId || this.selectedMethodId() === methodId;
+    return this.selectedMethod?.id === methodId;
   }
 
   protected getSelectedMethod(): PaymentMethod | undefined {
-    const selectedId = this.currentSelection() || this.selectedMethodId();
-    return this.methods().find(m => m.id === selectedId);
+    return this.selectedMethod;
+  }
+
+  private onSubmit(): void {
+    if (this.selectedMethod) {
+      this.methodSelected.emit(this.selectedMethod);
+    }
   }
 }

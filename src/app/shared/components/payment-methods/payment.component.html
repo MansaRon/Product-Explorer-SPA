@@ -1,9 +1,8 @@
 <div class="payment-methods" role="radiogroup" aria-label="Payment method options">
-  @for (method of methods(); track method.id) {
+  @for (method of paymentMethods; track method.id) {
     <label 
       class="payment-method"
-      [class.payment-method--selected]="isSelected(method.id)"
-    >
+      [class.payment-method--selected]="isSelected(method.id)">
       <input
         type="radio"
         [name]="'payment'"
@@ -11,8 +10,7 @@
         [checked]="isSelected(method.id)"
         (change)="selectMethod(method)"
         class="payment-radio"
-        [attr.aria-label]="method.label"
-      />
+        [attr.aria-label]="method.label" />
       <div class="method-content">
         <div class="method-icon" aria-hidden="true">
           @switch (method.type) {

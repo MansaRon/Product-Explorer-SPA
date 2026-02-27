@@ -1,6 +1,6 @@
 import { CurrencyPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, input, output, signal } from '@angular/core';
-import { DeliveryOption } from '../../../core/models/checkout';
+import { ChangeDetectionStrategy, Component, effect, input, output } from '@angular/core';
+import { DELIVERY_OPTIONS, DeliveryOption } from '../../../core/models/checkout';
 
 @Component({
   selector: 'app-options',
@@ -10,18 +10,47 @@ import { DeliveryOption } from '../../../core/models/checkout';
   imports: [CurrencyPipe]
 })
 export class OptionsComponent {
-  options = input.required<DeliveryOption[]>();
-  selectedOptionId = input<string | undefined>();
+  initialData = input<DeliveryOption | undefined>();
+  submitTrigger = input<number>(0);
 
   optionSelected = output<DeliveryOption>();
+  formValidity = output<boolean>();
 
-  protected readonly currentSelection = signal<string | undefined>(undefined);
+  protected selectedOption: DeliveryOption | undefined;
+  protected readonly deliveryOption: DeliveryOption[] = DELIVERY_OPTIONS;
+
+  constructor() {
+    effect(() => {
+      const data = this.initialData();
+      if (data) {
+        this.selectedOption = data;
+        this.formValidity.emit(true);
+      } else {
+        this.formValidity.emit(false);
+      }
+    });
+
+    effect(() => {
+      const trigger = this.submitTrigger();
+      if (trigger) {
+        this.onSubmit();
+      }
+    });
+  }
+
   protected selectOption(option: DeliveryOption): void {
-    this.currentSelection.set(option.id);
+    this.selectedOption = option;
+    this.formValidity.emit(true);
     this.optionSelected.emit(option);
   }
 
   protected isSelected(optionId: string): boolean {
-    return this.currentSelection() === optionId || this.selectedOptionId() === optionId;
+    return this.selectedOption?.id === optionId;
+  }
+
+  private onSubmit(): void {
+    if (this.selectedOption) {
+      this.optionSelected.emit(this.selectedOption);
+    }
   }
 }

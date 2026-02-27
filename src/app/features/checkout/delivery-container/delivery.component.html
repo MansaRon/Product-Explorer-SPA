@@ -4,10 +4,17 @@
     <p class="step-description">Choose how fast you want your order</p>
   </div>
 
-  <app-options [options]="deliveryOptions" [selectedOptionId]="selectedOptionId()" (optionSelected)="handleOptionSelected($event)" />
+  <app-options 
+    [initialData]="initialData()" 
+    [submitTrigger]="submitTrigger()"
+    (optionSelected)="handleOptionSelected($event)" 
+    (formValidity)="handleValidilityChange($event)"/>
 
-  <div class="form-actions">
-    <button type="button" class="button button--secondary" (click)="handleBack()">Back</button>
-    <button type="button" class="button button--primary" [disabled]="!selectedOption()" (click)="handleContinue()">Continue to payment</button>
-  </div>
+  <app-footer
+    backLabel="Back to Shipping"
+    forwardLabel="Continue to Payment"
+    [forwardDisabled]="!isFormValid()"
+    [isSubmitting]="isSubmitting()"
+    (backClick)="handleBack()"
+    (forwardClick)="handleContinue()" />
 </div>
