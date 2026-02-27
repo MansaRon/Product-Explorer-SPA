@@ -38,7 +38,7 @@ export class ReviewComponent {
           price: product.price
         } : undefined
       };
-    }).filter(item => item.product ! == undefined) as CartItemWithProduct[];
+    }).filter(item => item.product !== undefined) as CartItemWithProduct[];
   });
 
   protected readonly subTotal = computed(() => {
