@@ -5,11 +5,17 @@
   </div>
 
   @if (summaryData(); as data) {
-    <app-order [summary]="data" (editShipping)="handleEditShipping()" (editDelivery)="handleEditDelivery()" (editPayment)="handleEditPayment()" />
+    <app-order 
+      [summary]="data" 
+      (editShipping)="handleEditShipping()" 
+      (editDelivery)="handleEditDelivery()" 
+      (editPayment)="handleEditPayment()" />
   }
 
-  <div class="form-actions">
-    <button type="button" class="button button--secondary" (click)="handleBack()" [disabled]="placing()">Back</button>
-    <button type="button" class="button button--primary" [disabled]="placing() || !canPlaceOrder()" (click)="handlePlaceOrder()">{{ placing() ? 'Placing Order...' : 'Place Order' }}</button>
-  </div>
+  <app-footer
+    backLabel="Back to Payment"
+    forwardLabel="Place an order"
+    [isSubmitting]="isSubmitting()"
+    (backClick)="handleBack()"
+    (forwardClick)="handlePlaceOrder()" />
 </div>

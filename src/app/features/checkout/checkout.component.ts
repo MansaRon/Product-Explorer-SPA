@@ -56,7 +56,6 @@ export class CheckoutComponent {
   ]);
 
   constructor() {
-    // Redirect to cart if empty
     if (this.isEmpty()) {
       this.router.navigate(['/cart']);
     }

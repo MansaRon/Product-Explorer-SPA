@@ -4,9 +4,17 @@
     <p class="step-description">Where should we deliver your order?</p>
   </div>
 
-  <app-shipping [initialData]="initialData()" (formSubmit)="handleSubmit($event)" (cancel)="handleCancel()" />
+  <app-shipping 
+    [initialData]="initialData()"
+    [submitTrigger]="submitTrigger()"
+    (formSubmit)="handleSubmit($event)"
+    (formValidility)="handleValidilityChange($event)" />
 
-  <div class="form-actions">
-    <button type="button" class="button button--secondary" (click)="handleCancel()">Back To Cart</button>
-  </div>
+  <app-footer
+    backLabel="Back to Cart"
+    forwardLabel="Continue to Delivery"
+    [forwardDisabled]="!isFormValid()"
+    [isSubmitting]="isSubmitting()"
+    (backClick)="handleCancel()"
+    (forwardClick)="handleContinue()" />
 </div>

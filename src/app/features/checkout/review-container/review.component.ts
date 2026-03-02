@@ -6,13 +6,14 @@ import { Router } from '@angular/router';
 import { CheckoutService } from '../../../core/services/checkout/checkout.service';
 import { calculateOrderSummary } from '../../../shared/utils/price-calculations.util';
 import { OrderService } from '../../../core/services/order/order.service';
+import { FooterComponent } from '../../../shared/components/footer/footer.component';
 
 @Component({
   selector: 'app-review-container',
   templateUrl: './review.component.html',
   styleUrls: ['./review.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [OrderComponent]
+  imports: [OrderComponent, FooterComponent]
 })
 export class ReviewComponent {
   private readonly checkoutService = inject(CheckoutService);
@@ -22,6 +23,8 @@ export class ReviewComponent {
   private readonly router = inject(Router);
 
   protected readonly placing = signal(false);
+  protected readonly isSubmitting = signal(false);
+  protected readonly submitTrigger = signal(0);
 
   protected readonly cartWithProducts = computed(() => {
     return this.cartService.items().map(item => {
@@ -35,7 +38,7 @@ export class ReviewComponent {
           price: product.price
         } : undefined
       };
-    }).filter(item => item.product ! == undefined) as CartItemWithProduct[];
+    }).filter(item => item.product !== undefined) as CartItemWithProduct[];
   });
 
   protected readonly subTotal = computed(() => {

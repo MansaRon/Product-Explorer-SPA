@@ -1,5 +1,5 @@
 import { CurrencyPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state.component';
 import { CartService } from '../../core/services/cart/cart.service';
 import { ProductService } from '../../core/services/product/product.service';
@@ -51,7 +51,6 @@ export class CartComponent {
   }
 
   protected goToCheckout(): void {
-    alert('Going to checkout!');
     this.router.navigate(['/checkout']);
   }
 

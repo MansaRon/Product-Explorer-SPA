@@ -1,0 +1,127 @@
+.checkout-footer {
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  width: 100vw;
+  // 50vw moves the element to the left edge of the viewport, 
+  // then 50% centers it within the container resulting in a full-width footer thats centered.
+  // One way of overriding the default container width from the parent.
+  margin-left: calc(-50vw + 50%);
+  background-color: var(--color-bg);
+  border-top: 1px solid var(--color-border);
+  box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.05);
+
+  [data-theme="dark"] & {
+    box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.3);
+  }
+}
+
+.footer-content {
+  width: 100%;
+  padding: var(--spacing-md);
+
+  @media (min-width: 768px) {
+    padding: var(--spacing-lg) var(--spacing-2xl)
+  }
+}
+
+.footer-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--spacing-md);
+  width: 100%;
+}
+
+.footer-spacer {
+  flex-grow: 1;
+}
+
+.footer-button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-sm) var(--spacing-xl);
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  border: none;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+  flex-shrink: 0;
+
+  &:focus-visible {
+    outline: 2px solid var(--color-border-focus);
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  svg {
+    stroke: currentColor;
+    flex-shrink: 0;
+  }
+}
+
+.footer-button--primary {
+  background-color: var(--color-primary);
+  color: white;
+
+  &:hover:not(:disabled) {
+    background-color: var(--color-primary-dark);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+}
+
+.footer-button--secondary {
+  background-color: transparent;
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+
+  &:hover:not(:disabled) {
+    background-color: var(--color-bg-secondary);
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+  }
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 640px) {
+  .footer-actions {
+    flex-direction: column-reverse;
+    gap: var(--spacing-sm);
+  }
+
+  .footer-button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .footer-spacer {
+    display: none;
+  }
+}

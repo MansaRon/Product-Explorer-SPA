@@ -1,40 +1,50 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { CheckoutService } from '../../../core/services/checkout/checkout.service';
 import { Router } from '@angular/router';
-import { DELIVERY_OPTIONS, DeliveryOption } from '../../../core/models/checkout';
+import { DeliveryOption } from '../../../core/models/checkout';
 import { OptionsComponent } from '../../../shared/components/delivery-options/options.component';
+import { FooterComponent } from '../../../shared/components/footer/footer.component';
 
 @Component({
   selector: 'app-delivery',
   templateUrl: './delivery.component.html',
   styleUrls: ['./delivery.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [OptionsComponent]
+  imports: [OptionsComponent, FooterComponent]
 })
 export class DeliveryComponent {
   private readonly checkoutService = inject(CheckoutService);
   private readonly router = inject(Router);
 
-  protected readonly deliveryOptions = DELIVERY_OPTIONS;
-  protected readonly selectedOption = signal<DeliveryOption | null>(this.checkoutService.deliveryOption() ?? null);
-  protected selectedOptionId = signal<string | undefined>(this.checkoutService.deliveryOption()?.id);
+  protected readonly initialData = this.checkoutService.deliveryOption;
+
+  protected readonly isFormValid = signal(false);
+  protected readonly isSubmitting = signal(false);
+  protected readonly submitTrigger = signal(0);
+  protected selectedOption: DeliveryOption | undefined;
   
   protected handleOptionSelected(option: DeliveryOption): void {
-    this.selectedOption.set(option);
-    this.selectedOptionId.set(option.id);
+    this.selectedOption = option;
   }
 
-  protected handleContinue(): void {
-    const selected = this.selectedOption();
-    if (!selected) return;
-
-    this.checkoutService.setDeliveryOption(selected);
-    this.checkoutService.nextStep();
-    this.router.navigate(['/checkout/payment']);
+  protected handleValidilityChange(isValid: boolean): void {
+    this.isFormValid.set(isValid);
   }
 
   protected handleBack(): void {
     this.checkoutService.previousStep();
     this.router.navigate(['/checkout/shipping']);
+  }
+  
+  protected handleContinue(): void {
+    if (this.selectedOption) {
+      this.isSubmitting.set(true);
+      this.checkoutService.setDeliveryOption(this.selectedOption);
+      this.checkoutService.nextStep();
+      this.router.navigate(['/checkout/payment']);
+      this.isSubmitting.set(false);
+    } else {
+      this.submitTrigger.update(n => n + 1);
+    }
   }
 }

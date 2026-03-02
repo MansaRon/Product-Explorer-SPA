@@ -4,10 +4,17 @@
     <p class="step-description">How would you like to pay?</p>
   </div>
 
-  <app-payment-options [methods]="paymentMethods" [selectedMethodId]="selectedMethodId()" (methodSelected)="handleMethodSelected($event)" />
+  <app-payment-options 
+    [initialData]="initialData()"
+    [submitTrigger]="submitTrigger()"
+    (formValidity)="handleValidilityChange($event)" 
+    (methodSelected)="handleMethodSelected($event)" />
 
-  <div class="form-actions">
-    <button type="button" class="button button--secondary" (click)="handleBack()">Back</button>
-    <button type="button" class="button button--primary" [disabled]="!selectedMethod()" (click)="handleContinue()">Review Order</button>
-  </div>
+  <app-footer
+    backLabel="Back to Delivery"
+    forwardLabel="Continue to Review"
+    [forwardDisabled]="!isFormValid()"
+    [isSubmitting]="isSubmitting()"
+    (backClick)="handleBack()"
+    (forwardClick)="handleContinue()" />
 </div>
