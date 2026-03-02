@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { PaymentMethodComponent } from '../../../shared/components/payment-methods/payment.component';
 import { CheckoutService } from '../../../core/services/checkout/checkout.service';
 import { FooterComponent } from '../../../shared/components/footer/footer.component';
+import { AppRoutes } from '../../../shared/enums/app-routes-enum';
 
 @Component({
   selector: 'app-payment',
@@ -34,7 +35,7 @@ export class PaymentComponent {
 
   protected handleBack(): void {
     this.checkoutService.previousStep();
-    this.router.navigate(['/checkout/delivery']);
+    this.router.navigate([`${AppRoutes.CHECKOUT_DELIVERY}`]);
   }
   
   protected handleContinue(): void {
@@ -42,7 +43,7 @@ export class PaymentComponent {
     if (selected) {
       this.checkoutService.setPaymentMethod(selected);
       this.checkoutService.nextStep();
-      this.router.navigate(['/checkout/review']);
+      this.router.navigate([`${AppRoutes.CHECKOUT_REVIEW}`]);
       this.isSubmitting.set(false);      
     } else {
       this.submitTrigger.update(n => n + 1);

@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { ShippingAddress } from '../../../core/models/checkout';
 import { ShippingDumbComponent } from '../../../shared/components/shipping-form/shipping.component';
 import { FooterComponent } from '../../../shared/components/footer/footer.component';
+import { AppRoutes } from '../../../shared/enums/app-routes-enum';
 
 @Component({
   selector: 'app-shipping-container',
@@ -32,14 +33,14 @@ export class ShippingComponent {
 
   protected handleCancel(): void {
     this.checkoutService.resetCheckout();
-    this.router.navigate(['/cart']);
+    this.router.navigate([`${AppRoutes.CART}`]);
   }
 
   protected handleSubmit(data: ShippingAddress): void {
     this.isSubmitting.set(true);
     this.checkoutService.setShippingAddress(data);
     this.checkoutService.nextStep();
-    this.router.navigate(['/checkout/delivery']);
+    this.router.navigate([`${AppRoutes.CHECKOUT_DELIVERY}`]);
     this.isSubmitting.set(false);
   }
 }

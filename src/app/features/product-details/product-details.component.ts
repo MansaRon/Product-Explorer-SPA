@@ -8,6 +8,7 @@ import { map } from 'rxjs';
 import { CurrencyPipe } from '@angular/common';
 import { Location } from '@angular/common';
 import { CartService } from '../../core/services/cart/cart.service';
+import { AppRoutes } from '../../shared/enums/app-routes-enum';
 
 @Component({
   selector: 'app-product-details',
@@ -64,7 +65,7 @@ export class ProductDetailsComponent {
     if (window.history.length > 1) {
       this.location.back();
     } else {
-      this.router.navigate(['catalog']);
+      this.router.navigate([`${AppRoutes.CATALOG}`]);
     }
   }
 

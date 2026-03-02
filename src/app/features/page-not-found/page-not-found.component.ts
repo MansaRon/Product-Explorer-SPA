@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
+import { AppRoutes } from '../../shared/enums/app-routes-enum';
 
 @Component({
   selector: 'app-page-not-found',
@@ -19,7 +20,7 @@ export class PageNotFoundComponent implements OnInit, OnDestroy {
 
   protected goHome(): void {
     this.clearCountdown();
-    this.router.navigate(['/']);
+    this.router.navigate([`${AppRoutes.HOME}`]);
   }
 
   protected goBack(): void {
@@ -32,7 +33,7 @@ export class PageNotFoundComponent implements OnInit, OnDestroy {
       const current = this.countdown();
       if (current <= 1) {
         this.clearCountdown();
-        this.router.navigate(['/']);
+        this.router.navigate([`${AppRoutes.HOME}`]);
       } else {
         this.countdown.set(current - 1);
       }

@@ -4,6 +4,7 @@ import { EmptyStateComponent } from '../../shared/components/empty-state/empty-s
 import { CartService } from '../../core/services/cart/cart.service';
 import { ProductService } from '../../core/services/product/product.service';
 import { Router } from '@angular/router';
+import { AppRoutes } from '../../shared/enums/app-routes-enum';
 
 @Component({
   selector: 'app-cart',
@@ -47,11 +48,11 @@ export class CartComponent {
   }
 
   protected continueShopping(): void {
-    this.router.navigate(['/catalog']);
+    this.router.navigate([`${AppRoutes.CATALOG}`]);
   }
 
   protected goToCheckout(): void {
-    this.router.navigate(['/checkout']);
+    this.router.navigate([`${AppRoutes.CHECKOUT}`]);
   }
 
 }

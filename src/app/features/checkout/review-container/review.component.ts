@@ -7,6 +7,7 @@ import { CheckoutService } from '../../../core/services/checkout/checkout.servic
 import { calculateOrderSummary } from '../../../shared/utils/price-calculations.util';
 import { OrderService } from '../../../core/services/order/order.service';
 import { FooterComponent } from '../../../shared/components/footer/footer.component';
+import { AppRoutes } from '../../../shared/enums/app-routes-enum';
 
 @Component({
   selector: 'app-review-container',
@@ -102,21 +103,21 @@ export class ReviewComponent {
 
   protected handleBack(): void {
     this.checkoutService.previousStep();
-    this.router.navigate(['checkout/payment']);
+    this.router.navigate([`${AppRoutes.CHECKOUT_PAYMENT}`]);
   }
 
   protected handleEditShipping(): void {
     this.checkoutService.goToStep('shipping');
-    this.router.navigate(['checkout/shipping']);
+    this.router.navigate([`${AppRoutes.CHECKOUT_SHIPPING}`]);
   }
 
   protected handleEditDelivery(): void {
     this.checkoutService.goToStep('delivery');
-    this.router.navigate(['checkout/delivery']);
+    this.router.navigate([`${AppRoutes.CHECKOUT_DELIVERY}`]);
   }
 
   protected handleEditPayment(): void {
     this.checkoutService.goToStep('payment');
-    this.router.navigate(['checkout/payment']);
+    this.router.navigate([`${AppRoutes.CHECKOUT_PAYMENT}`]);
   }
 }

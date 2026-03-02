@@ -4,6 +4,7 @@ import { EmptyStateComponent } from '../../shared/components/empty-state/empty-s
 import { FavouriteService } from '../../core/services/favourite/favourite.service';
 import { ProductService } from '../../core/services/product/product.service';
 import { ActivatedRoute, Router } from '@angular/router';
+import { AppRoutes } from '../../shared/enums/app-routes-enum';
 
 @Component({
   selector: 'app-favourites',
@@ -48,7 +49,7 @@ export class FavouritesComponent {
   }
 
   protected back(): void {
-    void this.router.navigate(['/catalog'], {
+    void this.router.navigate([`${AppRoutes.CATALOG}`], {
       relativeTo: this.route
     })
   }

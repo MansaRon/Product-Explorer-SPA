@@ -3,6 +3,7 @@ import { Router, RouterOutlet } from '@angular/router';
 import { CheckoutService } from '../../core/services/checkout/checkout.service';
 import { CartService } from '../../core/services/cart/cart.service';
 import { CheckoutStep } from '../../core/models/checkout';
+import { AppRoutes } from '../../shared/enums/app-routes-enum';
 
 @Component({
   selector: 'app-checkout',
@@ -57,7 +58,7 @@ export class CheckoutComponent {
 
   constructor() {
     if (this.isEmpty()) {
-      this.router.navigate(['/cart']);
+      this.router.navigate([`${AppRoutes.CART}`]);
     }
   }
 

@@ -1,6 +1,7 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { AUTH_STORAGE_KEY } from '../../const/service-keys';
+import { AppRoutes } from '../../../shared/enums/app-routes-enum';
 
 @Injectable({
   providedIn: 'root'
@@ -47,6 +48,6 @@ export class AuthService {
   
   logoutAndRedirect(): void {
     this.logout();
-    this.router.navigate(['/catalog']);
+    this.router.navigate([`${AppRoutes.CATALOG}`]);
   }
 }

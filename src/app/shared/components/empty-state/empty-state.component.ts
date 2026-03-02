@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
 import { Router } from '@angular/router';
+import { AppRoutes } from '../../enums/app-routes-enum';
 
 @Component({
   selector: 'app-empty-state',
@@ -14,7 +15,7 @@ export class EmptyStateComponent {
   readonly description = input('');
   readonly showButton = input<boolean>(true);
   readonly buttonText = input<string>('Go to Catalog');
-  readonly buttonRoute = input<string>('/catalog');
+  readonly buttonRoute = input<string>(`${AppRoutes.CATALOG}`);
 
   protected handleBttonClick(): void {
     this.router.navigate([this.buttonRoute()]);

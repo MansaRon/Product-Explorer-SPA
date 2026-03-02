@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { DeliveryOption } from '../../../core/models/checkout';
 import { OptionsComponent } from '../../../shared/components/delivery-options/options.component';
 import { FooterComponent } from '../../../shared/components/footer/footer.component';
+import { AppRoutes } from '../../../shared/enums/app-routes-enum';
 
 @Component({
   selector: 'app-delivery',
@@ -33,7 +34,7 @@ export class DeliveryComponent {
 
   protected handleBack(): void {
     this.checkoutService.previousStep();
-    this.router.navigate(['/checkout/shipping']);
+    this.router.navigate([`${AppRoutes.CHECKOUT_SHIPPING}`]);
   }
   
   protected handleContinue(): void {
@@ -41,7 +42,7 @@ export class DeliveryComponent {
       this.isSubmitting.set(true);
       this.checkoutService.setDeliveryOption(this.selectedOption);
       this.checkoutService.nextStep();
-      this.router.navigate(['/checkout/payment']);
+      this.router.navigate([`${AppRoutes.CHECKOUT_PAYMENT}`]);
       this.isSubmitting.set(false);
     } else {
       this.submitTrigger.update(n => n + 1);
