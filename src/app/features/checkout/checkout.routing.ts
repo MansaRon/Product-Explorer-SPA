@@ -1,29 +1,30 @@
 import { Routes } from '@angular/router';
+import { AppRoutes } from '../../shared/enums/app-routes-enum';
 
 export const CHECKOUT: Routes = [
   {
-    path: '',
+    path: AppRoutes.HOME,
     loadComponent: () => import('./checkout.component').then(checkout => checkout.CheckoutComponent),
     children: [
       {
-        path: '',
+        path: AppRoutes.HOME,
         redirectTo: 'shipping',
         pathMatch: 'full'
       },
       {
-        path: 'shipping',
+        path: AppRoutes.SHIPPING,
         loadComponent: () => import('./shipping-container/shipping.component').then(m => m.ShippingComponent)
       },
       {
-        path: 'delivery',
+        path: AppRoutes.DELIVERY,
         loadComponent: () => import('./delivery-container/delivery.component').then(m => m.DeliveryComponent)
       },
       {
-        path: 'payment', 
+        path: AppRoutes.PAYMENT, 
         loadComponent: () => import('./payment-container/payment.component').then(m => m.PaymentComponent)
       },
       {
-        path: 'review',
+        path: AppRoutes.REVIEW,
         loadComponent: () => import('./review-container/review.component').then(m => m.ReviewComponent)
       }
     ]
