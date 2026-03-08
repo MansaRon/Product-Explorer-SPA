@@ -49,6 +49,8 @@ export class CheckoutService {
         return !!state.payment;
       case 'review':
         return !!state.shipping && !!state.delivery && !!state.payment;
+      case 'confirmation':
+          return true;
       default:
         return false;
     }
@@ -56,7 +58,7 @@ export class CheckoutService {
 
   // Computed: Checkout progress percentage
   readonly progressPercentage = computed(() => {
-    const steps: CheckoutStep[] = ['shipping', 'delivery', 'payment', 'review'];
+    const steps: CheckoutStep[] = ['shipping', 'delivery', 'payment', 'review', 'confirmation'];
     const currentIndex = steps.indexOf(this.checkoutState().currentStep);
     return ((currentIndex + 1) / steps.length) * 100;
   });
@@ -108,7 +110,7 @@ export class CheckoutService {
    * Navigate to next step
    */
   nextStep(): void {
-    const steps: CheckoutStep[] = ['shipping', 'delivery', 'payment', 'review'];
+    const steps: CheckoutStep[] = ['shipping', 'delivery', 'payment', 'review', 'confirmation'];
     const currentIndex = steps.indexOf(this.checkoutState().currentStep);
     
     if (currentIndex < steps.length - 1) {
@@ -120,7 +122,7 @@ export class CheckoutService {
    * Navigate to previous step
    */
   previousStep(): void {
-    const steps: CheckoutStep[] = ['shipping', 'delivery', 'payment', 'review'];
+    const steps: CheckoutStep[] = ['shipping', 'delivery', 'payment', 'review', 'confirmation'];
     const currentIndex = steps.indexOf(this.checkoutState().currentStep);
     
     if (currentIndex > 0) {

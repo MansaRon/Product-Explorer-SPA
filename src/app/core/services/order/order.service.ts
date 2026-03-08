@@ -1,5 +1,6 @@
 import { Injectable, signal, computed, effect } from '@angular/core';
 import { loadFromStorage, saveToStorage } from '../../../shared/utils/storage.util';
+import { DeliveryOption, PaymentMethod, ShippingAddress } from '../../models/checkout';
 
 export interface Order {
   id: string;
@@ -11,6 +12,9 @@ export interface Order {
   status: 'pending' | 'confirmed' | 'shipped' | 'delivered' | 'cancelled';
   createdAt: Date;
   updatedAt: Date;
+  shippingAddress: ShippingAddress;
+  deliveryOption: DeliveryOption;
+  paymentMethod: PaymentMethod;
 }
 
 export interface OrderItem {
@@ -18,6 +22,17 @@ export interface OrderItem {
   productName: string;
   quantity: number;
   price: number;
+}
+
+export interface CreateOrderInput {
+  items: OrderItem[];
+  subTotal: number;
+  tax: number;
+  total: number;
+  shippingAddress: ShippingAddress;
+  deliveryOption: DeliveryOption;
+  paymentMethod: PaymentMethod;
+  userId?: string;
 }
 
 const ORDERS_STORAGE_KEY = 'user_orders';
@@ -42,15 +57,33 @@ export class OrderService {
     this.ordersSignal().filter(order => order.status === 'pending')
   );
 
+  readonly confirmedOrders = computed(() =>
+    this.ordersSignal().filter(order => order.status === 'confirmed')
+  );
+
+  // Computed: Shipped orders
+  readonly shippedOrders = computed(() =>
+    this.ordersSignal().filter(order => order.status === 'shipped')
+  );
+
+  // Computed: Delivered orders
+  readonly deliveredOrders = computed(() =>
+    this.ordersSignal().filter(order => order.status === 'delivered')
+  );
+
   // Computed: Completed orders
-  readonly completedOrders = computed(() =>
-    this.ordersSignal().filter(order => 
-      order.status === 'delivered' || order.status === 'cancelled'
-    )
+  readonly cancelledOrders = computed(() =>
+    this.ordersSignal().filter(order => order.status === 'cancelled')
+  );
+
+  readonly activeOrders = computed(() =>
+    this.ordersSignal().filter(order => order.status !== 'delivered' && order.status !== 'cancelled')
   );
 
   // Computed: Check if there are any orders
   readonly hasOrders = computed(() => this.ordersSignal().length > 0);
+
+  readonly totalRevenue = computed(() => this.ordersSignal().reduce((sum, order) => sum + order.total, 0));
 
   constructor() {
     // Effect: Auto-save to localStorage whenever orders change
@@ -61,19 +94,20 @@ export class OrderService {
   }
 
   /**
-   * Get order by ID
-   */
-  getOrderById(orderId: string): Order | undefined {
-    return this.ordersSignal().find(order => order.id === orderId);
-  }
-
-  /**
    * Create a new order
    */
-  createOrder(order: Omit<Order, 'id' | 'createdAt' | 'updatedAt'>): Order {
+  createOrder(input: CreateOrderInput): Order {
     const newOrder: Order = {
-      ...order,
       id: this.generateOrderId(),
+      userId: input.userId || 'guest',
+      items: input.items,
+      subtotal: input.subTotal,
+      tax: input.tax,
+      total: input.total,
+      shippingAddress: input.shippingAddress,
+      deliveryOption: input.deliveryOption,
+      paymentMethod: input.paymentMethod,
+      status: 'pending',
       createdAt: new Date(),
       updatedAt: new Date()
     };
@@ -83,9 +117,17 @@ export class OrderService {
   }
 
   /**
+   * GET ORDER BY ID
+   * Retrieves a specific order
+   */
+  getOrderById(orderId: string): Order | undefined {
+    return this.ordersSignal().find(order => order.id === orderId);
+  }
+
+  /**
    * Update order status
    */
-  updateOrderStatus(orderId: string, status: Order['status']): void {
+  updateOrderStatus(orderId: string, status: Order['status']): Order | undefined {
     this.ordersSignal.update(orders =>
       orders.map(order =>
         order.id === orderId
@@ -93,6 +135,8 @@ export class OrderService {
           : order
       )
     );
+
+    return this.getOrderById(orderId);
   }
 
   /**

@@ -1,0 +1,8 @@
+<div class="step-container">
+    <app-order-confirmation 
+        [order]="order()" 
+        [orderExists]="orderExists()" 
+        [orderItemsWithProducts]="orderItemsWithProducts()" 
+        (continueShopping)="continueShopping()" 
+        (viewOrders)="viewOrders()" />
+</div>

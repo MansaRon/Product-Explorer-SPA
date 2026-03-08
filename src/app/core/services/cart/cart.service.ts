@@ -1,12 +1,14 @@
-import { computed, effect, Injectable, signal } from '@angular/core';
+import { computed, effect, inject, Injectable, signal } from '@angular/core';
 import { CartItem } from '../../models/cartitem';
 import { loadFromStorage, saveToStorage } from '../../../shared/utils/storage.util';
 import { CART_STORAGE_KEY } from '../../const/cart-keys';
+import { ProductService } from '../product/product.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CartService {
+  private readonly productService = inject(ProductService);
   private readonly cartItemsSignal = signal<CartItem[]>(this.loadInitialCart());
   
   readonly itemCount = computed(() => this.cartItemsSignal().reduce((total, item) => total + item.quantity, 0));
@@ -14,6 +16,34 @@ export class CartService {
   readonly uniqueProductCount = computed(() => this.cartItemsSignal().length);
   readonly isEmpty = computed(() => this.cartItemsSignal().length === 0);
   readonly productIds = computed(() => this.cartItemsSignal().map(item => item.productId));
+
+  readonly subTotal = computed(() => {
+    return this.cartItemsSignal().reduce((total, item) => {
+      const product = this.productService.getProductById(item.productId);
+      if (!product) return total;
+      return total + (product.price * item.quantity)
+    }, 0);
+  });
+
+  readonly tax = computed(() => {
+    return this.subTotal() * 0.15;
+  })
+
+  readonly total = computed(() => {
+    return this.subTotal() + this.tax();
+  });
+
+  readonly itemsWithProducts = computed(() => {
+    return this.cartItemsSignal().map(item => {
+      const product = this.productService.getProductById(item.productId);
+      return {
+        ...item,
+        product,
+        productName: product?.name || '',
+        price: product?.price || 0
+      };
+    });
+  });
 
   constructor() {
     // Autosave to localstorage whenever the cart changes

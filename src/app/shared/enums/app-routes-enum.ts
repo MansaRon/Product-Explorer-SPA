@@ -12,6 +12,7 @@ export enum AppRoutes {
     DELIVERY = 'delivery',
     PAYMENT = 'payment',
     REVIEW = 'review',
+    CONFIRMATION = 'order-confirmation',
     CHECKOUT_SHIPPING = 'checkout/shipping',
     CHECKOUT_DELIVERY = 'checkout/delivery',
     CHECKOUT_PAYMENT = 'checkout/payment',

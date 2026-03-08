@@ -1,12 +1,12 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
-import { CartItemWithProduct, OrderComponent, OrderSummaryData } from '../../../shared/components/order-summary/order.component';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { OrderComponent } from '../../../shared/components/order-summary/order.component';
 import { CartService } from '../../../core/services/cart/cart.service';
-import { ProductService } from '../../../core/services/product/product.service';
 import { Router } from '@angular/router';
 import { CheckoutService } from '../../../core/services/checkout/checkout.service';
-import { calculateOrderSummary } from '../../../shared/utils/price-calculations.util';
 import { OrderService } from '../../../core/services/order/order.service';
 import { FooterComponent } from '../../../shared/components/footer/footer.component';
+import { ProductService } from '../../../core/services/product/product.service';
+import { AppRoutes } from '../../../shared/enums/app-routes-enum';
 
 @Component({
   selector: 'app-review-container',
@@ -18,85 +18,85 @@ import { FooterComponent } from '../../../shared/components/footer/footer.compon
 export class ReviewComponent {
   private readonly checkoutService = inject(CheckoutService);
   private readonly cartService = inject(CartService);
-  private readonly productService = inject(ProductService);
   private readonly orderService = inject(OrderService);
+  private readonly productService = inject(ProductService);
   private readonly router = inject(Router);
 
-  protected readonly placing = signal(false);
   protected readonly isSubmitting = signal(false);
   protected readonly submitTrigger = signal(0);
+  protected readonly isFormValid = signal(false);
 
-  protected readonly cartWithProducts = computed(() => {
-    return this.cartService.items().map(item => {
-      const product = this.productService.getProductById(item.productId);
-      return {
-        productId: item.productId,
-        quantity: item.quantity,
-        product: product ? {
-          name: product.name,
-          imageUrl: product.imageUrl,
-          price: product.price
-        } : undefined
-      };
-    }).filter(item => item.product !== undefined) as CartItemWithProduct[];
-  });
+  protected readonly shippingAddress = this.checkoutService.shippingAddress;
+  protected readonly deliveryOption = this.checkoutService.deliveryOption;
+  protected readonly paymentMethod = this.checkoutService.paymentMethod;
 
-  protected readonly subTotal = computed(() => {
-    return this.cartWithProducts().reduce((total, item) => {
-      return total + (item?.product.price * item.quantity);
-    }, 0);
-  });
+  protected handleValidilityChange(isValid: boolean): void {
+    this.isFormValid.set(isValid);
+  }
 
-  protected readonly summaryData = computed((): OrderSummaryData | undefined => {
-    const shipping = this.checkoutService.shippingAddress();
-    const delivery = this.checkoutService.deliveryOption();
-    const payment = this.checkoutService.paymentMethod();
+  protected handleContinue(): void {
+    this.submitTrigger.update(n => n + 1);
+  }
 
-    if (!shipping || !delivery || !payment) return undefined;
-
-    const calculations = calculateOrderSummary(this.subTotal(), delivery.price);
-    return { shipping, delivery, payment, items: this.cartWithProducts(), subtotal: calculations.subtotal, deliveryCost: calculations.delivery, tax: calculations.tax, total: calculations.total };
-  });
-
-  protected readonly canPlaceOrder = computed(() => {
-    return !!this.summaryData();
-  });
-
-  protected async handlePlaceOrder(): Promise<void> {
-    if (this.placing()) return;
-
-    const summary = this.summaryData();
-    if (!summary) {
-      alert('Please complete all checkout steps.');
-      return;
-    }
-
-    this.placing.set(true);
+  protected handlePlaceOrder(): void {
+    this.isSubmitting.set(true);
 
     try {
+      const subTotal = this.cartService.subTotal();
+      const tax = this.cartService.tax();
+      const total = this.cartService.total();
+      const shipping = this.shippingAddress();
+      const delivery = this.deliveryOption();
+      const payment = this.paymentMethod();
+
+      if (!shipping || !delivery || !payment) {
+        alert('Missing required checkout information. Please complete all steps.');
+        this.isSubmitting.set(false);
+        return;
+      }
+
+      const cartItems = this.cartService.items();
+
+      if (cartItems.length === 0) {
+        alert('Cart is empty');
+        this.isSubmitting.set(false);
+        return;
+      }
+
+      const orderItems = cartItems.map(cartItem => {
+        const product = this.productService.getProductById((cartItem.productId));
+        if (!product) {
+          alert(`Product ${cartItem.productId} not found`);
+        }
+
+        return {
+          productId: cartItem.productId,
+          productName: product!.name,
+          quantity: cartItem.quantity,
+          price: product!.price
+        };
+      });
+
       const order = this.orderService.createOrder({
-        userId: 'guest',
-        items: summary.items.map(item => ({
-          productId: item.productId,
-          productName: item.product.name,
-          quantity: item.quantity,
-          price: item.product.price
-        })),
-        subtotal: summary.subtotal,
-        tax: summary.tax,
-        total: summary.total,
-        status: 'pending'
+        items: orderItems,
+        subTotal,
+        tax,
+        total,
+        shippingAddress: shipping,
+        deliveryOption: delivery,
+        paymentMethod: payment
       });
 
       this.cartService.clearCart();
 
-      this.checkoutService.resetCheckout();
+      this.checkoutService.goToStep('confirmation');
 
-      this.router.navigate(['/order-confirmation', order.id]);
+      this.router.navigate([AppRoutes.CHECKOUT, AppRoutes.CONFIRMATION, order.id]);
     } catch (error) {
       console.log('Failed to place order', error);
       alert('Failed to place order. Please try again');
-      this.placing.set(false);
+    } finally {
+      this.isSubmitting.set(false);
     }
   }
 

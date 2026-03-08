@@ -26,6 +26,10 @@ export const CHECKOUT: Routes = [
       {
         path: AppRoutes.REVIEW,
         loadComponent: () => import('./review-container/review.component').then(m => m.ReviewComponent)
+      },
+      {
+        path: `${AppRoutes.CONFIRMATION}/:id`,
+        loadComponent: () => import('./confirmation-container/confirmation-container.component').then(m => m.ConfirmationContainerComponent)
       }
     ]
   }
