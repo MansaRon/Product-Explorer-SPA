@@ -1,3 +1,7 @@
+@let shipping = shippingAddress();
+@let delivery = deliveryOption();
+@let payment = paymentMethod();
+
 <div class="review-sections">
   <!-- Shipping Address -->
   <section class="review-section" aria-labelledby="shipping-heading">
@@ -11,19 +15,22 @@
         Edit
       </button>
     </div>
-    <div class="section-content">
-      <p class="info-line"><strong>{{ summary().shipping.fullName }}</strong></p>
-      <p class="info-line">{{ summary().shipping.streetAddress }}</p>
-      @if (summary().shipping.apartment) {
-        <p class="info-line">{{ summary().shipping.apartment }}</p>
-      }
-      <p class="info-line">
-        {{ summary().shipping.city }}, {{ summary().shipping.province }} {{ summary().shipping.postalCode }}
-      </p>
-      <p class="info-line">{{ summary().shipping.country }}</p>
-      <p class="info-line contact">{{ summary().shipping.phoneNumber }}</p>
-      <p class="info-line contact">{{ summary().shipping.email }}</p>
-    </div>
+
+    @if (shipping) {
+      <div class="section-content">
+        <p class="info-line"><strong>{{ shipping.fullName }}</strong></p>
+        <p class="info-line">{{ shipping.streetAddress }}</p>
+        @if (shipping.apartment) {
+          <p class="info-line">{{ shipping.apartment }}</p>
+        }
+        <p class="info-line">
+          {{ shipping.city }}, {{ shipping.province }} {{ shipping.postalCode }}
+        </p>
+        <p class="info-line">{{ shipping.country }}</p>
+        <p class="info-line contact">{{ shipping.phoneNumber }}</p>
+        <p class="info-line contact">{{ shipping.email }}</p>
+      </div>
+    }
   </section>
 
   <!-- Delivery Method -->
@@ -34,18 +41,19 @@
         type="button"
         class="edit-button"
         (click)="handleEditDelivery()"
-        aria-label="Edit delivery method"
-      >
+        aria-label="Edit delivery method">
         Edit
       </button>
     </div>
-    <div class="section-content">
-      <p class="info-line"><strong>{{ summary().delivery.name }}</strong></p>
-      <p class="info-line">{{ summary().delivery.description }}</p>
-      <p class="info-line">
-        Cost: {{ summary().delivery.price === 0 ? 'FREE' : (summary().delivery.price | currency: 'R') }}
-      </p>
-    </div>
+    @if (delivery) {
+      <div class="section-content">
+        <p class="info-line"><strong>{{ delivery.name }}</strong></p>
+        <p class="info-line">{{ delivery.description }}</p>
+        <p class="info-line">
+          <strong>Cost: {{ delivery.price === 0 ? 'FREE' : (delivery.price | currency: 'R') }}</strong>
+        </p>
+      </div>
+    }
   </section>
 
   <!-- Payment Method -->
@@ -56,34 +64,36 @@
         type="button"
         class="edit-button"
         (click)="handleEditPayment()"
-        aria-label="Edit payment method"
-      >
+        aria-label="Edit payment method" >
         Edit
       </button>
     </div>
-    <div class="section-content">
-      <p class="info-line"><strong>{{ summary().payment.label }}</strong></p>
-    </div>
+    @if (payment) {
+      <div class="section-content">
+        <p class="info-line"><strong>{{ payment.label }}</strong></p>
+      </div>
+    }
   </section>
 
   <!-- Order Items -->
   <section class="review-section review-section--full" aria-labelledby="items-heading">
     <h2 id="items-heading" class="section-title">Order Items</h2>
     <div class="order-items">
-      @for (item of summary().items; track item.productId) {
+      @for (item of cartWithProducts(); track item.productId) {
         <div class="order-item">
-          <img 
-            [src]="item.product.imageUrl ?? '/assets/placeholder.jpg'" 
-            [alt]="item.product.name"
-            class="item-image"
-          />
-          <div class="item-details">
-            <p class="item-name">{{ item.product.name }}</p>
-            <p class="item-quantity">Qty: {{ item.quantity }}</p>
-          </div>
-          <p class="item-price">
-            {{ (item.product.price * item.quantity) | currency: 'R' }}
-          </p>
+          @if (item.product; as product) {
+            <img 
+              [src]="item.product.imageUrl ?? '/assets/placeholder.jpg'" 
+              [alt]="item.product.name"
+              class="item-image" />
+            <div class="item-details">
+              <p class="item-name">{{ item.product.name }}</p>
+              <p class="item-quantity">Qty: {{ item.quantity }}</p>
+            </div>
+            <p class="item-price">
+              {{ (item.product.price * item.quantity) | currency: 'R' }}
+            </p>
+          }
         </div>
       }
     </div>
@@ -95,22 +105,16 @@
     <div class="order-summary-details">
       <div class="summary-line">
         <span class="summary-label">Subtotal</span>
-        <span class="summary-value">{{ summary().subtotal | currency: 'R' }}</span>
-      </div>
-      <div class="summary-line">
-        <span class="summary-label">Delivery</span>
-        <span class="summary-value">
-          {{ summary().deliveryCost === 0 ? 'FREE' : (summary().deliveryCost | currency: 'R') }}
-        </span>
+        <span class="summary-value">{{ subTotal() | currency: 'R' }}</span>
       </div>
       <div class="summary-line">
         <span class="summary-label">Tax (15% VAT)</span>
-        <span class="summary-value">{{ summary().tax | currency: 'R' }}</span>
+        <span class="summary-value">{{ tax() | currency: 'R' }}</span>
       </div>
       <div class="summary-divider"></div>
       <div class="summary-line summary-total">
         <span class="summary-label">Total</span>
-        <span class="summary-value">{{ summary().total | currency: 'R' }}</span>
+        <span class="summary-value">{{ total() | currency: 'R' }}</span>
       </div>
     </div>
   </section>

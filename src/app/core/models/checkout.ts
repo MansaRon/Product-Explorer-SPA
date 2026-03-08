@@ -32,7 +32,7 @@ export interface CheckoutState {
     completedSteps: Set<CheckoutStep>;
 }
   
-export type CheckoutStep = 'shipping' | 'delivery' | 'payment' | 'review';
+export type CheckoutStep = 'shipping' | 'delivery' | 'payment' | 'review' | "confirmation";
   
 export const SOUTH_AFRICAN_PROVINCES = [
     'Eastern Cape',
