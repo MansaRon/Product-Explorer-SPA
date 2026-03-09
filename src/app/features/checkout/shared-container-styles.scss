@@ -35,17 +35,15 @@
 
 .form-row {
   margin-bottom: var(--spacing-md);
-}
 
-.form-row {
   &--two-columns {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: var(--spacing-md);
-  }
 
-  @media (max-width: 640px) {
-    grid-template-columns: 1fr;
+    @media (max-width: 640px) {
+      grid-template-columns: 1fr;
+    }
   }
 }
 
@@ -80,22 +78,20 @@
   &:focus {
     outline: none;
     border-color: var(--color-primary);
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    box-shadow: 0 0 0 3px var(--color-primary-tint);
   }
 
   &:disabled {
     background-color: var(--color-bg-tertiary);
     cursor: not-allowed;
   }
-}
 
-.form-input,
-.form-select {
   &--error {
     border-color: var(--color-danger);
-  }
-  &:focus {
-    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+
+    &:focus {
+      box-shadow: 0 0 0 3px var(--color-danger-tint);
+    }
   }
 }
 

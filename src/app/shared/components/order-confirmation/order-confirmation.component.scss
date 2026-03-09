@@ -1,26 +1,14 @@
-/**
- * ORDER CONFIRMATION - Simplified SCSS
- * 
- * Uses shared checkout styles from shared-container-styles.scss
- * Only adds confirmation-specific styling
- */
 
-// Import shared checkout container styles
 @import '../../../features/checkout/shared-container-styles.scss';
 
-/* ============================================
-   CONFIRMATION-SPECIFIC STYLES ONLY
-   (Reuses .step-container, .step-header, etc from shared)
-   ============================================ */
 
-/* Success Icon */
 .success-icon {
   display: flex;
   justify-content: center;
   margin-bottom: var(--spacing-xl);
   
   svg {
-    color: #10b981;  /* Green */
+    color: var(--color-success);
     filter: drop-shadow(0 4px 12px rgba(16, 185, 129, 0.3));
     animation: successPop 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
     
@@ -129,9 +117,9 @@
   letter-spacing: 0.5px;
   
   &--pending {
-    background-color: rgba(251, 191, 36, 0.1);
-    color: #f59e0b;
-    border: 1px solid rgba(251, 191, 36, 0.3);
+    background-color: var(--color-warning-tint);
+    color: var(--color-warning);
+    border: 1px solid var(--color-warning-tint);
   }
 }
 
