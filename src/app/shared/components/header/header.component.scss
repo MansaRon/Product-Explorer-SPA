@@ -72,9 +72,6 @@
   align-items: center;
 }
 
-.nav--open {
-  gap: var(--spacing-md);
-}
 
 .nav-link {
   display: block;
@@ -147,22 +144,22 @@
   transition: all var(--transition-fast);
   cursor: pointer;
   text-align: center;
-}
 
-.admin-toggle:hover {
-  background-color: var(--color-bg-tertiary);
-  border-color: var(--color-primary);
-}
+  &:hover {
+    background-color: var(--color-bg-tertiary);
+    border-color: var(--color-primary);
+  }
 
-.admin-toggle--active {
-  background-color: var(--color-primary);
-  color: white;
-  border-color: var(--color-primary);
-}
+  &--active {
+    background-color: var(--color-primary);
+    color: white;
+    border-color: var(--color-primary);
+  }
 
-.admin-toggle:focus-visible {
-  outline: 2px solid var(--color-border-focus);
-  outline-offset: 2px;
+  &:focus-visible {
+    outline: 2px solid var(--color-border-focus);
+    outline-offset: 2px;
+  }
 }
 
 .cart-icon-button {

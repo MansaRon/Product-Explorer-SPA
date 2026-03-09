@@ -13,27 +13,20 @@
     border-radius: var(--radius-lg);
     cursor: pointer;
     transition: all var(--transition-fast);
-    
+
     &:hover {
       border-color: var(--color-primary);
       box-shadow: var(--shadow-md);
     }
-    
+
     &:focus-within {
       outline: 2px solid var(--color-border-focus);
       outline-offset: 2px;
     }
-}
-  
-.delivery-option {
-    &--selected {
-        background-color: rgba(37, 99, 235, 0.05);
-        border-color: var(--color-primary);
-        border-width: 2px;
-    }
 
-    &:hover {
-        border-color: var(--color-primary);
+    &--selected {
+      background-color: var(--color-primary-tint);
+      border-color: var(--color-primary);
     }
 }
   
