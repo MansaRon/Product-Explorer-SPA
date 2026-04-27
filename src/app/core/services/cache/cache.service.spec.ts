@@ -1,16 +1,18 @@
-import { TestBed } from '@angular/core/testing';
-
 import { CacheService } from './cache.service';
+import { SpectatorService, createServiceFactory } from '@ngneat/spectator';
 
-describe('CacheService', () => {
-  let service: CacheService;
+describe(CacheService.name, () => {
+  let spectator: SpectatorService<CacheService>;
+
+  const createService = createServiceFactory({
+    service: CacheService
+  });
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
-    service = TestBed.inject(CacheService);
+    spectator = createService();
   });
 
   it('should be created', () => {
-    expect(service).toBeTruthy();
+    expect(spectator.service).toBeTruthy();
   });
 });

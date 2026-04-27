@@ -7,7 +7,6 @@
 * Template for commits
 * Create seperate project for end 2 end testing with functional CI/CD
 * Add IDs in selectors for robust end 2 end testing
-* Add a global interceptor for API calls
 
 <!-- SMART has the container name -->
 <!-- DUMB have the form, options, methods and summary name to them -->

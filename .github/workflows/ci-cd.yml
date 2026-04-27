@@ -1,0 +1,112 @@
+name: Product-Explorer CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+      - master
+      - develop
+  pull_request:
+    branches:
+      - main
+      - master
+      - develop
+  pull_request_target:
+    types: [closed]
+
+jobs:
+  build:
+    name: Build Application
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Build Application
+        run: npm run build
+
+      - name: Check Build Size (Fail if > 5MB)
+        run: |
+          BUILD_SIZE=$(du -sm dist/ | awk '{print $1}')
+          MAX_SIZE=5
+          echo "Build size: ${BUILD_SIZE}MB"
+          if [ "$BUILD_SIZE" -gt "$MAX_SIZE" ]; then
+            echo "❌ Build size exceeds ${MAX_SIZE}MB! Failing pipeline."
+            exit 1
+          else
+            echo "✅ Build size is within limits."
+          fi
+
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-build
+          path: dist/
+
+  test:
+    name: Run Unit Tests
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Run Tests
+        run: npm test -- --watch=false --no-progress --browsers=ChromeHeadless
+    #   - name: Run Tests (Skip)
+    #     run: echo "Skipping tests..."
+
+  deploy:
+    name: Deploy to Hosting
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Build Application
+        run: npm run build
+
+      # - name: Deploy to Vercel
+      #   run: npx vercel --prod
+      #   env:
+      #     VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+
+      # - name: Deploy to Firebase
+      #   run: npx firebase deploy --token ${{ secrets.FIREBASE_TOKEN }}
+    
+  delete_feature_branch:
+    if: github.event.pull_request.merged == true && !startsWith(github.event.pull_request.head.ref, 'main') && !startsWith(github.event.pull_request.head.ref, 'master') && !startsWith(github.event.pull_request.head.ref, 'develop')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete feature branch
+        uses: dawidd6/action-delete-branch@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branches: ${{ github.event.pull_request.head.ref }}
+    

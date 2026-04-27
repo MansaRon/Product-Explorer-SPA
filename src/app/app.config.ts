@@ -16,14 +16,15 @@ export const appConfig: ApplicationConfig = {
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
     provideHttpClient(
+      // Will uncomment once I've intergrated with the backend and want to test the interceptors
       withInterceptors([
-        authInterceptor,
-        errorInterceptor,
-        loadingInterceptor,
-        loggingInterceptor,
-        retryInterceptor,
-        baseUrlInterceptor,
-        cachingInterceptor,
+        //authInterceptor,
+        //errorInterceptor,
+        //loadingInterceptor,
+        //loggingInterceptor,
+        //retryInterceptor,
+        //baseUrlInterceptor,
+        //cachingInterceptor,
       ])
     ),
   ],

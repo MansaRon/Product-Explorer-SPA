@@ -1,16 +1,19 @@
 /* tslint:disable:no-unused-variable */
-
-import { TestBed, async, inject } from '@angular/core/testing';
+import { SpectatorService, createServiceFactory } from '@ngneat/spectator';
 import { OrderService } from './order.service';
 
-describe('Service: Order', () => {
-  beforeEach(() => {
-    TestBed.configureTestingModule({
-      providers: [OrderService]
-    });
+describe(OrderService.name, () => {
+  let spectator: SpectatorService<OrderService>;
+
+  const createService = createServiceFactory({
+    service: OrderService
   });
 
-  it('should ...', inject([OrderService], (service: OrderService) => {
-    expect(service).toBeTruthy();
-  }));
+  beforeEach(() => {
+    spectator = createService();
+  });
+
+  it('should be created', () => {
+    expect(spectator.service).toBeTruthy();
+  });
 });

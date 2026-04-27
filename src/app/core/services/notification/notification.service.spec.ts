@@ -1,16 +1,18 @@
-import { TestBed } from '@angular/core/testing';
-
 import { NotificationService } from './notification.service';
+import { SpectatorService, createServiceFactory } from '@ngneat/spectator';
 
-describe('NotificationService', () => {
-  let service: NotificationService;
+describe(NotificationService.name, () => {
+  let spectator: SpectatorService<NotificationService>;
+
+  const createService = createServiceFactory({
+    service: NotificationService
+  });
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
-    service = TestBed.inject(NotificationService);
+    spectator = createService();
   });
 
   it('should be created', () => {
-    expect(service).toBeTruthy();
+    expect(spectator.service).toBeTruthy();
   });
 });
