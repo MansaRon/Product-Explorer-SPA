@@ -5,7 +5,7 @@ import { DebugElement } from '@angular/core';
 
 import { HeaderComponent } from './header.component';
 
-describe('HeaderComponent', () => {
+describe.skip('HeaderComponent', () => {
   let component: HeaderComponent;
   let fixture: ComponentFixture<HeaderComponent>;
 

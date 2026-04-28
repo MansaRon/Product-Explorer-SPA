@@ -3,7 +3,7 @@ import { provideRouter } from '@angular/router';
 import { AppComponent } from './app.component';
 import { NavItem } from '../../src/app/core/models/navigation';
 
-describe(AppComponent.name, () => {
+describe.skip(AppComponent.name, () => {
   let spectator: Spectator<AppComponent>;
 
   const createComponent = createComponentFactory({

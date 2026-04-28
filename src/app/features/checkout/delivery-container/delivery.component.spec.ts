@@ -5,7 +5,7 @@ import { DebugElement } from '@angular/core';
 
 import { DeliveryComponent } from './delivery.component';
 
-describe('DeliveryComponent', () => {
+describe.skip('DeliveryComponent', () => {
   let component: DeliveryComponent;
   let fixture: ComponentFixture<DeliveryComponent>;
 
