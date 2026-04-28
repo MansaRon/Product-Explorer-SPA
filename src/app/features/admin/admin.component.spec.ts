@@ -7,6 +7,7 @@ import { ProductService } from '../../core/services/product/product.service';
 import { FavouriteService } from '../../core/services/favourite/favourite.service';
 import { AuthService } from '../../core/services/auth/auth.service';
 import { Product } from '../../core/models/product';
+import { fromPartial } from '@total-typescript/shoehorn';
 
 describe(AdminComponent.name, () => {
   let spectator: Spectator<AdminComponent>;
@@ -14,38 +15,20 @@ describe(AdminComponent.name, () => {
   let favouriteService: SpyObject<FavouriteService>;
   let authService: SpyObject<AuthService>;
 
-  const mockProducts: Product[] = [
+  const mockProducts: Product[] = fromPartial([
     {
       id: '1',
       name: 'Wireless Headphones',
-      description: 'High-quality headphones',
-      price: 199.99,
-      category: 'Electronics',
-      imageUrl: 'headphones.jpg',
-      rating: 4.5,
-      stock: 10
     },
     {
       id: '2',
       name: 'Laptop Stand',
-      description: 'Ergonomic stand',
-      price: 49.99,
-      category: 'Accessories',
-      imageUrl: 'stand.jpg',
-      rating: 4.8,
-      stock: 5
     },
     {
       id: '3',
       name: 'USB-C Hub',
-      description: '7-in-1 hub',
-      price: 59.99,
-      category: 'Electronics',
-      imageUrl: 'hub.jpg',
-      rating: 4.2,
-      stock: 0
     }
-  ];
+  ]);
 
   const createComponent = createComponentFactory({
     component: AdminComponent,

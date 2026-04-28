@@ -7,6 +7,7 @@ import { ProductDetailsComponent } from '../product-details/product-details.comp
 import { ProductService } from '../../core/services/product/product.service';
 import { FavouriteService } from '../../core/services/favourite/favourite.service';
 import { Product } from '../../core/models/product';
+import { fromPartial } from '@total-typescript/shoehorn';
 
 describe(ProductDetailsComponent.name, () => {
   let spectator: Spectator<ProductDetailsComponent>;
@@ -14,16 +15,10 @@ describe(ProductDetailsComponent.name, () => {
   let favouriteService: SpyObject<FavouriteService>;
   let router: SpyObject<Router>;
 
-  const mockProduct: Product = {
+  const mockProduct: Product = fromPartial({
     id: '1',
     name: 'Wireless Headphones',
-    description: 'High-quality wireless headphones',
-    price: 199.99,
-    category: 'Electronics',
-    imageUrl: 'headphones.jpg',
-    rating: 4.5,
-    stock: 10
-  };
+  });
 
   const createComponent = createComponentFactory({
     component: ProductDetailsComponent,

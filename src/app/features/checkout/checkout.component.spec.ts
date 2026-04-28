@@ -1,28 +1,29 @@
 /* tslint:disable:no-unused-variable */
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { By } from '@angular/platform-browser';
-import { DebugElement } from '@angular/core';
-
 import { CheckoutComponent } from './checkout.component';
+import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator';
+import { CheckoutService } from '../../core/services/checkout/checkout.service';
+import { CartService } from '../../core/services/cart/cart.service';
+import { Router } from '@angular/router';
 
 describe.skip('CheckoutComponent', () => {
-  let component: CheckoutComponent;
-  let fixture: ComponentFixture<CheckoutComponent>;
-
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [ CheckoutComponent ]
-    })
-    .compileComponents();
-  }));
+  let spectator: Spectator<CheckoutComponent>;
+  
+  const createComponent = createComponentFactory({
+    component: CheckoutComponent,
+    shallow: true,
+    detectChanges: false,
+    providers: [
+      mockProvider(Router, {
+        navigate: jest.fn().mockResolvedValue(true)
+      })
+    ]
+  });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(CheckoutComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+    spectator = createComponent();
   });
 
   it('should create', () => {
-    expect(component).toBeTruthy();
+    expect(spectator.component).toBeTruthy();
   });
 });

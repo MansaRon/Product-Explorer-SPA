@@ -1,28 +1,27 @@
 /* tslint:disable:no-unused-variable */
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { By } from '@angular/platform-browser';
-import { DebugElement } from '@angular/core';
-
-import { OrderConfirmationComponent } from './confirmation-container.component';
+import { Router } from '@angular/router';
+import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator';
+import { ConfirmationContainerComponent } from './confirmation-container.component';
 
 describe.skip('OrderConfirmationComponent', () => {
-  let component: OrderConfirmationComponent;
-  let fixture: ComponentFixture<OrderConfirmationComponent>;
-
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [ OrderConfirmationComponent ]
-    })
-    .compileComponents();
-  }));
+  let spectator: Spectator<ConfirmationContainerComponent>;
+  
+  const createComponent = createComponentFactory({
+    component: ConfirmationContainerComponent,
+    shallow: true,
+    detectChanges: false,
+    providers: [
+      mockProvider(Router, {
+        navigate: jest.fn().mockResolvedValue(true)
+      }),
+    ]
+  });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(OrderConfirmationComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+    spectator = createComponent();
   });
 
   it('should create', () => {
-    expect(component).toBeTruthy();
+    expect(spectator.component).toBeTruthy();
   });
 });

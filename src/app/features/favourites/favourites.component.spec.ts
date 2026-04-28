@@ -6,34 +6,23 @@ import { FavouritesComponent } from '../favourites/favourites.component';
 import { FavouriteService } from '../../core/services/favourite/favourite.service';
 import { ProductService } from '../../core/services/product/product.service';
 import { Product } from '../../core/models/product';
+import { fromPartial } from '@total-typescript/shoehorn';
 
 describe.skip(FavouritesComponent.name, () => {
   let spectator: Spectator<FavouritesComponent>;
   let favouriteService: SpyObject<FavouriteService>;
   let productService: SpyObject<ProductService>;
 
-  const mockProducts: Product[] = [
+  const mockProducts: Product[] = fromPartial([
     {
       id: '1',
       name: 'Wireless Headphones',
-      description: 'High-quality headphones',
-      price: 199.99,
-      category: 'Electronics',
-      imageUrl: 'headphones.jpg',
-      rating: 4.5,
-      stock: 10
     },
     {
       id: '2',
       name: 'Laptop Stand',
-      description: 'Ergonomic stand',
-      price: 49.99,
-      category: 'Accessories',
-      imageUrl: 'stand.jpg',
-      rating: 4.3,
-      stock: 25
     }
-  ];
+  ]);
 
   const createComponent = createComponentFactory({
     component: FavouritesComponent,

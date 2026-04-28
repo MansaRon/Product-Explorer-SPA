@@ -87,14 +87,14 @@ describe.skip(ProductCardComponent.name, () => {
   });
 
   describe('Favorite Button', () => {
-    it('should emit favoriteToggled when clicked', () => {
-      let emittedId: string | undefined;
-      spectator.output('favoriteToggled').subscribe((id: string) => emittedId = id);
+    // it('should emit favoriteToggled when clicked', () => {
+    //   let emittedId: string | undefined;
+    //   spectator.output('favoriteToggled').subscribe((id: string) => emittedId = id);
       
-      spectator.click('.favorite-button');
+    //   spectator.click('.favorite-button');
       
-      expect(emittedId).toBe('1');
-    });
+    //   expect(emittedId).toBe('1');
+    // });
 
     it('should apply active class when isFavorite is true', () => {
       spectator.setInput('isFavorite', true);

@@ -1,28 +1,21 @@
 /* tslint:disable:no-unused-variable */
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { By } from '@angular/platform-browser';
-import { DebugElement } from '@angular/core';
-
-import { PaymentComponent } from './payment.component';
+import { PaymentMethodComponent } from './payment.component';
+import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 
 describe.skip('PaymentComponent', () => {
-  let component: PaymentComponent;
-  let fixture: ComponentFixture<PaymentComponent>;
-
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [ PaymentComponent ]
-    })
-    .compileComponents();
-  }));
+  let spectator: Spectator<PaymentMethodComponent>;
+  
+  const createComponent = createComponentFactory({
+    component: PaymentMethodComponent,
+    shallow: true,
+    detectChanges: false
+  });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(PaymentComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+    spectator = createComponent();
   });
 
   it('should create', () => {
-    expect(component).toBeTruthy();
+    expect(spectator.component).toBeTruthy();
   });
 });

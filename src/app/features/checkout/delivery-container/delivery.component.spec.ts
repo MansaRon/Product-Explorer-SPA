@@ -1,28 +1,27 @@
 /* tslint:disable:no-unused-variable */
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { By } from '@angular/platform-browser';
-import { DebugElement } from '@angular/core';
-
+import { Router } from '@angular/router';
+import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator';
 import { DeliveryComponent } from './delivery.component';
 
 describe.skip('DeliveryComponent', () => {
-  let component: DeliveryComponent;
-  let fixture: ComponentFixture<DeliveryComponent>;
-
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [ DeliveryComponent ]
-    })
-    .compileComponents();
-  }));
+  let spectator: Spectator<DeliveryComponent>;
+  
+  const createComponent = createComponentFactory({
+    component: DeliveryComponent,
+    shallow: true,
+    detectChanges: false,
+    providers: [
+      mockProvider(Router, {
+        navigate: jest.fn().mockResolvedValue(true)
+      }),
+    ]
+  });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(DeliveryComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+    spectator = createComponent();
   });
 
   it('should create', () => {
-    expect(component).toBeTruthy();
+    expect(spectator.component).toBeTruthy();
   });
 });

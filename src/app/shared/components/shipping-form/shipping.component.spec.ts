@@ -1,28 +1,21 @@
 /* tslint:disable:no-unused-variable */
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { By } from '@angular/platform-browser';
-import { DebugElement } from '@angular/core';
-
-import { ShippingComponent } from './shipping.component';
+import { ShippingDumbComponent } from './shipping.component';
+import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 
 describe.skip('ShippingComponent', () => {
-  let component: ShippingComponent;
-  let fixture: ComponentFixture<ShippingComponent>;
-
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [ ShippingComponent ]
-    })
-    .compileComponents();
-  }));
+  let spectator: Spectator<ShippingDumbComponent>;
+  
+  const createComponent = createComponentFactory({
+    component: ShippingDumbComponent,
+    shallow: true,
+    detectChanges: false
+  });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ShippingComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+    spectator = createComponent();
   });
 
   it('should create', () => {
-    expect(component).toBeTruthy();
+    expect(spectator.component).toBeTruthy();
   });
 });

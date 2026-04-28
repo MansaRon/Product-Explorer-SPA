@@ -1,28 +1,21 @@
 /* tslint:disable:no-unused-variable */
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { By } from '@angular/platform-browser';
-import { DebugElement } from '@angular/core';
-
+import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { HeaderComponent } from './header.component';
 
 describe.skip('HeaderComponent', () => {
-  let component: HeaderComponent;
-  let fixture: ComponentFixture<HeaderComponent>;
-
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [ HeaderComponent ]
-    })
-    .compileComponents();
-  }));
+  let spectator: Spectator<HeaderComponent>;
+  
+  const createComponent = createComponentFactory({
+    component: HeaderComponent,
+    shallow: true,
+    detectChanges: false
+  });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(HeaderComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+    spectator = createComponent();
   });
 
   it('should create', () => {
-    expect(component).toBeTruthy();
+    expect(spectator.component).toBeTruthy();
   });
 });
