@@ -11,12 +11,14 @@ on:
       - main
       - master
       - develop
-  pull_request_target:
-    types: [closed]
+    types:
+      - opened
+      - synchronize
+      - reopened
 
 jobs:
-  build:
-    name: Build Application
+  test:
+    name: Run Unit Tests
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
@@ -26,7 +28,33 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 20
-          
+
+      - name: Cache node modules
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}
+          restore-keys: ${{ runner.os }}-npm-
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Run Tests
+        run: npm test -- --watch=false --no-progress --browsers=ChromeHeadless
+
+  build:
+    name: Build Application
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
       - name: Cache node modules
         uses: actions/cache@v3
         with:
@@ -58,38 +86,10 @@ jobs:
           name: frontend-build
           path: dist/
 
-  test:
-    name: Run Unit Tests
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 20
-
-      - name: Cache node modules
-        uses: actions/cache@v3
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}
-          restore-keys: ${{ runner.os }}-npm-
-
-      - name: Install Dependencies
-        run: npm install
-
-      - name: Run Tests
-        run: npm test -- --watch=false --no-progress --browsers=ChromeHeadless
-    #   - name: Run Tests (Skip)
-    #     run: echo "Skipping tests..."
-
   deploy:
     name: Deploy to Hosting
     runs-on: ubuntu-latest
-    needs: test
+    needs: build
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
     steps:
       - name: Checkout Code
@@ -118,16 +118,20 @@ jobs:
       #   env:
       #     VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
 
-      # - name: Deploy to Firebase
-      #   run: npx firebase deploy --token ${{ secrets.FIREBASE_TOKEN }}
-    
   delete_feature_branch:
-    if: github.event.pull_request.merged == true && !startsWith(github.event.pull_request.head.ref, 'main') && !startsWith(github.event.pull_request.head.ref, 'master') && !startsWith(github.event.pull_request.head.ref, 'develop')
+    name: Delete Feature Branch
     runs-on: ubuntu-latest
+    needs: build
+    if: |
+      github.event_name == 'pull_request' &&
+      github.event.pull_request.merged == true &&
+      github.event.pull_request.base.ref != 'main' == false &&
+      !startsWith(github.event.pull_request.head.ref, 'main') &&
+      !startsWith(github.event.pull_request.head.ref, 'master') &&
+      !startsWith(github.event.pull_request.head.ref, 'develop')
     steps:
       - name: Delete feature branch
         uses: dawidd6/action-delete-branch@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           branches: ${{ github.event.pull_request.head.ref }}
-    
