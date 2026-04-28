@@ -2,10 +2,10 @@ Proposed change
 
 Type of change
 
-- [ ] bugfix (non-breaking change which fixes an issue)
+- [ ] Bugfix (non-breaking change which fixes an issue)
 - [ ] Styling fix (change to the original styling)
 - [ ] New feature (which adds functionality to an existing intergration)
-- [ ] Code wuality improvements to existig code or addition of tests
+- [ ] Code quality improvements to existig code or addition of tests
 
 Checklist
 
