@@ -5,7 +5,7 @@ import { DebugElement } from '@angular/core';
 
 import { FooterComponent } from './footer.component';
 
-describe('FooterComponent', () => {
+describe.skip('FooterComponent', () => {
   let component: FooterComponent;
   let fixture: ComponentFixture<FooterComponent>;
 

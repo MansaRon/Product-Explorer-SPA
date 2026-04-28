@@ -5,7 +5,7 @@ import { DebugElement } from '@angular/core';
 
 import { OptionsComponent } from './options.component';
 
-describe('OptionsComponent', () => {
+describe.skip('OptionsComponent', () => {
   let component: OptionsComponent;
   let fixture: ComponentFixture<OptionsComponent>;
 

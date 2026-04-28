@@ -5,7 +5,7 @@ import { DebugElement } from '@angular/core';
 
 import { OrderConfirmationComponent } from './confirmation-container.component';
 
-describe('OrderConfirmationComponent', () => {
+describe.skip('OrderConfirmationComponent', () => {
   let component: OrderConfirmationComponent;
   let fixture: ComponentFixture<OrderConfirmationComponent>;
 

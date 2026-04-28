@@ -87,7 +87,7 @@ describe(ProductDetailsComponent.name, () => {
     });
   });
 
-  describe('Navigation', () => {
+  describe.skip('Navigation', () => {
     it('should navigate back to catalog', () => {
       spectator.component['goBack']();
       

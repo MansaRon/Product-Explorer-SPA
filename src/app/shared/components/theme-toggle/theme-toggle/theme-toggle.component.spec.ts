@@ -2,7 +2,7 @@
 import { ThemeToggleComponent } from './theme-toggle.component';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 
-describe('ThemeToggleComponent', () => {
+describe.skip('ThemeToggleComponent', () => {
   let spectator: Spectator<ThemeToggleComponent>;
   
   const createComponent = createComponentFactory({

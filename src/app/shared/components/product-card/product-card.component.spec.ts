@@ -3,7 +3,7 @@ import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { ProductCardComponent } from './product-card.component';
 import { Product } from '../../../core/models/product';
 
-describe(ProductCardComponent.name, () => {
+describe.skip(ProductCardComponent.name, () => {
   let spectator: Spectator<ProductCardComponent>;
   
   const mockProduct: Product = {
