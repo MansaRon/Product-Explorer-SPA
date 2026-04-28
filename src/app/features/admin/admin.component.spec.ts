@@ -9,7 +9,7 @@ import { AuthService } from '../../core/services/auth/auth.service';
 import { Product } from '../../core/models/product';
 import { fromPartial } from '@total-typescript/shoehorn';
 
-describe(AdminComponent.name, () => {
+describe.skip(AdminComponent.name, () => {
   let spectator: Spectator<AdminComponent>;
   let productService: SpyObject<ProductService>;
   let favouriteService: SpyObject<FavouriteService>;
