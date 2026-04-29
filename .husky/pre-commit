@@ -1,0 +1,27 @@
+#!/bin/sh
+BRANCH=$(git symbolic-ref --short HEAD)
+# Run lint-staged (formats and lints only changed files)
+echo "🔍 Running lint-staged on changed files..."
+npx lint-staged
+if [ $? -ne 0 ]; then
+echo "❌ Linting failed. Commit aborted."
+exit 1
+fi
+case "$BRANCH" in
+  (main|master|develop)
+    echo "⏭️  Skipping tests on protected branch: $BRANCH"
+    exit 0
+    ;;
+esac
+
+echo "🧪 Running unit tests on branch: $BRANCH"
+npm test -- --watch=false --no-progress
+
+if [ $? -ne 0 ]; then
+echo ""
+echo "Tests failed. Commit aborted."
+echo "Fix the failing tests before committing."
+exit 1
+fi
+echo "All checks passed. Committing..."
+exit 0
