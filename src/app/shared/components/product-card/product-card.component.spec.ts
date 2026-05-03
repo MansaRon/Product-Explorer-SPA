@@ -1,34 +1,28 @@
-/* tslint:disable:no-unused-variable */
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { ProductCardComponent } from './product-card.component';
 import { Product } from '../../../core/models/product';
+import { fromPartial } from '@total-typescript/shoehorn';
 
 describe.skip(ProductCardComponent.name, () => {
   let spectator: Spectator<ProductCardComponent>;
-  
-  const mockProduct: Product = {
+
+  const mockProduct: Product = fromPartial({
     id: '1',
     name: 'Test Product',
-    description: 'Test description for the product',
-    price: 99.99,
-    category: 'Electronics',
-    imageUrl: 'test.jpg',
-    rating: 4.5,
-    stock: 10
-  };
+  });
 
   const createComponent = createComponentFactory({
     component: ProductCardComponent,
     shallow: true,
-    detectChanges: false
+    detectChanges: false,
   });
 
   beforeEach(() => {
     spectator = createComponent({
       props: {
         product: mockProduct,
-        isFavorite: false
-      }
+        isFavorite: false,
+      },
     });
   });
 
@@ -56,7 +50,9 @@ describe.skip(ProductCardComponent.name, () => {
     });
 
     it('should display product description', () => {
-      expect(spectator.query('.product-description')).toHaveText('Test description for the product');
+      expect(spectator.query('.product-description')).toHaveText(
+        'Test description for the product'
+      );
     });
   });
 
@@ -90,9 +86,9 @@ describe.skip(ProductCardComponent.name, () => {
     // it('should emit favoriteToggled when clicked', () => {
     //   let emittedId: string | undefined;
     //   spectator.output('favoriteToggled').subscribe((id: string) => emittedId = id);
-      
+
     //   spectator.click('.favorite-button');
-      
+
     //   expect(emittedId).toBe('1');
     // });
 
