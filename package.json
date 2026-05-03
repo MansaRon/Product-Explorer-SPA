@@ -16,7 +16,15 @@
     "e2e:debug": "playwright test --debug",
     "e2e:report": "playwright show-report",
     "prepare": "husky",
-    "lint": "ng lint"
+    "lint": "ng lint",
+    "docker:build": "docker build -t product-explorer:latest .",
+    "docker:run": "docker run -d -p 4200:80 --name product-explorer product-explorer:latest",
+    "docker:stop": "docker stop product-explorer",
+    "docker:remove": "docker rm product-explorer",
+    "docker:logs": "docker logs -f product-explorer",
+    "docker:shell": "docker exec -it product-explorer sh",
+    "docker:clean": "docker stop product-explorer && docker rm product-explorer && docker rmi product-explorer:latest",
+    "docker:rebuild": "npm run docker:clean && npm run docker:build && npm run docker:run"
   },
   "private": true,
   "dependencies": {

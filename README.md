@@ -64,6 +64,12 @@ npm start
 ng serve
 ```
 
+### Development Server With Docker
+
+Start the development server using Docker:
+```bash
+make run
+
 Navigate to `http://localhost:4200/` in your browser. The application will automatically reload if you change any source files.
 
 ### Production Build
