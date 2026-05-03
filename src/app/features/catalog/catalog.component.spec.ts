@@ -1,4 +1,3 @@
-/* tslint:disable:no-unused-variable */
 import { createComponentFactory, Spectator, SpyObject } from '@ngneat/spectator/jest';
 import { mockProvider } from '@ngneat/spectator/jest';
 import { signal } from '@angular/core';
@@ -6,34 +5,23 @@ import { CatalogComponent } from '../catalog/catalog.component';
 import { ProductService } from '../../core/services/product/product.service';
 import { FavouriteService } from '../../core/services/favourite/favourite.service';
 import { Product } from '../../core/models/product';
+import { fromPartial } from '@total-typescript/shoehorn';
 
 describe(CatalogComponent.name, () => {
   let spectator: Spectator<CatalogComponent>;
   let productService: SpyObject<ProductService>;
   let favouriteService: SpyObject<FavouriteService>;
 
-  const mockProducts: Product[] = [
+  const mockProducts: Product[] = fromPartial([
     {
       id: '1',
       name: 'Wireless Headphones',
-      description: 'High-quality headphones',
-      price: 199.99,
-      category: 'Electronics',
-      imageUrl: 'headphones.jpg',
-      rating: 4.5,
-      stock: 10
     },
     {
       id: '2',
       name: 'Laptop Stand',
-      description: 'Ergonomic stand',
-      price: 49.99,
-      category: 'Accessories',
-      imageUrl: 'stand.jpg',
-      rating: 4.3,
-      stock: 25
-    }
-  ];
+    },
+  ]);
 
   const createComponent = createComponentFactory({
     component: CatalogComponent,
@@ -49,21 +37,21 @@ describe(CatalogComponent.name, () => {
           minPrice: 0,
           maxPrice: Number.MAX_SAFE_INTEGER,
           sortBy: 'name',
-          sortOrder: 'asc'
+          sortOrder: 'asc',
         }),
         updateSearchTerm: jest.fn(),
         updateCategory: jest.fn(),
         updateSort: jest.fn(),
         resetFilters: jest.fn(),
-        retryLoad: jest.fn()
+        retryLoad: jest.fn(),
       }),
       mockProvider(FavouriteService, {
         isFavorite: jest.fn().mockReturnValue(false),
-        toggleFavorite: jest.fn()
-      })
+        toggleFavorite: jest.fn(),
+      }),
     ],
     shallow: true,
-    detectChanges: false
+    detectChanges: false,
   });
 
   beforeEach(() => {
@@ -95,7 +83,7 @@ describe(CatalogComponent.name, () => {
   describe('Search Functionality', () => {
     it('should update search term when input changes', () => {
       spectator.component['onSearchChange']('headphones');
-      
+
       expect(spectator.component['searchTerm']()).toBe('headphones');
       expect(productService.updateSearchTerm).toHaveBeenCalledWith('headphones');
     });
@@ -103,7 +91,7 @@ describe(CatalogComponent.name, () => {
     it('should clear search term when empty string', () => {
       spectator.component['onSearchChange']('test');
       spectator.component['onSearchChange']('');
-      
+
       expect(spectator.component['searchTerm']()).toBe('');
       expect(productService.updateSearchTerm).toHaveBeenCalledWith('');
     });
@@ -112,14 +100,14 @@ describe(CatalogComponent.name, () => {
   describe('Category Filtering', () => {
     it('should update category when selection changes', () => {
       spectator.component['onCategoryChange']('Electronics');
-      
+
       expect(spectator.component['selectedCategory']()).toBe('Electronics');
       expect(productService.updateCategory).toHaveBeenCalledWith('Electronics');
     });
 
     it('should handle empty category selection', () => {
       spectator.component['onCategoryChange']('');
-      
+
       expect(spectator.component['selectedCategory']()).toBe('');
       expect(productService.updateCategory).toHaveBeenCalledWith('');
     });
@@ -128,14 +116,14 @@ describe(CatalogComponent.name, () => {
   describe('Sorting', () => {
     it('should update sort field', () => {
       spectator.component['onSortChange']('price');
-      
+
       expect(spectator.component['selectedSort']()).toBe('price');
       expect(productService.updateSort).toHaveBeenCalledWith('price', 'asc');
     });
 
     it('should update sort order', () => {
       spectator.component['onOrderChange']('desc');
-      
+
       expect(spectator.component['selectedOrder']()).toBe('desc');
       expect(productService.updateSort).toHaveBeenCalledWith('name', 'desc');
     });
@@ -143,7 +131,7 @@ describe(CatalogComponent.name, () => {
     it('should update both sort field and order', () => {
       spectator.component['onSortChange']('rating');
       spectator.component['onOrderChange']('desc');
-      
+
       expect(spectator.component['selectedSort']()).toBe('rating');
       expect(spectator.component['selectedOrder']()).toBe('desc');
       expect(productService.updateSort).toHaveBeenCalledWith('rating', 'desc');
@@ -156,9 +144,9 @@ describe(CatalogComponent.name, () => {
       spectator.component['onCategoryChange']('Electronics');
       spectator.component['onSortChange']('price');
       spectator.component['onOrderChange']('desc');
-      
+
       spectator.component['resetFilters']();
-      
+
       expect(spectator.component['searchTerm']()).toBe('');
       expect(spectator.component['selectedCategory']()).toBe('');
       expect(spectator.component['selectedSort']()).toBe('name');
@@ -170,16 +158,16 @@ describe(CatalogComponent.name, () => {
   describe('Favorites', () => {
     it('should check if product is favorite', () => {
       favouriteService.isFavorite.mockReturnValue(true);
-      
+
       const result = spectator.component['isFavorite']('1');
-      
+
       expect(result).toBe(true);
       expect(favouriteService.isFavorite).toHaveBeenCalledWith('1');
     });
 
     it('should toggle favorite', () => {
       spectator.component['toggleFavorite']('1');
-      
+
       expect(favouriteService.toggleFavorite).toHaveBeenCalledWith('1');
     });
   });
@@ -187,7 +175,7 @@ describe(CatalogComponent.name, () => {
   describe('Error Handling', () => {
     it('should handle retry on error', () => {
       spectator.component['handleRetry']();
-      
+
       expect(productService.retryLoad).toHaveBeenCalled();
     });
   });
