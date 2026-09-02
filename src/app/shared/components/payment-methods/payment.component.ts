@@ -1,11 +1,14 @@
 import { ChangeDetectionStrategy, Component, effect, input, output, signal } from '@angular/core';
 import { PAYMENT_METHODS, PaymentMethod } from '../../../core/models/checkout';
+import { CreditCardIconComponent } from '../icons/credit-card-icon/credit-card-icon.component';
+import { BanknoteIconComponent } from '../icons/banknote-icon/banknote-icon.component';
 
 @Component({
   selector: 'app-payment-options',
   templateUrl: './payment.component.html',
   styleUrls: ['./payment.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [CreditCardIconComponent, BanknoteIconComponent],
 })
 export class PaymentMethodComponent {
   initialData = input<PaymentMethod | undefined>();

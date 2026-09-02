@@ -1,11 +1,14 @@
 import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
+import { HomeIconComponent } from '../../shared/components/icons/home-icon/home-icon.component';
+import { ArrowLeftIconComponent } from '../../shared/components/icons/arrow-left-icon/arrow-left-icon.component';
 
 @Component({
   selector: 'app-page-not-found',
   templateUrl: './page-not-found.component.html',
   styleUrls: ['./page-not-found.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [HomeIconComponent, ArrowLeftIconComponent],
 })
 export class PageNotFoundComponent implements OnInit, OnDestroy {
   private readonly router = inject(Router);

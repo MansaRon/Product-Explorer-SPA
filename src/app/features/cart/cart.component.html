@@ -20,14 +20,15 @@
         @for (item of cartWithProducts(); track item.productId) {
           <div class="cart-item">
             <div class="item-image">
-              <img 
-                [src]="item.product!.imageUrl ?? '/assets/placeholder.jpg'" 
-                [alt]="item.product!.name"
+              <img
+                [src]="item.product!.imageUrls[0] ?? '/assets/placeholder.jpg'"
+                [alt]="item.product!.title"
               />
+
             </div>
 
             <div class="item-details">
-              <h3 class="item-name">{{ item.product!.name }}</h3>
+              <h3 class="item-name">{{ item.product!.title }}</h3>
               <p class="item-category">{{ item.product!.category }}</p>
               
               <div class="item-meta">
@@ -39,12 +40,12 @@
                 </span>
               </div>
 
-              @if (item.product!.stock < 10 && item.product!.stock > 0) {
+              @if (item.product!.quantity < 10 && item.product!.quantity > 0) {
                 <p class="item-stock-warning">
-                  ⚠️ Only {{ item.product!.stock }} left in stock
+                  ⚠️ Only {{ item.product!.quantity }} left in stock
                 </p>
               }
-              @if (item.product!.stock === 0) {
+              @if (item.product!.quantity === 0) {
                 <p class="item-out-of-stock">
                   ❌ Out of stock
                 </p>
@@ -55,14 +56,11 @@
               <div class="item-total">
                 {{ (item.product!.price * item.quantity) | currency: 'R' }}
               </div>
-              <button 
-                type="button" 
+              <button
+                type="button"
                 class="remove-button"
                 (click)="removeFromCart(item.productId)">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
-                  <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                  <path d="M10 11v6M14 11v6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
+                <app-trash-icon [width]="20" [height]="20"  color="currentColor" />
                 Remove
               </button>
             </div>

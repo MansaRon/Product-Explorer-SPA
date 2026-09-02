@@ -1,6 +1,6 @@
 <div class="payment-methods" role="radiogroup" aria-label="Payment method options">
   @for (method of paymentMethods; track method.id) {
-    <label 
+    <label
       class="payment-method"
       [class.payment-method--selected]="isSelected(method.id)">
       <input
@@ -15,22 +15,13 @@
         <div class="method-icon" aria-hidden="true">
           @switch (method.type) {
             @case ('card') {
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                <rect x="1" y="4" width="22" height="16" rx="2" stroke-width="2"/>
-                <path d="M1 10h22" stroke-width="2"/>
-              </svg>
+              <app-credit-card-icon [width]="32" [height]="32"  color="currentColor" />
             }
             @case ('eft') {
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                <rect x="2" y="5" width="20" height="14" rx="2" stroke-width="2"/>
-                <path d="M2 10h20" stroke-width="2"/>
-              </svg>
+              <app-credit-card-icon [width]="32" [height]="32"  color="currentColor" />
             }
             @case ('cash') {
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                <rect x="2" y="7" width="20" height="10" rx="2" stroke-width="2"/>
-                <circle cx="12" cy="12" r="3" stroke-width="2"/>
-              </svg>
+              <app-banknote-icon [width]="32" [height]="32"  color="currentColor" />
             }
           }
         </div>

@@ -18,29 +18,15 @@
             [attr.aria-label]="step.label + ' step' + (step.isCompleted ? ', completed' : '')">
             <span class="step-icon" aria-hidden="true">
               @if (step.isCompleted) {
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                  <path d="M20 6L9 17l-5-5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
+                <app-check-icon [width]="20" [height]="20"  color="currentColor" />
               } @else if (step.icon === 'truck') {
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                  <path d="M16 3h5v13h-2M16 16H3V4h13v12z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                  <circle cx="7.5" cy="19.5" r="2.5" stroke-width="2"/>
-                  <circle cx="16.5" cy="19.5" r="2.5" stroke-width="2"/>
-                </svg>
+                <app-truck-icon [width]="20" [height]="20"  color="currentColor" />
               } @else if (step.icon === 'calendar') {
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                  <rect x="3" y="4" width="18" height="18" rx="2" stroke-width="2"/>
-                  <path d="M16 2v4M8 2v4M3 10h18" stroke-width="2" stroke-linecap="round"/>
-                </svg>
+                <app-calendar-icon [width]="20" [height]="20"  color="currentColor" />
               } @else if (step.icon === 'card') {
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                  <rect x="1" y="4" width="22" height="16" rx="2" stroke-width="2"/>
-                  <path d="M1 10h22" stroke-width="2"/>
-                </svg>
+                <app-credit-card-icon [width]="20" [height]="20"  color="currentColor" />
               } @else {
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                  <path d="M20 6L9 17l-5-5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
+                <app-check-icon [width]="20" [height]="20"  color="currentColor" />
               }
             </span>
             <span class="step-label">{{ step.label }}</span>

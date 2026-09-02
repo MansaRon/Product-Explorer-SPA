@@ -7,21 +7,7 @@
   } @else {
     <div class="product-detail">
       <button type="button" class="back-link" (click)="goBack()" aria-label="Back to catalog">
-        <svg
-          width="20"
-          height="20"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          aria-hidden="true"
-        >
-          <path
-            d="M19 12H5M12 19l-7-7 7-7"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-        </svg>
+        <app-arrow-left-icon [width]="20" [height]="20"  color="currentColor" />
         Back to Catalog
       </button>
 
@@ -54,20 +40,7 @@
                 [attr.aria-label]="isFavorite() ? 'Remove from favorites' : 'Add to favorites'"
                 [attr.aria-pressed]="isFavorite()"
               >
-                <svg
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  aria-hidden="true"
-                >
-                  <path
-                    d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
-                    [attr.fill]="isFavorite() ? 'currentColor' : 'none'"
-                    stroke-width="2"
-                  />
-                </svg>
+                <app-heart-icon [width]="24" [height]="24" [filled]="isFavorite()"  color="currentColor" />
                 {{ isFavorite() ? 'Remove from Favorites' : 'Add to Favorites' }}
               </button>
 
@@ -80,40 +53,14 @@
                 [attr.aria-label]="isInCart() ? 'Remove from cart' : 'Add to cart'"
                 [attr.aria-pressed]="isInCart()"
               >
-                <svg
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  aria-hidden="true"
-                >
-                  <path
-                    d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    [attr.fill]="isInCart() ? 'currentColor' : 'none'"
-                  />
-                  <line x1="3" y1="6" x2="21" y2="6" stroke-width="2" stroke-linecap="round" />
-                  <path
-                    d="M16 10a4 4 0 01-8 0"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                </svg>
+                <app-cart-icon [width]="24" [height]="24" [filled]="isInCart()"  color="currentColor" />
                 {{ isInCart() ? 'Remove from Cart' : 'Add to Cart' }}
               </button>
             </div>
           </div>
 
           <div class="product-rating">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-              <path
-                d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
-              />
-            </svg>
+            <app-star-icon [width]="20" [height]="20"  color="currentColor" />
             <span class="rating-value">{{ product()!.rate }}</span>
             <span class="rating-text">({{ product()!.rate }} out of 5)</span>
           </div>

@@ -34,7 +34,7 @@ export class CatalogComponent {
   
   protected readonly searchTerm = signal('');
   protected readonly selectedCategory = signal('');
-  protected readonly selectedSort = signal<SortField>('name');
+  protected readonly selectedSort = signal<SortField>('title');
   protected readonly selectedOrder = signal<SortOrder>('asc');
   
   protected onSearchChange(value: string): void {
@@ -62,7 +62,7 @@ export class CatalogComponent {
   protected resetFilters(): void {
     this.searchTerm.set('');
     this.selectedCategory.set('');
-    this.selectedSort.set('name');
+    this.selectedSort.set('title');
     this.selectedOrder.set('asc');
     this.productService.resetFilters();
   }

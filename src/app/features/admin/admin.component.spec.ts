@@ -18,15 +18,15 @@ describe.skip(AdminComponent.name, () => {
   const mockProducts: Product[] = fromPartial([
     {
       id: '1',
-      name: 'Wireless Headphones',
+      title: 'Wireless Headphones',
     },
     {
       id: '2',
-      name: 'Laptop Stand',
+      title: 'Laptop Stand',
     },
     {
       id: '3',
-      name: 'USB-C Hub',
+      title: 'USB-C Hub',
     }
   ]);
 
@@ -117,9 +117,9 @@ describe.skip(AdminComponent.name, () => {
     it('should sort products by rating descending', () => {
       const topRated = spectator.component['topRatedProducts']();
       
-      expect(topRated[0].rating).toBe(4.8);
-      expect(topRated[1].rating).toBe(4.5);
-      expect(topRated[2].rating).toBe(4.2);
+      expect(topRated[0].rate).toBe(4.8);
+      expect(topRated[1].rate).toBe(4.5);
+      expect(topRated[2].rate).toBe(4.2);
     });
   });
 

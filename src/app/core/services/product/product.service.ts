@@ -3,7 +3,8 @@ import { computed, inject, Injectable, signal } from '@angular/core';
 import { Product } from '../../models/product';
 import { FilterParams, SortField, SortOrder } from '../../models/filter-params';
 import { initialFilterParams } from '../../const/filter-params';
-import { catchError, delay, of } from 'rxjs';
+import { ApiResponse, PagedData } from '../../models/api-response';
+import { catchError, delay, map, of } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Injectable({
@@ -29,8 +30,8 @@ export class ProductService {
 
     if (params.searchTerm) {
       const searchProduct = params.searchTerm.toLowerCase();
-      filtered = filtered.filter(p => 
-        p.name.toLowerCase().includes(searchProduct) || 
+      filtered = filtered.filter(p =>
+        p.title.toLowerCase().includes(searchProduct) ||
         p.description.toLowerCase().includes(searchProduct)
       );
     }
@@ -74,9 +75,10 @@ export class ProductService {
     this.loadingSignal.set(true);
     this.errorSignal.set(null);
 
-    this.httpClient.get<Product[]>('/assets/data/products.json')
+    this.httpClient.get<ApiResponse<PagedData<Product> | Product[]>>('/products')
     .pipe(
       delay(800),
+      map(response => this.extractProducts(response)),
       takeUntilDestroyed(),
       catchError(error => {
         this.errorSignal.set('Failed to load products. Please try again.');
@@ -130,6 +132,27 @@ export class ProductService {
   
   retryLoad(): void {
     this.loadProducts();
+  }
+
+  private extractProducts(response: ApiResponse<PagedData<Product> | Product[]> | Product[]): Product[] {
+    if (Array.isArray(response)) {
+      return response.map(p => this.normalise(p));
+    }
+
+    const data = response.data;
+
+    if (Array.isArray(data)) {
+      return data.map(p => this.normalise(p));
+    }
+
+    return (data.products ?? []).map(p => this.normalise(p));
+  }
+
+  private normalise(product: Product): Product {
+    return {
+      ...product,
+      rate: parseFloat(String(product.rate)),
+    };
   }
 
 }

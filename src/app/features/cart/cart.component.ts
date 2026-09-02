@@ -4,13 +4,14 @@ import { EmptyStateComponent } from '../../shared/components/empty-state/empty-s
 import { CartService } from '../../core/services/cart/cart.service';
 import { ProductService } from '../../core/services/product/product.service';
 import { Router } from '@angular/router';
+import { TrashIconComponent } from '../../shared/components/icons/trash-icon/trash-icon.component';
 
 @Component({
   selector: 'app-cart',
   templateUrl: './cart.component.html',
   styleUrls: ['./cart.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CurrencyPipe, EmptyStateComponent],
+  imports: [CurrencyPipe, EmptyStateComponent, TrashIconComponent],
 })
 export class CartComponent {
   private readonly cartService = inject(CartService);

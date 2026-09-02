@@ -23,7 +23,7 @@ export const appConfig: ApplicationConfig = {
         //loadingInterceptor,
         //loggingInterceptor,
         //retryInterceptor,
-        //baseUrlInterceptor,
+        baseUrlInterceptor,
         //cachingInterceptor,
       ])
     ),

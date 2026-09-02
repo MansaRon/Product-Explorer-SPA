@@ -71,7 +71,7 @@ export class ReviewComponent {
 
         return {
           productId: cartItem.productId,
-          productName: product!.name,
+          productName: product!.title,
           quantity: cartItem.quantity,
           price: product!.price
         };
