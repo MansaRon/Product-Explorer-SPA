@@ -1,4 +1,3 @@
-/* tslint:disable:no-unused-variable */
 import { createComponentFactory, Spectator, SpyObject } from '@ngneat/spectator/jest';
 import { mockProvider } from '@ngneat/spectator/jest';
 import { signal } from '@angular/core';
@@ -11,8 +10,8 @@ import { fromPartial } from '@total-typescript/shoehorn';
 
 describe.skip(AdminComponent.name, () => {
   let spectator: Spectator<AdminComponent>;
-  let productService: SpyObject<ProductService>;
-  let favouriteService: SpyObject<FavouriteService>;
+  // let productService: SpyObject<ProductService>;
+  // let favouriteService: SpyObject<FavouriteService>;
   let authService: SpyObject<AuthService>;
 
   const mockProducts: Product[] = fromPartial([
@@ -27,7 +26,7 @@ describe.skip(AdminComponent.name, () => {
     {
       id: '3',
       title: 'USB-C Hub',
-    }
+    },
   ]);
 
   const createComponent = createComponentFactory({
@@ -35,25 +34,25 @@ describe.skip(AdminComponent.name, () => {
     providers: [
       mockProvider(ProductService, {
         filterProducts: signal(mockProducts),
-        categories: signal(['Electronics', 'Accessories'])
+        categories: signal(['Electronics', 'Accessories']),
       }),
       mockProvider(FavouriteService, {
-        count: signal(5)
+        count: signal(5),
       }),
       mockProvider(AuthService, {
         isAdmin: signal(true),
         toggleAdmin: jest.fn(),
-        logoutAndRedirect: jest.fn().mockResolvedValue(undefined)
-      })
+        logoutAndRedirect: jest.fn().mockResolvedValue(undefined),
+      }),
     ],
     shallow: true,
-    detectChanges: false
+    detectChanges: false,
   });
 
   beforeEach(() => {
     spectator = createComponent();
-    productService = spectator.inject(ProductService);
-    favouriteService = spectator.inject(FavouriteService);
+    // productService = spectator.inject(ProductService);
+    // favouriteService = spectator.inject(FavouriteService);
     authService = spectator.inject(AuthService);
     jest.clearAllMocks();
   });
@@ -76,7 +75,7 @@ describe.skip(AdminComponent.name, () => {
 
     it('should compute total inventory value', () => {
       const stats = spectator.component['stats']();
-      const expectedValue = (199.99 * 10) + (49.99 * 5) + (59.99 * 0);
+      const expectedValue = 199.99 * 10 + 49.99 * 5 + 59.99 * 0;
       expect(stats.totalValue).toBeCloseTo(expectedValue, 2);
     });
 
@@ -110,13 +109,13 @@ describe.skip(AdminComponent.name, () => {
   describe('Top Rated Products', () => {
     it('should compute top 5 rated products', () => {
       const topRated = spectator.component['topRatedProducts']();
-      
+
       expect(topRated.length).toBeLessThanOrEqual(5);
     });
 
     it('should sort products by rating descending', () => {
       const topRated = spectator.component['topRatedProducts']();
-      
+
       expect(topRated[0].rate).toBe(4.8);
       expect(topRated[1].rate).toBe(4.5);
       expect(topRated[2].rate).toBe(4.2);
@@ -126,24 +125,24 @@ describe.skip(AdminComponent.name, () => {
   describe('Category Statistics', () => {
     it('should compute category stats', () => {
       const categoryStats = spectator.component['categoryStats']();
-      
+
       expect(categoryStats.length).toBe(2);
     });
 
     it('should count products per category', () => {
       const categoryStats = spectator.component['categoryStats']();
-      const electronicsStats = categoryStats.find(s => s.category === 'Electronics');
-      const accessoriesStats = categoryStats.find(s => s.category === 'Accessories');
-      
+      const electronicsStats = categoryStats.find((s) => s.category === 'Electronics');
+      const accessoriesStats = categoryStats.find((s) => s.category === 'Accessories');
+
       expect(electronicsStats?.count).toBe(2);
       expect(accessoriesStats?.count).toBe(1);
     });
 
     it('should compute total value per category', () => {
       const categoryStats = spectator.component['categoryStats']();
-      const electronicsStats = categoryStats.find(s => s.category === 'Electronics');
-      
-      const expectedValue = (199.99 * 10) + (59.99 * 0);
+      const electronicsStats = categoryStats.find((s) => s.category === 'Electronics');
+
+      const expectedValue = 199.99 * 10 + 59.99 * 0;
       expect(electronicsStats?.totalValue).toBeCloseTo(expectedValue, 2);
     });
   });
@@ -151,13 +150,13 @@ describe.skip(AdminComponent.name, () => {
   describe('Admin Actions', () => {
     it('should toggle admin access', () => {
       spectator.component['toggleAdminAccess']();
-      
+
       expect(authService.toggleAdmin).toHaveBeenCalled();
     });
 
     it('should logout and redirect', async () => {
       await spectator.component['logout']();
-      
+
       expect(authService.logoutAndRedirect).toHaveBeenCalled();
     });
   });

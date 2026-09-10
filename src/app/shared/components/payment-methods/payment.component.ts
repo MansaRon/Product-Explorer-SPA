@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, effect, input, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, input, output } from '@angular/core';
 import { PAYMENT_METHODS, PaymentMethod } from '../../../core/models/checkout';
 import { CreditCardIconComponent } from '../icons/credit-card-icon/credit-card-icon.component';
 import { BanknoteIconComponent } from '../icons/banknote-icon/banknote-icon.component';

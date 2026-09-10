@@ -1,17 +1,18 @@
 import { HttpClient } from '@angular/common/http';
-import { computed, inject, Injectable, signal } from '@angular/core';
+import { computed, DestroyRef, inject, Injectable, signal } from '@angular/core';
 import { Product } from '../../models/product';
 import { FilterParams, SortField, SortOrder } from '../../models/filter-params';
 import { initialFilterParams } from '../../const/filter-params';
 import { ApiResponse, PagedData } from '../../models/api-response';
-import { catchError, delay, map, of } from 'rxjs';
+import { catchError, delay, map, of, retry } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ProductService {
   private readonly httpClient = inject(HttpClient);
+  private readonly destryRef = inject(DestroyRef);
 
   private readonly productsSignal = signal<Product[]>([]);
   private readonly loadingSignal = signal(false);
@@ -30,22 +31,18 @@ export class ProductService {
 
     if (params.searchTerm) {
       const searchProduct = params.searchTerm.toLowerCase();
-      filtered = filtered.filter(p =>
-        p.title.toLowerCase().includes(searchProduct) ||
-        p.description.toLowerCase().includes(searchProduct)
+      filtered = filtered.filter(
+        (p) =>
+          p.title.toLowerCase().includes(searchProduct) ||
+          p.description.toLowerCase().includes(searchProduct)
       );
     }
 
     if (params.category) {
-      filtered = filtered.filter(category => category.category === params.category);
+      filtered = filtered.filter((category) => category.category === params.category);
     }
 
-    filtered = filtered.filter(pf => 
-      pf.price >= 
-      params.minPrice && 
-      pf.price <= 
-      params.maxPrice
-    );
+    filtered = filtered.filter((pf) => pf.price >= params.minPrice && pf.price <= params.maxPrice);
 
     filtered.sort((a, b) => {
       const aVal = a[params.sortBy];
@@ -63,11 +60,11 @@ export class ProductService {
 
   readonly categories = computed(() => {
     const products = this.productsSignal();
-    const uniqueCategories = new Set(products.map(p => p.category));
+    const uniqueCategories = new Set(products.map((p) => p.category));
     return Array.from(uniqueCategories).sort();
   });
 
-  constructor() { 
+  constructor() {
     this.loadProducts();
   }
 
@@ -75,77 +72,81 @@ export class ProductService {
     this.loadingSignal.set(true);
     this.errorSignal.set(null);
 
-    this.httpClient.get<ApiResponse<PagedData<Product> | Product[]>>('/products')
-    .pipe(
-      delay(800),
-      map(response => this.extractProducts(response)),
-      takeUntilDestroyed(),
-      catchError(error => {
-        this.errorSignal.set('Failed to load products. Please try again.');
-        console.error('Error loading products:', error);
-        return of([]);
-      })
-    )
-    .subscribe(products => {
-      this.productsSignal.set(products);
-      this.loadingSignal.set(false);
-    });
+    this.httpClient
+      .get<ApiResponse<PagedData<Product> | Product[]>>('/products')
+      .pipe(
+        delay(800),
+        map((response) => this.extractProducts(response)),
+        takeUntilDestroyed(this.destryRef),
+        retry(3),
+        catchError((error) => {
+          this.errorSignal.set('Failed to load products. Please try again.');
+          console.error('Error loading products:', error);
+          return of([]);
+        })
+      )
+      .subscribe((products) => {
+        this.productsSignal.set(products);
+        this.loadingSignal.set(false);
+      });
   }
 
   getProductById(id: string): Product | undefined {
-    return this.productsSignal().find(p => p.id === id);
+    return this.productsSignal().find((p) => p.id === id);
   }
-  
+
   updateSearchTerm(searchTerm: string): void {
-    this.filterParamsSignal.update(params => ({
+    this.filterParamsSignal.update((params) => ({
       ...params,
-      searchTerm
+      searchTerm,
     }));
   }
-  
+
   updateCategory(category: string): void {
-    this.filterParamsSignal.update(params => ({
+    this.filterParamsSignal.update((params) => ({
       ...params,
-      category
+      category,
     }));
   }
-  
+
   updatePriceRange(minPrice: number, maxPrice: number): void {
-    this.filterParamsSignal.update(params => ({
+    this.filterParamsSignal.update((params) => ({
       ...params,
       minPrice,
-      maxPrice
+      maxPrice,
     }));
   }
-  
+
   updateSort(sortBy: SortField, sortOrder: SortOrder): void {
-    this.filterParamsSignal.update(params => ({
+    this.filterParamsSignal.update((params) => ({
       ...params,
       sortBy,
-      sortOrder
+      sortOrder,
     }));
   }
-  
+
   resetFilters(): void {
     this.filterParamsSignal.set(initialFilterParams);
   }
-  
+
   retryLoad(): void {
     this.loadProducts();
   }
 
-  private extractProducts(response: ApiResponse<PagedData<Product> | Product[]> | Product[]): Product[] {
+  private extractProducts(
+    response: ApiResponse<PagedData<Product> | Product[]> | Product[]
+  ): Product[] {
     if (Array.isArray(response)) {
-      return response.map(p => this.normalise(p));
+      return response.map((p) => this.normalise(p));
     }
 
     const data = response.data;
 
     if (Array.isArray(data)) {
-      return data.map(p => this.normalise(p));
+      return data.map((p) => this.normalise(p));
     }
 
-    return (data.products ?? []).map(p => this.normalise(p));
+    return (data.products ?? []).map((p) => this.normalise(p));
   }
 
   private normalise(product: Product): Product {
@@ -154,5 +155,4 @@ export class ProductService {
       rate: parseFloat(String(product.rate)),
     };
   }
-
 }
