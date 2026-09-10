@@ -1,5 +1,5 @@
 module.exports = {
-    displayName: 'lexis-nexus-assignmnt',
+    displayName: 'ecommerce-project',
     preset: 'jest-preset-angular',
     setupFilesAfterEnv: ['<rootDir>/src/setup-jest.ts'],
     testPathIgnorePatterns: ['/node_modules/', '/dist/', '/e2e/'],
