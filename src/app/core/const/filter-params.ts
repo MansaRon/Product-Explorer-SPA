@@ -6,7 +6,7 @@ export const initialFilterParams: FilterParams = {
     category: '',
     minPrice: 0,
     maxPrice: Number.MAX_SAFE_INTEGER,
-    sortBy: 'name',
+    sortBy: 'title',
     sortOrder: 'asc'
 } as const;
 

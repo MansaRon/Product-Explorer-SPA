@@ -1,4 +1,4 @@
-export type SortField = 'name' | 'price' | 'rating';
+export type SortField = 'title' | 'price' | 'rate';
 export type SortOrder = 'asc' | 'desc';
 
 export interface FilterParams {

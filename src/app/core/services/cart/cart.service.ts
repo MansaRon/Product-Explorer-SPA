@@ -39,7 +39,7 @@ export class CartService {
       return {
         ...item,
         product,
-        productName: product?.name || '',
+        productName: product?.title || '',
         price: product?.price || 0
       };
     });

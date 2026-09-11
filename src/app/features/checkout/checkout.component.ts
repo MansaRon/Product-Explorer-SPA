@@ -3,13 +3,17 @@ import { Router, RouterOutlet } from '@angular/router';
 import { CheckoutService } from '../../core/services/checkout/checkout.service';
 import { CartService } from '../../core/services/cart/cart.service';
 import { CheckoutStep } from '../../core/models/checkout';
+import { CheckIconComponent } from '../../shared/components/icons/check-icon/check-icon.component';
+import { TruckIconComponent } from '../../shared/components/icons/truck-icon/truck-icon.component';
+import { CalendarIconComponent } from '../../shared/components/icons/calendar-icon/calendar-icon.component';
+import { CreditCardIconComponent } from '../../shared/components/icons/credit-card-icon/credit-card-icon.component';
 
 @Component({
   selector: 'app-checkout',
   templateUrl: './checkout.component.html',
   styleUrls: ['./checkout.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterOutlet]
+  imports: [RouterOutlet, CheckIconComponent, TruckIconComponent, CalendarIconComponent, CreditCardIconComponent],
 })
 export class CheckoutComponent {
   private readonly checkoutService = inject(CheckoutService);

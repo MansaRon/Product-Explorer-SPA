@@ -11,14 +11,17 @@
         type="button"
         class="edit-button"
         (click)="handleEditShipping()"
-        aria-label="Edit shipping address">
+        aria-label="Edit shipping address"
+      >
         Edit
       </button>
     </div>
 
     @if (shipping) {
       <div class="section-content">
-        <p class="info-line"><strong>{{ shipping.fullName }}</strong></p>
+        <p class="info-line">
+          <strong>{{ shipping.fullName }}</strong>
+        </p>
         <p class="info-line">{{ shipping.streetAddress }}</p>
         @if (shipping.apartment) {
           <p class="info-line">{{ shipping.apartment }}</p>
@@ -41,16 +44,21 @@
         type="button"
         class="edit-button"
         (click)="handleEditDelivery()"
-        aria-label="Edit delivery method">
+        aria-label="Edit delivery method"
+      >
         Edit
       </button>
     </div>
     @if (delivery) {
       <div class="section-content">
-        <p class="info-line"><strong>{{ delivery.name }}</strong></p>
+        <p class="info-line">
+          <strong>{{ delivery.name }}</strong>
+        </p>
         <p class="info-line">{{ delivery.description }}</p>
         <p class="info-line">
-          <strong>Cost: {{ delivery.price === 0 ? 'FREE' : (delivery.price | currency: 'R') }}</strong>
+          <strong
+            >Cost: {{ delivery.price === 0 ? 'FREE' : (delivery.price | currency: 'R') }}</strong
+          >
         </p>
       </div>
     }
@@ -64,13 +72,16 @@
         type="button"
         class="edit-button"
         (click)="handleEditPayment()"
-        aria-label="Edit payment method" >
+        aria-label="Edit payment method"
+      >
         Edit
       </button>
     </div>
     @if (payment) {
       <div class="section-content">
-        <p class="info-line"><strong>{{ payment.label }}</strong></p>
+        <p class="info-line">
+          <strong>{{ payment.label }}</strong>
+        </p>
       </div>
     }
   </section>
@@ -82,16 +93,17 @@
       @for (item of cartWithProducts(); track item.productId) {
         <div class="order-item">
           @if (item.product; as product) {
-            <img 
-              [src]="item.product.imageUrl ?? '/assets/placeholder.jpg'" 
-              [alt]="item.product.name"
-              class="item-image" />
+            <img
+              [src]="item.product.imageUrls[0] ?? '/assets/placeholder.jpg'"
+              [alt]="item.product.title"
+              class="item-image"
+            />
             <div class="item-details">
-              <p class="item-name">{{ item.product.name }}</p>
+              <p class="item-name">{{ item.product.title }}</p>
               <p class="item-quantity">Qty: {{ item.quantity }}</p>
             </div>
             <p class="item-price">
-              {{ (item.product.price * item.quantity) | currency: 'R' }}
+              {{ item.product.price * item.quantity | currency: 'R' }}
             </p>
           }
         </div>

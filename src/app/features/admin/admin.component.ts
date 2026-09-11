@@ -3,6 +3,12 @@ import { ProductService } from '../../core/services/product/product.service';
 import { FavouriteService } from '../../core/services/favourite/favourite.service';
 import { AuthService } from '../../core/services/auth/auth.service';
 import { CurrencyPipe } from '@angular/common';
+import { TableIconComponent } from '../../shared/components/icons/table-icon/table-icon.component';
+import { CurrencyIconComponent } from '../../shared/components/icons/currency-icon/currency-icon.component';
+import { AlertTriangleIconComponent } from '../../shared/components/icons/alert-triangle-icon/alert-triangle-icon.component';
+import { XCircleIconComponent } from '../../shared/components/icons/x-circle-icon/x-circle-icon.component';
+import { StarIconComponent } from '../../shared/components/icons/star-icon/star-icon.component';
+import { HeartIconComponent } from '../../shared/components/icons/heart-icon/heart-icon.component';
 
 @Component({
   selector: 'app-admin',
@@ -10,7 +16,13 @@ import { CurrencyPipe } from '@angular/common';
   styleUrls: ['./admin.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CurrencyPipe
+    CurrencyPipe,
+    TableIconComponent,
+    CurrencyIconComponent,
+    AlertTriangleIconComponent,
+    XCircleIconComponent,
+    StarIconComponent,
+    HeartIconComponent,
   ]
 })
 export class AdminComponent {
@@ -27,11 +39,11 @@ export class AdminComponent {
   protected readonly stats = computed(() => {
     const allProducts = this.products();
     const totalProducts = allProducts.length;
-    const totalValue = allProducts.reduce((sum, p) => sum + (p.price * p.stock), 0);
-    const lowStock = allProducts.filter(p => p.stock < 10 && p.stock > 0).length;
-    const outOfStock = allProducts.filter(p => p.stock === 0).length;
-    const avgRating = totalProducts > 0 
-      ? allProducts.reduce((sum, p) => sum + p.rating, 0) / totalProducts 
+    const totalValue = allProducts.reduce((sum, p) => sum + (p.price * p.quantity), 0);
+    const lowStock = allProducts.filter(p => p.quantity < 10 && p.quantity > 0).length;
+    const outOfStock = allProducts.filter(p => p.quantity === 0).length;
+    const avgRating = totalProducts > 0
+      ? allProducts.reduce((sum, p) => sum + p.rate, 0) / totalProducts
       : 0;
     
     return {
@@ -47,7 +59,7 @@ export class AdminComponent {
   
   protected readonly topRatedProducts = computed(() => {
     return [...this.products()]
-      .sort((a, b) => b.rating - a.rating)
+      .sort((a, b) => b.rate - a.rate)
       .slice(0, 5);
   });
   
@@ -60,7 +72,7 @@ export class AdminComponent {
       const current = stats.get(p.category) || { count: 0, totalValue: 0 };
       stats.set(p.category, {
         count: current.count + 1,
-        totalValue: current.totalValue + (p.price * p.stock)
+        totalValue: current.totalValue + (p.price * p.quantity)
       });
     });
     

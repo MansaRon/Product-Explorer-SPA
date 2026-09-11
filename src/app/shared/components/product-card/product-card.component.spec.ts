@@ -8,7 +8,7 @@ describe.skip(ProductCardComponent.name, () => {
 
   const mockProduct: Product = fromPartial({
     id: '1',
-    name: 'Test Product',
+    title: 'Test Product',
   });
 
   const createComponent = createComponentFactory({
@@ -62,22 +62,22 @@ describe.skip(ProductCardComponent.name, () => {
     });
 
     it('should show "Only X left" when stock < 10', () => {
-      spectator.setInput('product', { ...mockProduct, stock: 5 });
+      spectator.setInput('product', { ...mockProduct, quantity:5 });
       expect(spectator.query('.product-stock')).toHaveText('Only 5 left');
     });
 
     it('should show "Out of stock" when stock = 0', () => {
-      spectator.setInput('product', { ...mockProduct, stock: 0 });
+      spectator.setInput('product', { ...mockProduct, quantity:0 });
       expect(spectator.query('.product-stock')).toHaveText('Out of stock');
     });
 
     it('should apply low stock class when stock < 10', () => {
-      spectator.setInput('product', { ...mockProduct, stock: 5 });
+      spectator.setInput('product', { ...mockProduct, quantity:5 });
       expect(spectator.query('.product-stock')).toHaveClass('product-stock--low');
     });
 
     it('should apply out of stock class when stock = 0', () => {
-      spectator.setInput('product', { ...mockProduct, stock: 0 });
+      spectator.setInput('product', { ...mockProduct, quantity:0 });
       expect(spectator.query('.product-stock')).toHaveClass('product-stock--out');
     });
   });

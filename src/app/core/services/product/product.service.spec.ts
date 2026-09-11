@@ -12,23 +12,23 @@ describe.skip('Service: Product', () => {
   const mockProducts: Product[] = [
     {
       id: '1',
-      name: 'Wireless Headphones',
+      title: 'Wireless Headphones',
       description: 'High-quality wireless headphones with noise cancellation',
       price: 199.99,
       category: 'Electronics',
-      imageUrl: 'headphones.jpg',
-      rating: 4.5,
-      stock: 10
+      imageUrls: ['headphones.jpg'],
+      rate: 4.5,
+      quantity: 10
     },
     {
       id: '2',
-      name: 'Laptop Stand',
+      title: 'Laptop Stand',
       description: 'Ergonomic aluminum laptop stand',
       price: 49.99,
       category: 'Accessories',
-      imageUrl: 'stand.jpg',
-      rating: 4.3,
-      stock: 25
+      imageUrls: ['stand.jpg'],
+      rate: 4.3,
+      quantity: 25
     }
   ];
 
@@ -55,7 +55,7 @@ describe.skip('Service: Product', () => {
 
   describe('loadProducts', () => {
     it('should call HttpClient.get on initialization', () => {
-      const url = '/assets/data/products.json';
+      const url = '/products';
       spectator.expectOne(url, HttpMethod.GET);
     });
 
@@ -66,7 +66,7 @@ describe.skip('Service: Product', () => {
 
   describe('getProductsById', () => {
     beforeEach((done) => {
-      const req = spectator.expectOne('/assets/data/products.json', HttpMethod.GET);
+      const req = spectator.expectOne('/products', HttpMethod.GET);
       req.flush(mockProducts);
       setTimeout(() => done(), 1000);
     });
@@ -75,7 +75,7 @@ describe.skip('Service: Product', () => {
       const product = spectator.service.getProductById('1');
       
       expect(product).toBeDefined();
-      expect(product?.name).toBe('Wireless Headphones');
+      expect(product?.title).toBe('Wireless Headphones');
     });
 
     it('should return undefined when id does not exist', () => {
@@ -87,7 +87,7 @@ describe.skip('Service: Product', () => {
 
   describe('updateSearchTerm', () => {
     beforeEach((done) => {
-      const req = spectator.expectOne('/assets/data/products.json', HttpMethod.GET);
+      const req = spectator.expectOne('/products', HttpMethod.GET);
       req.flush(mockProducts);
       setTimeout(() => done(), 1000);
     });
@@ -97,15 +97,15 @@ describe.skip('Service: Product', () => {
       
       const filtered = spectator.service.filterProducts();
       expect(filtered.length).toBe(1);
-      expect(filtered[0].name).toBe('Wireless Headphones');
+      expect(filtered[0].title).toBe('Wireless Headphones');
     });
 
     it('should be case-insensitive', () => {
       spectator.service.updateSearchTerm('WIRELESS');
-      
+
       const filtered = spectator.service.filterProducts();
       expect(filtered.length).toBe(1);
-      expect(filtered[0].name).toBe('Wireless Headphones');
+      expect(filtered[0].title).toBe('Wireless Headphones');
     });
 
     it('should return all products when search term is empty', () => {
@@ -120,13 +120,13 @@ describe.skip('Service: Product', () => {
       
       const filtered = spectator.service.filterProducts();
       expect(filtered.length).toBe(1);
-      expect(filtered[0].name).toBe('Laptop Stand');
+      expect(filtered[0].title).toBe('Laptop Stand');
     });
   });
 
   describe('updateCategory', () => {
     beforeEach((done) => {
-      const req = spectator.expectOne('/assets/data/products.json', HttpMethod.GET);
+      const req = spectator.expectOne('/products', HttpMethod.GET);
       req.flush(mockProducts);
       setTimeout(() => done(), 1000);
     });
@@ -149,7 +149,7 @@ describe.skip('Service: Product', () => {
 
   describe('updatePriceRange', () => {
     beforeEach((done) => {
-      const req = spectator.expectOne('/assets/data/products.json', HttpMethod.GET);
+      const req = spectator.expectOne('/products', HttpMethod.GET);
       req.flush(mockProducts);
       setTimeout(() => done(), 1000);
     });
@@ -159,7 +159,7 @@ describe.skip('Service: Product', () => {
       
       const filtered = spectator.service.filterProducts();
       expect(filtered.length).toBe(1);
-      expect(filtered[0].name).toBe('USB-C Hub');
+      expect(filtered[0].title).toBe('USB-C Hub');
     });
 
     it('should include products at exact boundaries', () => {
@@ -172,25 +172,25 @@ describe.skip('Service: Product', () => {
 
   describe('updateSort', () => {
     beforeEach((done) => {
-      const req = spectator.expectOne('/assets/data/products.json', HttpMethod.GET);
+      const req = spectator.expectOne('/products', HttpMethod.GET);
       req.flush(mockProducts);
       setTimeout(() => done(), 1000);
     });
 
-    it('should sort products by name ascending', () => {
-      spectator.service.updateSort('name', 'asc');
-      
+    it('should sort products by title ascending', () => {
+      spectator.service.updateSort('title', 'asc');
+
       const sorted = spectator.service.filterProducts();
-      expect(sorted[0].name).toBe('Laptop Stand');
-      expect(sorted[sorted.length - 1].name).toBe('Wireless Headphones');
+      expect(sorted[0].title).toBe('Laptop Stand');
+      expect(sorted[sorted.length - 1].title).toBe('Wireless Headphones');
     });
 
-    it('should sort products by name descending', () => {
-      spectator.service.updateSort('name', 'desc');
-      
+    it('should sort products by title descending', () => {
+      spectator.service.updateSort('title', 'desc');
+
       const sorted = spectator.service.filterProducts();
-      expect(sorted[0].name).toBe('Wireless Headphones');
-      expect(sorted[sorted.length - 1].name).toBe('Laptop Stand');
+      expect(sorted[0].title).toBe('Wireless Headphones');
+      expect(sorted[sorted.length - 1].title).toBe('Laptop Stand');
     });
 
     it('should sort products by price ascending', () => {
@@ -209,26 +209,26 @@ describe.skip('Service: Product', () => {
       expect(sorted[sorted.length - 1].price).toBe(49.99);
     });
 
-    it('should sort products by rating ascending', () => {
-      spectator.service.updateSort('rating', 'asc');
-      
+    it('should sort products by rate ascending', () => {
+      spectator.service.updateSort('rate', 'asc');
+
       const sorted = spectator.service.filterProducts();
-      expect(sorted[0].rating).toBe(4.2);
-      expect(sorted[sorted.length - 1].rating).toBe(4.8);
+      expect(sorted[0].rate).toBe(4.3);
+      expect(sorted[sorted.length - 1].rate).toBe(4.5);
     });
 
-    it('should sort products by rating descending', () => {
-      spectator.service.updateSort('rating', 'desc');
-      
+    it('should sort products by rate descending', () => {
+      spectator.service.updateSort('rate', 'desc');
+
       const sorted = spectator.service.filterProducts();
-      expect(sorted[0].rating).toBe(4.8);
-      expect(sorted[sorted.length - 1].rating).toBe(4.2);
+      expect(sorted[0].rate).toBe(4.5);
+      expect(sorted[sorted.length - 1].rate).toBe(4.3);
     });
   });
 
   describe('resetFilters', () => {
     beforeEach((done) => {
-      const req = spectator.expectOne('/assets/data/products.json', HttpMethod.GET);
+      const req = spectator.expectOne('/products', HttpMethod.GET);
       req.flush(mockProducts);
       setTimeout(() => done(), 1000);
     });
@@ -246,7 +246,7 @@ describe.skip('Service: Product', () => {
       expect(params.category).toBe('');
       expect(params.minPrice).toBe(0);
       expect(params.maxPrice).toBe(Number.MAX_SAFE_INTEGER);
-      expect(params.sortBy).toBe('name');
+      expect(params.sortBy).toBe('title');
       expect(params.sortOrder).toBe('asc');
     });
 
@@ -261,7 +261,7 @@ describe.skip('Service: Product', () => {
 
   describe('categories', () => {
     beforeEach((done) => {
-      const req = spectator.expectOne('/assets/data/products.json', HttpMethod.GET);
+      const req = spectator.expectOne('/products', HttpMethod.GET);
       req.flush(mockProducts);
       setTimeout(() => done(), 1000);
     });
@@ -284,18 +284,18 @@ describe.skip('Service: Product', () => {
 
   describe('retryLoad', () => {
     it('should make new HTTP request', () => {
-      const req1 = spectator.expectOne('/assets/data/products.json', HttpMethod.GET);
+      const req1 = spectator.expectOne('/products', HttpMethod.GET);
       req1.flush('Error', { status: 500, statusText: 'Server Error' });
 
       spectator.service.retryLoad();
 
-      spectator.expectOne('/assets/data/products.json', HttpMethod.GET);
+      spectator.expectOne('/products', HttpMethod.GET);
     });
   });
 
   describe('Combined Filtering', () => {
     beforeEach((done) => {
-      const req = spectator.expectOne('/assets/data/products.json', HttpMethod.GET);
+      const req = spectator.expectOne('/products', HttpMethod.GET);
       req.flush(mockProducts);
       setTimeout(() => done(), 1000);
     });
@@ -306,7 +306,7 @@ describe.skip('Service: Product', () => {
       
       const filtered = spectator.service.filterProducts();
       expect(filtered.length).toBe(1);
-      expect(filtered[0].name).toBe('USB-C Hub');
+      expect(filtered[0].title).toBe('USB-C Hub');
     });
 
     it('should apply all filters and sorting together', () => {

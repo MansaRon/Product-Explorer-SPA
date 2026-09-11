@@ -2,6 +2,8 @@ import { ChangeDetectionStrategy, Component, computed, input, output } from '@an
 import { RouterLink } from '@angular/router';
 import { Product } from '../../../core/models/product';
 import { CurrencyPipe } from '@angular/common';
+import { HeartIconComponent } from '../icons/heart-icon/heart-icon.component';
+import { StarIconComponent } from '../icons/star-icon/star-icon.component';
 
 @Component({
   selector: 'app-product-card',
@@ -10,7 +12,9 @@ import { CurrencyPipe } from '@angular/common';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     RouterLink,
-    CurrencyPipe
+    CurrencyPipe,
+    HeartIconComponent,
+    StarIconComponent,
   ]
 })
 export class ProductCardComponent {

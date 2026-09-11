@@ -16,11 +16,11 @@ describe.skip(FavouritesComponent.name, () => {
   const mockProducts: Product[] = fromPartial([
     {
       id: '1',
-      name: 'Wireless Headphones',
+      title: 'Wireless Headphones',
     },
     {
       id: '2',
-      name: 'Laptop Stand',
+      title: 'Laptop Stand',
     }
   ]);
 

@@ -4,12 +4,17 @@ import { NavItem } from '../../../core/models/navigation';
 import { AuthService } from '../../../core/services/auth/auth.service';
 import { ThemeService } from '../../../core/services/theme/theme.service';
 import { CartService } from '../../../core/services/cart/cart.service';
+import { CartIconComponent } from '../icons/cart-icon/cart-icon.component';
+import { MenuIconComponent } from '../icons/menu-icon/menu-icon.component';
+import { CloseIconComponent } from '../icons/close-icon/close-icon.component';
+import { MoonIconComponent } from '../icons/moon-icon/moon-icon.component';
+import { SunIconComponent } from '../icons/sun-icon/sun-icon.component';
 
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
-  imports: [RouterLink, RouterLinkActive],
+  imports: [RouterLink, RouterLinkActive, CartIconComponent, MenuIconComponent, CloseIconComponent, MoonIconComponent, SunIconComponent],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HeaderComponent {

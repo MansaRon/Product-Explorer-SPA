@@ -1,13 +1,13 @@
 <article class="product-card">
-  <a 
+  <a
     [routerLink]="routeLink()"
     class="product-link"
-    [attr.aria-label]="'View details for ' + vm().name"
+    [attr.aria-label]="'View details for ' + vm().title"
   >
     <div class="product-image-container">
       <img
-        [src]="vm().imageUrl ?? '/have a place holder for image not found'"
-        [alt]="vm().name"
+        [src]="vm().imageUrls[0] ?? '/assets/placeholder.jpg'"
+        [alt]="vm().title"
         class="product-image"
         loading="lazy"
       />
@@ -17,32 +17,19 @@
         [class.favorite-button--active]="isFavorite()"
         (click)="handleFavoriteClick($event)"
         [attr.aria-label]="
-          isFavorite() 
-            ? 'Remove ' + vm().name + ' from favorites' 
-            : 'Add ' + vm().name + ' to favorites'
+          isFavorite()
+            ? 'Remove ' + vm().title + ' from favorites'
+            : 'Add ' + vm().title + ' to favorites'
         "
         [attr.aria-pressed]="isFavorite()"
       >
-        <svg 
-          width="20" 
-          height="20" 
-          viewBox="0 0 24 24" 
-          fill="none" 
-          stroke="currentColor"
-          aria-hidden="true"
-        >
-          <path 
-            d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
-            [attr.fill]="isFavorite() ? 'currentColor' : 'none'"
-            stroke-width="2"
-          />
-        </svg>
+        <app-heart-icon [width]="20" [height]="20" [filled]="isFavorite()"  color="currentColor" />
       </button>
     </div>
 
     <div class="product-content">
       <div class="product-header">
-        <h2 class="product-name">{{ vm().name }}</h2>
+        <h2 class="product-name">{{ vm().title }}</h2>
         <span class="product-category">{{ vm().category }}</span>
       </div>
 
@@ -50,33 +37,25 @@
 
       <div class="product-footer">
         <div class="product-rating">
-          <svg 
-            width="16" 
-            height="16" 
-            viewBox="0 0 24 24" 
-            fill="currentColor"
-            aria-hidden="true"
-          >
-            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-          </svg>
-          <span>{{ vm().rating }}</span>
+          <app-star-icon [width]="16" [height]="16"  color="currentColor" />
+          <span>{{ vm().rate }}</span>
         </div>
 
         <div class="product-price">
           <span class="price-label">Price:</span>
-          <span class="price-value">{{ vm().price.toFixed(2) | currency: "R" }}</span>
+          <span class="price-value">{{ vm().price.toFixed(2) | currency: 'R' }}</span>
         </div>
       </div>
 
-      <div 
+      <div
         class="product-stock"
-        [class.product-stock--low]="vm().stock < 10"
-        [class.product-stock--out]="vm().stock === 0"
+        [class.product-stock--low]="vm().quantity < 10"
+        [class.product-stock--out]="vm().quantity === 0"
       >
-        @if (vm().stock === 0) {
+        @if (vm().quantity === 0) {
           Out of stock
-        } @else if (vm().stock < 10) {
-          Only {{ vm().stock }} left
+        } @else if (vm().quantity < 10) {
+          Only {{ vm().quantity }} left
         } @else {
           In stock
         }

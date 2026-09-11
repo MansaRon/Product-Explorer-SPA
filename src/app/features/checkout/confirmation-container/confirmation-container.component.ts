@@ -1,5 +1,11 @@
-import { CurrencyPipe, DatePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { OrderService } from '../../../core/services/order/order.service';
 import { ProductService } from '../../../core/services/product/product.service';
@@ -12,7 +18,7 @@ import { OrderConfirmationComponent } from '../../../shared/components/order-con
   templateUrl: './confirmation-container.component.html',
   styleUrls: ['./confirmation-container.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [OrderConfirmationComponent]
+  imports: [OrderConfirmationComponent],
 })
 export class ConfirmationContainerComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
@@ -35,11 +41,11 @@ export class ConfirmationContainerComponent implements OnInit {
     const currentOrder = this.order();
     if (!currentOrder) return [];
 
-    return currentOrder.items.map(item => {
+    return currentOrder.items.map((item) => {
       const product = this.productService.getProductById(item.productId);
       return {
         ...item,
-        product
+        product,
       };
     });
   });
@@ -63,5 +69,4 @@ export class ConfirmationContainerComponent implements OnInit {
     // If admin, go to admin page, otherwise go back to main page
     this.router.navigate([[`${AppRoutes.CATALOG}`]]);
   }
-
 }

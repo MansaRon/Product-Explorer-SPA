@@ -15,11 +15,11 @@ describe(CatalogComponent.name, () => {
   const mockProducts: Product[] = fromPartial([
     {
       id: '1',
-      name: 'Wireless Headphones',
+      title: 'Wireless Headphones',
     },
     {
       id: '2',
-      name: 'Laptop Stand',
+      title: 'Laptop Stand',
     },
   ]);
 
@@ -36,7 +36,7 @@ describe(CatalogComponent.name, () => {
           category: '',
           minPrice: 0,
           maxPrice: Number.MAX_SAFE_INTEGER,
-          sortBy: 'name',
+          sortBy: 'title',
           sortOrder: 'asc',
         }),
         updateSearchTerm: jest.fn(),
@@ -75,7 +75,7 @@ describe(CatalogComponent.name, () => {
     });
 
     it('should initialize with default sort', () => {
-      expect(spectator.component['selectedSort']()).toBe('name');
+      expect(spectator.component['selectedSort']()).toBe('title');
       expect(spectator.component['selectedOrder']()).toBe('asc');
     });
   });
@@ -125,16 +125,16 @@ describe(CatalogComponent.name, () => {
       spectator.component['onOrderChange']('desc');
 
       expect(spectator.component['selectedOrder']()).toBe('desc');
-      expect(productService.updateSort).toHaveBeenCalledWith('name', 'desc');
+      expect(productService.updateSort).toHaveBeenCalledWith('title', 'desc');
     });
 
     it('should update both sort field and order', () => {
-      spectator.component['onSortChange']('rating');
+      spectator.component['onSortChange']('rate');
       spectator.component['onOrderChange']('desc');
 
-      expect(spectator.component['selectedSort']()).toBe('rating');
+      expect(spectator.component['selectedSort']()).toBe('rate');
       expect(spectator.component['selectedOrder']()).toBe('desc');
-      expect(productService.updateSort).toHaveBeenCalledWith('rating', 'desc');
+      expect(productService.updateSort).toHaveBeenCalledWith('rate', 'desc');
     });
   });
 
@@ -149,7 +149,7 @@ describe(CatalogComponent.name, () => {
 
       expect(spectator.component['searchTerm']()).toBe('');
       expect(spectator.component['selectedCategory']()).toBe('');
-      expect(spectator.component['selectedSort']()).toBe('name');
+      expect(spectator.component['selectedSort']()).toBe('title');
       expect(spectator.component['selectedOrder']()).toBe('asc');
       expect(productService.resetFilters).toHaveBeenCalled();
     });
