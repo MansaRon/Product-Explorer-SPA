@@ -3,6 +3,7 @@ import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { authInterceptor } from './core/services/interceptor/auth/auth.interceptor';
 import { baseUrlInterceptor } from './core/services/interceptor/base-url/base-url.interceptor';
 import { retryInterceptor } from './core/services/interceptor/retry/retry.interceptor';
 import { loadingInterceptor } from './core/services/interceptor/loading/loading.interceptor';
@@ -13,9 +14,8 @@ export const appConfig: ApplicationConfig = {
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
     provideHttpClient(
-      // Will uncomment once I've intergrated with the backend and want to test the interceptors
       withInterceptors([
-        //authInterceptor,
+        authInterceptor,
         errorInterceptor,
         loadingInterceptor,
         //loggingInterceptor,

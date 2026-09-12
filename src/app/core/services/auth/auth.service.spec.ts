@@ -1,31 +1,51 @@
-/* tslint:disable:no-unused-variable */
-
-import { createServiceFactory, SpectatorService, SpyObject } from '@ngneat/spectator/jest';
+import {
+  createServiceFactory,
+  mockProvider,
+  SpectatorService,
+  SpyObject,
+} from '@ngneat/spectator/jest';
+import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { of } from 'rxjs';
 import { AuthService } from './auth.service';
-import { mockProvider } from '@ngneat/spectator/jest';
+import { User } from '../../models/user';
+import { fromPartial } from '@total-typescript/shoehorn';
 
 describe(AuthService.name, () => {
   let spectator: SpectatorService<AuthService>;
   let router: SpyObject<Router>;
+  let http: SpyObject<HttpClient>;
+
+  const mockUser: User = fromPartial({
+    id: '1',
+    name: 'Jane Doe',
+    email: 'jane@test.com',
+    accessToken: 'access-token',
+    refreshToken: 'refresh-token',
+    roles: ['USER'],
+  });
+
+  const mockAdminUser: User = fromPartial({ ...mockUser, roles: ['USER', 'ADMIN'] });
 
   const createService = createServiceFactory({
     service: AuthService,
     providers: [
-      mockProvider(Router, {
-        navigate: jest.fn().mockResolvedValue(true)
-      })
-    ]
+      mockProvider(Router, { navigate: jest.fn().mockResolvedValue(true) }),
+      mockProvider(HttpClient, { post: jest.fn() }),
+    ],
   });
 
   beforeEach(() => {
+    localStorage.clear();
     sessionStorage.clear();
     spectator = createService();
     router = spectator.inject(Router);
+    http = spectator.inject(HttpClient);
     jest.clearAllMocks();
   });
 
   afterEach(() => {
+    localStorage.clear();
     sessionStorage.clear();
   });
 
@@ -34,85 +54,68 @@ describe(AuthService.name, () => {
   });
 
   describe('Initialization', () => {
-    it('should start as not admin', () => {
-      expect(spectator.service.isAdmin()).toBe(false);
+    it('should start unauthenticated when storage is empty', () => {
       expect(spectator.service.isAuthenticated()).toBe(false);
+      expect(spectator.service.isAdmin()).toBe(false);
     });
   });
 
   describe('login', () => {
-    it('should set admin status to true', () => {
-      spectator.service.login();
-      
-      expect(spectator.service.isAdmin()).toBe(true);
+    it('should set currentUser and return the user', () => {
+      http.post.mockReturnValue(of({ data: mockUser }));
+      spectator.service.login({ email: 'jane@test.com', password: 'pass' }).subscribe((user) => {
+        expect(user).toEqual(mockUser);
+      });
       expect(spectator.service.isAuthenticated()).toBe(true);
+      expect(spectator.service.currentUser()).toEqual(mockUser);
     });
 
-    it('should persist to sessionStorage', () => {
-      const setItemSpy = jest.spyOn(Storage.prototype, 'setItem');
-      
-      spectator.service.login();
-      
-      expect(setItemSpy).toHaveBeenCalledWith('isAdmin', 'true');
+    it('should set isAdmin true when user has ADMIN role', () => {
+      http.post.mockReturnValue(of({ data: mockAdminUser }));
+      spectator.service.login({ email: 'admin@test.com', password: 'pass' }).subscribe();
+      expect(spectator.service.isAdmin()).toBe(true);
     });
   });
 
   describe('logout', () => {
     beforeEach(() => {
-      spectator.service.login();
+      http.post.mockReturnValue(of({ data: mockUser }));
+      spectator.service.login({ email: 'jane@test.com', password: 'pass' }).subscribe();
     });
 
-    it('should set admin status to false', () => {
+    it('should clear the current user', () => {
       spectator.service.logout();
-      
-      expect(spectator.service.isAdmin()).toBe(false);
       expect(spectator.service.isAuthenticated()).toBe(false);
-    });
-
-    it('should persist to sessionStorage', () => {
-      const setItemSpy = jest.spyOn(Storage.prototype, 'setItem');
-      
-      spectator.service.logout();
-      
-      expect(setItemSpy).toHaveBeenCalledWith('isAdmin', 'false');
-    });
-  });
-
-  describe('toggleAdmin', () => {
-    it('should toggle from false to true', () => {
-      spectator.service.toggleAdmin();
-      
-      expect(spectator.service.isAdmin()).toBe(true);
-    });
-
-    it('should toggle from true to false', () => {
-      spectator.service.login();
-      spectator.service.toggleAdmin();
-      
-      expect(spectator.service.isAdmin()).toBe(false);
-    });
-
-    it('should persist each toggle', () => {
-      const setItemSpy = jest.spyOn(Storage.prototype, 'setItem');
-      
-      spectator.service.toggleAdmin();
-      expect(setItemSpy).toHaveBeenLastCalledWith('isAdmin', 'true');
-      
-      spectator.service.toggleAdmin();
-      expect(setItemSpy).toHaveBeenLastCalledWith('isAdmin', 'false');
+      expect(spectator.service.currentUser()).toBeNull();
     });
   });
 
   describe('logoutAndRedirect', () => {
-    beforeEach(() => {
-      spectator.service.login();
+    it('should logout and navigate to /login', () => {
+      spectator.service.logoutAndRedirect();
+      expect(router.navigate).toHaveBeenCalledWith(['/login']);
+    });
+  });
+
+  describe('getAccessToken', () => {
+    it('should return null when not authenticated', () => {
+      expect(spectator.service.getAccessToken()).toBeNull();
     });
 
-    it('should logout and navigate to catalog', async () => {
-      await spectator.service.logoutAndRedirect();
-      
+    it('should return access token when authenticated', () => {
+      http.post.mockReturnValue(of({ data: mockUser }));
+      spectator.service.login({ email: 'jane@test.com', password: 'pass' }).subscribe();
+      expect(spectator.service.getAccessToken()).toBe('access-token');
+    });
+  });
+
+  describe('toggleAdmin', () => {
+    it('should toggle dev admin override', () => {
       expect(spectator.service.isAdmin()).toBe(false);
-      expect(router.navigate).toHaveBeenCalledWith(['/catalog']);
+      spectator.service.toggleAdmin();
+      expect(spectator.service.isAdmin()).toBe(true);
+      spectator.service.toggleAdmin();
+      expect(spectator.service.isAdmin()).toBe(false);
     });
   });
 });

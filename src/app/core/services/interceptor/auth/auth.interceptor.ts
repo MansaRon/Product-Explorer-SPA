@@ -1,14 +1,11 @@
-import { inject, Injectable } from '@angular/core';
+import { inject } from '@angular/core';
 import {
   HttpRequest,
-  HttpHandler,
-  HttpEvent,
-  HttpInterceptor,
   HttpHandlerFn,
   HttpErrorResponse,
-  HttpInterceptorFn
+  HttpInterceptorFn,
 } from '@angular/common/http';
-import { BehaviorSubject, catchError, filter, Observable, switchMap, take, throwError } from 'rxjs';
+import { BehaviorSubject, catchError, filter, switchMap, take, throwError } from 'rxjs';
 import { AuthService } from '../../auth/auth.service';
 import { Router } from '@angular/router';
 
@@ -23,7 +20,7 @@ import { Router } from '@angular/router';
  */
 
 let isRefreshing = false;
-const refreshTokenSubject = new BehaviorSubject<string | null>(null); 
+const refreshTokenSubject = new BehaviorSubject<string | null>(null);
 
 export const authInterceptor: HttpInterceptorFn = (
   req: HttpRequest<unknown>,
@@ -31,15 +28,15 @@ export const authInterceptor: HttpInterceptorFn = (
 ) => {
   const authService = inject(AuthService);
   const router = inject(Router);
- 
+
   // Skip auth endpoints to avoid infinite loops
   if (isAuthEndpoint(req.url)) {
     return next(req);
   }
- 
+
   const token = authService.getAccessToken();
   const authReq = token ? addAuthHeader(req, token) : req;
- 
+
   return next(authReq).pipe(
     catchError((error) => {
       if (error instanceof HttpErrorResponse && error.status === 401) {
@@ -59,7 +56,7 @@ function handle401(
   if (!isRefreshing) {
     isRefreshing = true;
     refreshTokenSubject.next(null);
- 
+
     return authService.refreshToken().pipe(
       switchMap((newToken: string) => {
         isRefreshing = false;
@@ -74,7 +71,7 @@ function handle401(
       })
     );
   }
- 
+
   return refreshTokenSubject.pipe(
     filter((token) => token !== null),
     take(1),
@@ -89,6 +86,8 @@ function addAuthHeader(req: HttpRequest<unknown>, token: string): HttpRequest<un
 }
 
 function isAuthEndpoint(url: string): boolean {
-  const authPaths = ['/auth/login', '/auth/register', '/auth/refresh'];
+  // Exclude only unauthenticated endpoints. /auth/refresh is NOT excluded because
+  // the backend requires a valid Bearer token (hasRole USER) to call it.
+  const authPaths = ['/auth/login', '/auth/register', '/auth/confirm'];
   return authPaths.some((path) => url.includes(path));
 }

@@ -3,8 +3,8 @@
     <div class="header-content">
       <a routerLink="/" class="logo" aria-label="Product Explorer Home">
         <svg width="32" height="32" viewBox="0 0 32 32" fill="none" aria-hidden="true">
-          <rect width="32" height="32" rx="8" fill="currentColor"/>
-          <path d="M16 8L22 14L16 20L10 14L16 8Z" fill="white"/>
+          <rect width="32" height="32" rx="8" fill="currentColor" />
+          <path d="M16 8L22 14L16 20L10 14L16 8Z" fill="white" />
         </svg>
         <span class="logo-text">Product Explorer</span>
       </a>
@@ -18,9 +18,9 @@
         aria-label="Toggle navigation menu"
       >
         @if (!isOpen()) {
-          <app-menu-icon [width]="24" [height]="24"  color="currentColor" />
+          <app-menu-icon [width]="24" [height]="24" color="currentColor" />
         } @else {
-          <app-close-icon [width]="24" [height]="24"  color="currentColor" />
+          <app-close-icon [width]="24" [height]="24" color="currentColor" />
         }
       </button>
 
@@ -29,26 +29,25 @@
         class="nav"
         [class.nav--open]="isOpen()"
         [attr.aria-hidden]="!isOpen()"
-        aria-label="Main navigation">
+        aria-label="Main navigation"
+      >
         @for (item of navItems(); track item.label) {
           @if (item.label !== 'Admin' || isAdmin()) {
-            <a class="nav-link"
+            <a
+              class="nav-link"
               [routerLink]="item.link"
               routerLinkActive="nav-link--active"
-              (click)="closeMobileMenu()">
+              (click)="closeMobileMenu()"
+            >
               {{ item.label }}
             </a>
           }
         }
 
         <div class="nav-actions">
-          <button
-            type="button"
-            class="cart-icon-button"
-            routerLink="/cart"
-            aria-label="View cart">
+          <button type="button" class="cart-icon-button" routerLink="/cart" aria-label="View cart">
             <div class="cart-icon-wrapper">
-              <app-cart-icon [width]="20" [height]="20"  color="currentColor"  [filled]="false" />
+              <app-cart-icon [width]="20" [height]="20" color="currentColor" [filled]="false" />
               @if (cartCount() > 0) {
                 <span class="cart-badge">
                   {{ cartCount() }}
@@ -57,28 +56,58 @@
             </div>
           </button>
 
-          <button
-            type="button"
-            class="admin-toggle"
-            (click)="toggleAdmin()"
-            [class.admin-toggle--active]="isAdmin()"
-            aria-label="Toggle admin access">
-            @if (isAdmin()) {
-              🔓 Admin Mode
+          <div class="profile-menu-container">
+            @if (!isAuthenticated()) {
+              <a
+                routerLink="/login"
+                class="profile-button"
+                aria-label="Sign in or create an account"
+              >
+                <app-user-circle-icon [width]="24" [height]="24" color="currentColor" />
+              </a>
             } @else {
-              🔒 Guest Mode
+              <button
+                type="button"
+                class="profile-button profile-button--avatar"
+                (click)="toggleProfileMenu()"
+                [attr.aria-expanded]="profileMenuOpen()"
+                aria-haspopup="true"
+                aria-label="Account menu"
+              >
+                <span class="user-avatar" aria-hidden="true">{{ userInitial() }}</span>
+              </button>
+
+              @if (profileMenuOpen()) {
+                <div class="menu-backdrop" (click)="closeProfileMenu()" aria-hidden="true"></div>
+                <div class="profile-dropdown" role="menu">
+                  <div class="profile-info">
+                    <span class="profile-name">{{ currentUser()?.name }}</span>
+                    <span class="profile-email">{{ currentUser()?.email }}</span>
+                  </div>
+                  <hr class="dropdown-divider" />
+                  <button
+                    type="button"
+                    class="dropdown-item dropdown-item--danger"
+                    (click)="logout()"
+                    role="menuitem"
+                  >
+                    Sign Out
+                  </button>
+                </div>
+              }
             }
-          </button>
+          </div>
 
           <button
             type="button"
             class="theme-toggle"
             (click)="toggleTheme()"
-            [attr.aria-label]="theme() === 'light' ? 'Switch to dark mode' : 'Switch to light mode'">
+            [attr.aria-label]="theme() === 'light' ? 'Switch to dark mode' : 'Switch to light mode'"
+          >
             @if (theme() === 'light') {
-              <app-moon-icon [width]="20" [height]="20"  color="currentColor" />
+              <app-moon-icon [width]="20" [height]="20" color="currentColor" />
             } @else {
-              <app-sun-icon [width]="20" [height]="20"  color="currentColor" />
+              <app-sun-icon [width]="20" [height]="20" color="currentColor" />
             }
           </button>
         </div>
