@@ -4,7 +4,7 @@ import { Product } from '../../models/product';
 import { FilterParams, SortField, SortOrder } from '../../models/filter-params';
 import { initialFilterParams } from '../../const/filter-params';
 import { ApiResponse, PagedData } from '../../models/api-response';
-import { catchError, delay, map, of, retry, shareReplay } from 'rxjs';
+import { catchError, delay, map, Observable, of, retry, shareReplay } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Injectable({
@@ -97,6 +97,12 @@ export class ProductService {
 
   getProductById(id: string): Product | undefined {
     return this.productsSignal().find((p) => p.id === id);
+  }
+
+  fetchProductById(id: string): Observable<Product> {
+    return this.httpClient
+      .get<ApiResponse<Product>>(`/products/${id}`)
+      .pipe(map((response) => this.normalise(response.data)));
   }
 
   updateSearchTerm(searchTerm: string): void {
