@@ -1,0 +1,23 @@
+<div class="auth-page">
+  <div class="auth-card">
+    <div class="auth-header">
+      <h1 class="auth-title">Welcome back</h1>
+      <p class="auth-subtitle">Sign in to your account to continue</p>
+    </div>
+
+    <app-auth-form
+      mode="login"
+      [loading]="loading()"
+      [error]="error()"
+      (formSubmit)="handleSubmit($event)"
+    />
+
+    <div class="auth-footer">
+      <a routerLink="/forgot-password" class="auth-link">Forgot your password?</a>
+      <p class="auth-redirect">
+        Don't have an account?
+        <a routerLink="/register" class="auth-link auth-link--bold">Create one</a>
+      </p>
+    </div>
+  </div>
+</div>

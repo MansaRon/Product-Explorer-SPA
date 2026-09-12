@@ -4,7 +4,7 @@ import { Product } from '../../models/product';
 import { FilterParams, SortField, SortOrder } from '../../models/filter-params';
 import { initialFilterParams } from '../../const/filter-params';
 import { ApiResponse, PagedData } from '../../models/api-response';
-import { catchError, delay, map, of, retry } from 'rxjs';
+import { catchError, delay, map, of, retry, shareReplay } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Injectable({
@@ -79,6 +79,10 @@ export class ProductService {
         map((response) => this.extractProducts(response)),
         takeUntilDestroyed(this.destryRef),
         retry(3),
+        shareReplay({
+          bufferSize: 1,
+          refCount: true,
+        }),
         catchError((error) => {
           this.errorSignal.set('Failed to load products. Please try again.');
           console.error('Error loading products:', error);

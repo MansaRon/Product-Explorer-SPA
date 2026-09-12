@@ -1,26 +1,22 @@
 import { AbstractControl, ValidationErrors } from '@angular/forms';
 
 export class CheckoutValidators {
-
   static saPhoneNumber(control: AbstractControl): ValidationErrors | null {
     if (!control.value) return null;
-    
+
     const valid = /^0[0-9]{9}$/.test(control.value);
     return valid ? null : { saPhoneNumber: true };
   }
 
   static saPostalCode(control: AbstractControl): ValidationErrors | null {
     if (!control.value) return null;
-    
+
     const valid = /^[0-9]{4}$/.test(control.value);
     return valid ? null : { saPostalCode: true };
   }
 }
 
-export function getFormErrorMessage(
-  control: AbstractControl | null,
-  fieldName?: string
-): string {
+export function getFormErrorMessage(control: AbstractControl | null): string {
   if (!control || !control.touched || !control.errors) {
     return '';
   }
@@ -62,4 +58,11 @@ export function getFormErrorMessage(
 
 export function hasFormError(control: AbstractControl | null): boolean {
   return !!(control && control.invalid && control.touched);
+}
+
+export function passwordMatchValidator(group: AbstractControl): ValidationErrors | null {
+  const password = group.get('password')?.value;
+  const confirm = group.get('confirmPassword')?.value;
+  if (!password || !confirm) return null;
+  return password === confirm ? null : { passwordMismatch: true };
 }

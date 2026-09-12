@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, effect, inject, input, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, input, output } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ShippingAddress, SOUTH_AFRICAN_PROVINCES } from '../../../core/models/checkout';
 import { CheckoutValidators, getFormErrorMessage, hasFormError } from '../../utils/validators.util';
@@ -8,7 +8,7 @@ import { CheckoutValidators, getFormErrorMessage, hasFormError } from '../../uti
   templateUrl: './shipping.component.html',
   styleUrls: ['./shipping.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule]
+  imports: [ReactiveFormsModule],
 })
 export class ShippingDumbComponent {
   private readonly fb = inject(FormBuilder);
@@ -29,7 +29,7 @@ export class ShippingDumbComponent {
     city: ['', [Validators.required, Validators.minLength(2)]],
     province: ['', Validators.required],
     postalCode: ['', [Validators.required, CheckoutValidators.saPostalCode]],
-    country: ['South Africa']
+    country: ['South Africa'],
   });
 
   constructor() {
@@ -59,20 +59,20 @@ export class ShippingDumbComponent {
     if (this.form.invalid) {
       this.markAllTouched();
     } else {
-      this.formSubmit.emit(this.form.value as ShippingAddress);  
+      this.formSubmit.emit(this.form.value as ShippingAddress);
     }
   }
 
   protected getErrorMessage(fieldName: string): string {
-    return getFormErrorMessage(this.form.get(fieldName), fieldName);
+    return getFormErrorMessage(this.form.get(fieldName));
   }
 
   protected hasError(fieldName: string): boolean {
     return hasFormError(this.form.get(fieldName));
   }
-  
+
   private markAllTouched(): void {
-    Object.keys(this.form.controls).forEach(key => {
+    Object.keys(this.form.controls).forEach((key) => {
       this.form.get(key)?.markAsTouched();
     });
   }
