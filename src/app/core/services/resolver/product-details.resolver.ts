@@ -1,7 +1,6 @@
 import { inject } from '@angular/core';
 import { ResolveFn, Router } from '@angular/router';
-import { toObservable } from '@angular/core/rxjs-interop';
-import { EMPTY, filter, of, switchMap, take } from 'rxjs';
+import { EMPTY, catchError } from 'rxjs';
 import { Product } from '../../models/product';
 import { ProductService } from '../product/product.service';
 
@@ -10,16 +9,10 @@ export const productDetailsResolver: ResolveFn<Product> = (route) => {
   const router = inject(Router);
   const id = route.paramMap.get('id') ?? '';
 
-  return toObservable(productService.loading).pipe(
-    filter(loading => !loading),
-    take(1),
-    switchMap(() => {
-      const product = productService.getProductById(id);
-      if (!product) {
-        router.navigate(['/catalog']);
-        return EMPTY;
-      }
-      return of(product);
+  return productService.fetchProductById(id).pipe(
+    catchError(() => {
+      router.navigate(['/catalog']);
+      return EMPTY;
     })
   );
 };
