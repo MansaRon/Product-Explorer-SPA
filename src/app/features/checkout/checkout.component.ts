@@ -13,7 +13,13 @@ import { CreditCardIconComponent } from '../../shared/components/icons/credit-ca
   templateUrl: './checkout.component.html',
   styleUrls: ['./checkout.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterOutlet, CheckIconComponent, TruckIconComponent, CalendarIconComponent, CreditCardIconComponent],
+  imports: [
+    RouterOutlet,
+    CheckIconComponent,
+    TruckIconComponent,
+    CalendarIconComponent,
+    CreditCardIconComponent,
+  ],
 })
 export class CheckoutComponent {
   private readonly checkoutService = inject(CheckoutService);
@@ -24,39 +30,48 @@ export class CheckoutComponent {
   protected readonly progressPercentage = this.checkoutService.progressPercentage;
   protected readonly isEmpty = this.cartService.isEmpty;
 
-  protected readonly steps = computed(() => [
+  protected readonly steps = computed<
     {
-      id: 'shipping' as CheckoutStep,
+      id: CheckoutStep;
+      label: string;
+      icon: string;
+      route: string;
+      isActive: boolean;
+      isCompleted: boolean;
+    }[]
+  >(() => [
+    {
+      id: 'shipping' satisfies CheckoutStep,
       label: 'Shipping',
       icon: 'truck',
       route: '/checkout/shipping',
       isActive: this.currentStep() === 'shipping',
-      isCompleted: this.checkoutService.isStepCompleted()('shipping')
+      isCompleted: this.checkoutService.isStepCompleted()('shipping'),
     },
     {
-      id: 'delivery' as CheckoutStep,
+      id: 'delivery' satisfies CheckoutStep,
       label: 'Delivery',
       icon: 'calendar',
       route: '/checkout/delivery',
       isActive: this.currentStep() === 'delivery',
-      isCompleted: this.checkoutService.isStepCompleted()('delivery')
+      isCompleted: this.checkoutService.isStepCompleted()('delivery'),
     },
     {
-      id: 'payment' as CheckoutStep,
+      id: 'payment' satisfies CheckoutStep,
       label: 'Payment',
       icon: 'card',
       route: '/checkout/payment',
       isActive: this.currentStep() === 'payment',
-      isCompleted: this.checkoutService.isStepCompleted()('payment')
+      isCompleted: this.checkoutService.isStepCompleted()('payment'),
     },
     {
-      id: 'review' as CheckoutStep,
+      id: 'review' satisfies CheckoutStep,
       label: 'Review',
       icon: 'check',
       route: '/checkout/review',
       isActive: this.currentStep() === 'review',
-      isCompleted: false
-    }
+      isCompleted: false,
+    },
   ]);
 
   constructor() {
