@@ -1,23 +1,39 @@
-/* tslint:disable:no-unused-variable */
-
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { FavouriteService } from './favourite.service';
+import { AuthService } from '../auth/auth.service';
+import { HttpClient } from '@angular/common/http';
+import { mockProvider } from '@ngneat/spectator/jest';
+import { signal } from '@angular/core';
+import { User } from '../../models/user';
+import { of } from 'rxjs';
+import { fromPartial } from '@total-typescript/shoehorn';
+
+const mockUser: User = fromPartial({
+  id: 'user-123',
+  accessToken: 'token-abc',
+});
 
 describe(FavouriteService.name, () => {
   let spectator: SpectatorService<FavouriteService>;
 
   const createService = createServiceFactory({
-    service: FavouriteService
+    service: FavouriteService,
+    providers: [
+      mockProvider(AuthService, {
+        currentUser: signal<User | null>(null),
+        isAuthenticated: signal(false),
+      }),
+      mockProvider(HttpClient, {
+        get: jest.fn().mockReturnValue(of({ dataList: [] })),
+        post: jest.fn().mockReturnValue(of({ data: null })),
+        delete: jest.fn().mockReturnValue(of({})),
+      }),
+    ],
   });
 
   beforeEach(() => {
-    localStorage.clear();
     spectator = createService();
     jest.clearAllMocks();
-  });
-
-  afterEach(() => {
-    localStorage.clear();
   });
 
   it('should be created', () => {
@@ -25,128 +41,99 @@ describe(FavouriteService.name, () => {
   });
 
   describe('Initialization', () => {
-    it('should start with empty favorites', () => {
+    it('should start with empty favourites', () => {
       expect(spectator.service.count()).toBe(0);
-    });
-  });
-
-  describe('addFavorite', () => {
-    it('should add product to favorites', () => {
-      spectator.service.addFavorite('1');
-      
-      expect(spectator.service.isFavorite('1')).toBe(true);
-      expect(spectator.service.count()).toBe(1);
-    });
-
-    it('should not add duplicate favorites', () => {
-      spectator.service.addFavorite('1');
-      spectator.service.addFavorite('1');
-      
-      expect(spectator.service.count()).toBe(1);
-    });
-
-    it('should persist to localStorage', () => {
-      const setItemSpy = jest.spyOn(Storage.prototype, 'setItem');
-      
-      spectator.service.addFavorite('1');
-      
-      expect(setItemSpy).toHaveBeenCalledWith(
-        'product-fav-key',
-        JSON.stringify(['1'])
-      );
-    });
-  });
-
-  describe('removeFavorite', () => {
-    beforeEach(() => {
-      spectator.service.addFavorite('1');
-      spectator.service.addFavorite('2');
-    });
-
-    it('should remove product from favorites', () => {
-      spectator.service.removeFavorite('1');
-      
-      expect(spectator.service.isFavorite('1')).toBe(false);
-      expect(spectator.service.count()).toBe(1);
-    });
-
-    it('should persist to localStorage', () => {
-      const setItemSpy = jest.spyOn(Storage.prototype, 'setItem');
-      
-      spectator.service.removeFavorite('1');
-      
-      expect(setItemSpy).toHaveBeenCalled();
-    });
-  });
-
-  describe('toggleFavorite', () => {
-    it('should add when not present', () => {
-      spectator.service.toggleFavorite('1');
-      
-      expect(spectator.service.isFavorite('1')).toBe(true);
-    });
-
-    it('should remove when present', () => {
-      spectator.service.addFavorite('1');
-      spectator.service.toggleFavorite('1');
-      
-      expect(spectator.service.isFavorite('1')).toBe(false);
-    });
-  });
-
-  describe('clearAll', () => {
-    beforeEach(() => {
-      spectator.service.addFavorite('1');
-      spectator.service.addFavorite('2');
-    });
-
-    it('should clear all favorites', () => {
-      spectator.service.clearAll();
-      
-      expect(spectator.service.count()).toBe(0);
-    });
-
-    it('should persist empty state to localStorage', () => {
-      const setItemSpy = jest.spyOn(Storage.prototype, 'setItem');
-      
-      spectator.service.clearAll();
-      
-      expect(setItemSpy).toHaveBeenCalledWith(
-        'product-fav-key',
-        JSON.stringify([])
-      );
     });
   });
 
   describe('isFavorite', () => {
-    beforeEach(() => {
-      spectator.service.addFavorite('1');
-    });
-
-    it('should return true for favorite product', () => {
-      expect(spectator.service.isFavorite('1')).toBe(true);
-    });
-
-    it('should return false for non-favorite product', () => {
-      expect(spectator.service.isFavorite('999')).toBe(false);
+    it('should return false when wishlist is empty', () => {
+      expect(spectator.service.isFavorite('product-1')).toBe(false);
     });
   });
 
-  describe('favouritesId', () => {
-    it('should return array of favorite IDs', () => {
-      spectator.service.addFavorite('1');
-      spectator.service.addFavorite('2');
-      
-      const ids = spectator.service.favouritesId();
-      
-      expect(ids).toEqual(expect.arrayContaining(['1', '2']));
-      expect(ids.length).toBe(2);
+  describe('addFavorite', () => {
+    it('should not call API when user is not authenticated', () => {
+      const http = spectator.inject(HttpClient);
+      spectator.service.addFavorite('product-1');
+      expect(http.post).not.toHaveBeenCalled();
     });
 
-    it('should return empty array when no favorites', () => {
-      const ids = spectator.service.favouritesId();
-      
-      expect(ids).toEqual([]);
+    it('should call POST /wishlist when user is authenticated', () => {
+      const authService = spectator.inject(AuthService);
+      const http = spectator.inject(HttpClient);
+      (authService.currentUser as ReturnType<typeof signal<User | null>>).set(mockUser);
+
+      spectator.service.addFavorite('product-1');
+
+      expect(http.post).toHaveBeenCalledWith('/wishlist', {
+        userID: mockUser.id,
+        productID: 'product-1',
+      });
+    });
+
+    it('should not call API for a duplicate', () => {
+      const authService = spectator.inject(AuthService);
+      const http = spectator.inject(HttpClient);
+      (authService.currentUser as ReturnType<typeof signal<User | null>>).set(mockUser);
+
+      spectator.service.addFavorite('product-1');
+      spectator.service.addFavorite('product-1');
+
+      expect(http.post).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('removeFavorite', () => {
+    it('should not call API when user is not authenticated', () => {
+      const http = spectator.inject(HttpClient);
+      spectator.service.removeFavorite('product-1');
+      expect(http.delete).not.toHaveBeenCalled();
+    });
+
+    it('should call DELETE /wishlist/{userId} when authenticated', () => {
+      const authService = spectator.inject(AuthService);
+      const http = spectator.inject(HttpClient);
+      (authService.currentUser as ReturnType<typeof signal<User | null>>).set(mockUser);
+
+      spectator.service.addFavorite('product-1');
+      spectator.service.removeFavorite('product-1');
+
+      expect(http.delete).toHaveBeenCalledWith(`/wishlist/${mockUser.id}`, {
+        body: { userID: mockUser.id, productID: 'product-1' },
+      });
+    });
+  });
+
+  describe('toggleFavorite', () => {
+    it('should call addFavorite when product is not in wishlist', () => {
+      const addSpy = jest.spyOn(spectator.service, 'addFavorite');
+      spectator.service.toggleFavorite('product-1');
+      expect(addSpy).toHaveBeenCalledWith('product-1');
+    });
+
+    it('should call removeFavorite when product is already in wishlist', () => {
+      const authService = spectator.inject(AuthService);
+      (authService.currentUser as ReturnType<typeof signal<User | null>>).set(mockUser);
+
+      spectator.service.addFavorite('product-1');
+      const removeSpy = jest.spyOn(spectator.service, 'removeFavorite');
+      spectator.service.toggleFavorite('product-1');
+
+      expect(removeSpy).toHaveBeenCalledWith('product-1');
+    });
+  });
+
+  describe('clearAll', () => {
+    it('should not call API when user is not authenticated', () => {
+      const http = spectator.inject(HttpClient);
+      spectator.service.clearAll();
+      expect(http.delete).not.toHaveBeenCalled();
+    });
+
+    it('should reset count to 0', () => {
+      spectator.service.clearAll();
+      expect(spectator.service.count()).toBe(0);
     });
   });
 });
