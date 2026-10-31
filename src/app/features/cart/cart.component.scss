@@ -1,4 +1,3 @@
-
 .cart-layout {
   display: grid;
   gap: var(--spacing-xl);
@@ -92,12 +91,52 @@
   color: var(--color-primary);
 }
 
-.item-quantity {
-  font-size: var(--font-size-sm);
-  color: var(--color-text-secondary);
-  padding: var(--spacing-xs) var(--spacing-sm);
+.quantity-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
   background-color: var(--color-bg-tertiary);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
+  padding: 2px;
+}
+
+.quantity-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background-color: transparent;
+  color: var(--color-text);
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-lg);
+  font-weight: 500;
+  line-height: 1;
+  transition: background-color var(--transition-fast);
+
+  &:hover:not(:disabled) {
+    background-color: var(--color-bg-secondary);
+  }
+
+  &:disabled {
+    color: var(--color-text-muted);
+    cursor: not-allowed;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-border-focus);
+    outline-offset: 2px;
+  }
+}
+
+.quantity-value {
+  min-width: 28px;
+  text-align: center;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text);
 }
 
 .item-stock-warning {
@@ -144,7 +183,8 @@
   border-radius: var(--radius-md);
   font-size: var(--font-size-sm);
   font-weight: 500;
-  transition: background-color var(--transition-fast),
+  transition:
+    background-color var(--transition-fast),
     color var(--transition-fast);
 
   &:hover {
@@ -160,7 +200,7 @@
 
 .order-summary {
   position: sticky;
-  top: calc(4rem + var(--spacing-md)); 
+  top: calc(4rem + var(--spacing-md));
   height: fit-content;
   padding: var(--spacing-lg);
   background-color: var(--color-bg-secondary);
@@ -255,7 +295,8 @@
   border-radius: var(--radius-md);
   font-size: var(--font-size-base);
   font-weight: 500;
-  transition: background-color var(--transition-fast),
+  transition:
+    background-color var(--transition-fast),
     color var(--transition-fast);
 
   &:hover {

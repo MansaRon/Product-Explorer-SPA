@@ -5,7 +5,6 @@ import { Router } from '@angular/router';
 import { CheckoutService } from '../../../core/services/checkout/checkout.service';
 import { OrderService } from '../../../core/services/order/order.service';
 import { FooterComponent } from '../../../shared/components/footer/footer.component';
-import { ProductService } from '../../../core/services/product/product.service';
 import { AppRoutes } from '../../../shared/enums/app-routes-enum';
 
 @Component({
@@ -13,13 +12,12 @@ import { AppRoutes } from '../../../shared/enums/app-routes-enum';
   templateUrl: './review.component.html',
   styleUrls: ['./review.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [OrderComponent, FooterComponent]
+  imports: [OrderComponent, FooterComponent],
 })
 export class ReviewComponent {
   private readonly checkoutService = inject(CheckoutService);
   private readonly cartService = inject(CartService);
   private readonly orderService = inject(OrderService);
-  private readonly productService = inject(ProductService);
   private readonly router = inject(Router);
 
   protected readonly isSubmitting = signal(false);
@@ -35,7 +33,7 @@ export class ReviewComponent {
   }
 
   protected handleContinue(): void {
-    this.submitTrigger.update(n => n + 1);
+    this.submitTrigger.update((n) => n + 1);
   }
 
   protected handlePlaceOrder(): void {
@@ -63,19 +61,12 @@ export class ReviewComponent {
         return;
       }
 
-      const orderItems = cartItems.map(cartItem => {
-        const product = this.productService.getProductById((cartItem.productId));
-        if (!product) {
-          alert(`Product ${cartItem.productId} not found`);
-        }
-
-        return {
-          productId: cartItem.productId,
-          productName: product!.title,
-          quantity: cartItem.quantity,
-          price: product!.price
-        };
-      });
+      const orderItems = cartItems.map((cartItem) => ({
+        productId: cartItem.productDTO.id,
+        productName: cartItem.productDTO.title,
+        quantity: cartItem.quantity,
+        price: cartItem.productDTO.price,
+      }));
 
       const order = this.orderService.createOrder({
         items: orderItems,
@@ -84,7 +75,7 @@ export class ReviewComponent {
         total,
         shippingAddress: shipping,
         deliveryOption: delivery,
-        paymentMethod: payment
+        paymentMethod: payment,
       });
 
       this.cartService.clearCart();

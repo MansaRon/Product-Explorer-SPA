@@ -1,5 +1,18 @@
+import { Product } from './product';
+
 export interface CartItem {
-    productId: string;
-    quantity: number;
-    addedAt: Date;
+  productDTO: Product;
+  quantity: number;
+  discount: number;
+  tax: number;
+  productPrice: number;
+}
+
+export interface CartResponse {
+  data: {
+    cartItems: CartItem[];
+  };
+  message: string;
+  status: string;
+  statusCode: number;
 }

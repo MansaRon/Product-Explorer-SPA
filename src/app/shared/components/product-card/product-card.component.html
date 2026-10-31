@@ -5,12 +5,7 @@
     [attr.aria-label]="'View details for ' + vm().title"
   >
     <div class="product-image-container">
-      <img
-        [src]="vm().imageUrls[0] ?? '/assets/placeholder.jpg'"
-        [alt]="vm().title"
-        class="product-image"
-        loading="lazy"
-      />
+      <img [src]="vm().imageUrls[0]" [alt]="vm().title" class="product-image" loading="lazy" />
       <button
         type="button"
         class="favorite-button"
@@ -23,7 +18,7 @@
         "
         [attr.aria-pressed]="isFavorite()"
       >
-        <app-heart-icon [width]="20" [height]="20" [filled]="isFavorite()"  color="currentColor" />
+        <app-heart-icon [width]="20" [height]="20" [filled]="isFavorite()" color="currentColor" />
       </button>
     </div>
 
@@ -37,7 +32,7 @@
 
       <div class="product-footer">
         <div class="product-rating">
-          <app-star-icon [width]="16" [height]="16"  color="currentColor" />
+          <app-star-icon [width]="16" [height]="16" color="currentColor" />
           <span>{{ vm().rate }}</span>
         </div>
 
