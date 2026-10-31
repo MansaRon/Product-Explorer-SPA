@@ -46,6 +46,7 @@
                   <button
                     type="button"
                     class="quantity-btn"
+                    [disabled]="item.product!.quantity <= 0"
                     (click)="increaseQuantity(item.productId)"
                     aria-label="Increase quantity"
                   >

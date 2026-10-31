@@ -28,7 +28,9 @@ export class CartService {
   readonly subTotal = computed(() =>
     this.cartItemsSignal().reduce((total, item) => total + item.productPrice, 0)
   );
-  readonly tax = computed(() => this.subTotal() * 0.15);
+  readonly tax = computed(() =>
+    this.cartItemsSignal().reduce((total, item) => total + item.tax, 0)
+  );
   readonly total = computed(() => this.subTotal() + this.tax());
 
   readonly getCartSummary = computed(() => ({
@@ -128,7 +130,19 @@ export class CartService {
   }
 
   clearCart(): void {
-    this.cartItemsSignal.set([]);
+    const user = this.authService.currentUser();
+    if (!user?.id) return;
+
+    this.http
+      .delete<CartResponse>(`/cart/${user.id}/clear`)
+      .pipe(
+        tap((response) => this.syncFromResponse(response)),
+        catchError((err) => {
+          console.error('Failed to clear cart:', err);
+          return EMPTY;
+        })
+      )
+      .subscribe();
   }
 
   private loadCart(userId: string): void {

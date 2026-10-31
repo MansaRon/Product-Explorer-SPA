@@ -11,6 +11,7 @@ export interface CartItem {
 export interface CartResponse {
   data: {
     cartItems: CartItem[];
+    totalPrice: number;
   };
   message: string;
   status: string;

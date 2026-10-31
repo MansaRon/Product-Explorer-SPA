@@ -8,6 +8,7 @@ import {
 import { catchError, throwError } from 'rxjs';
 import { Router } from '@angular/router';
 import { NotificationService } from '../../notification/notification.service';
+import { AuthService } from '../../auth/auth.service';
 
 /**
  * ERROR INTERCEPTOR
@@ -32,6 +33,7 @@ export const errorInterceptor: HttpInterceptorFn = (
 ) => {
   const router = inject(Router);
   const notifications = inject(NotificationService);
+  const authService = inject(AuthService);
 
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
@@ -48,7 +50,8 @@ export const errorInterceptor: HttpInterceptorFn = (
 
         case 401:
           notifications.warn('Your session has expired. Please log in again.');
-          router.navigate(['/login']);
+          authService.logout();
+          router.navigate(['/login'], { queryParams: { returnUrl: router.url } });
           break;
 
         case 403:
