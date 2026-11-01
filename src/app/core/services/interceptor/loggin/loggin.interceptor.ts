@@ -1,6 +1,11 @@
-import { HttpErrorResponse, HttpEvent, HttpHandler, HttpHandlerFn, HttpInterceptor, HttpInterceptorFn, HttpRequest, HttpResponse } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { Observable, tap } from 'rxjs';
+import {
+  HttpErrorResponse,
+  HttpHandlerFn,
+  HttpInterceptorFn,
+  HttpRequest,
+  HttpResponse,
+} from '@angular/common/http';
+import { tap } from 'rxjs';
 import { environment } from '../../../../../environment';
 
 /**
@@ -24,20 +29,20 @@ export const loggingInterceptor: HttpInterceptorFn = (
 ) => {
   const start = performance.now();
   const safeHeaders = redactHeaders(req.headers.keys(), req);
- 
+
   if (!environment.production) {
     console.groupCollapsed(`➡️  ${req.method} ${req.url}`);
     console.log('Headers:', safeHeaders);
     if (req.body) console.log('Body:', req.body);
     console.groupEnd();
   }
- 
+
   return next(req).pipe(
     tap({
       next: (event) => {
         if (event instanceof HttpResponse) {
           const duration = (performance.now() - start).toFixed(1);
- 
+
           if (!environment.production) {
             console.groupCollapsed(
               `%c✅ ${event.status} ${req.method} ${req.url} (${duration}ms)`,
@@ -50,7 +55,7 @@ export const loggingInterceptor: HttpInterceptorFn = (
       },
       error: (error: HttpErrorResponse) => {
         const duration = (performance.now() - start).toFixed(1);
- 
+
         // Always log errors, even in production
         console.groupCollapsed(
           `%c❌ ${error.status} ${req.method} ${req.url} (${duration}ms)`,
@@ -65,8 +70,13 @@ export const loggingInterceptor: HttpInterceptorFn = (
 };
 
 function redactHeaders(keys: string[], req: HttpRequest<unknown>): Record<string, string> {
-  return keys.reduce((acc, key) => {
-    acc[key] = SENSITIVE_HEADERS.includes(key.toLowerCase()) ? REDACTED : req.headers.get(key) ?? '';
-    return acc;
-  }, {} as Record<string, string>);
+  return keys.reduce(
+    (acc, key) => {
+      acc[key] = SENSITIVE_HEADERS.includes(key.toLowerCase())
+        ? REDACTED
+        : (req.headers.get(key) ?? '');
+      return acc;
+    },
+    {} as Record<string, string>
+  );
 }

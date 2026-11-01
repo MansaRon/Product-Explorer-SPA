@@ -9,6 +9,7 @@ import { catchError, throwError } from 'rxjs';
 import { Router } from '@angular/router';
 import { NotificationService } from '../../notification/notification.service';
 import { AuthService } from '../../auth/auth.service';
+import { AppRoutes } from '../../../../shared/enums/app-routes-enum';
 
 /**
  * ERROR INTERCEPTOR
@@ -51,16 +52,20 @@ export const errorInterceptor: HttpInterceptorFn = (
         case 401:
           notifications.warn('Your session has expired. Please log in again.');
           authService.logout();
-          router.navigate(['/login'], { queryParams: { returnUrl: router.url } });
+          router.navigate([`/${AppRoutes.LOGIN}`], { queryParams: { returnUrl: router.url } });
           break;
 
         case 403:
           notifications.error('You do not have permission to perform this action.');
+          // TODO - Consider redirecting to a dedicated "Forbidden" page instead of the login page
           router.navigate(['/forbidden']);
           break;
 
         case 404:
           notifications.error('The requested resource was not found.');
+          router.navigate([`/${AppRoutes.PAGE_NOT_FOUND}`], {
+            queryParams: { returnUrl: router.url },
+          });
           break;
 
         case 409:
