@@ -5,62 +5,70 @@
   </div>
 
   @if (cartWithProducts().length === 0) {
-    <app-empty-state 
+    <app-empty-state
       icon="cart"
       title="Your cart is empty"
       description="Add some products to your cart to see them here"
       [showButton]="true"
       buttonText="Browse Catalog"
-      buttonRoute="/catalog" />
+      buttonRoute="/catalog"
+    />
   } @else {
     <div class="cart-layout">
       <div class="cart-items">
         <h2 class="section-title">Cart Items ({{ cartWithProducts().length }})</h2>
-        
+
         @for (item of cartWithProducts(); track item.productId) {
           <div class="cart-item">
             <div class="item-image">
-              <img
-                [src]="item.product!.imageUrls[0] ?? '/assets/placeholder.jpg'"
-                [alt]="item.product!.title"
-              />
-
+              <img [src]="item.product!.imageUrls[0]" [alt]="item.product!.title" />
             </div>
 
             <div class="item-details">
               <h3 class="item-name">{{ item.product!.title }}</h3>
               <p class="item-category">{{ item.product!.category }}</p>
-              
+
               <div class="item-meta">
                 <span class="item-price">
                   {{ item.product!.price | currency: 'R' }}
                 </span>
-                <span class="item-quantity">
-                  Qty: {{ item.quantity }}
-                </span>
+                <div class="quantity-controls">
+                  <button
+                    type="button"
+                    class="quantity-btn"
+                    [disabled]="item.quantity <= 1"
+                    (click)="decreaseQuantity(item.productId)"
+                    aria-label="Decrease quantity"
+                  >
+                    −
+                  </button>
+                  <span class="quantity-value">{{ item.quantity }}</span>
+                  <button
+                    type="button"
+                    class="quantity-btn"
+                    [disabled]="item.product!.quantity <= 0"
+                    (click)="increaseQuantity(item.productId)"
+                    aria-label="Increase quantity"
+                  >
+                    +
+                  </button>
+                </div>
               </div>
 
               @if (item.product!.quantity < 10 && item.product!.quantity > 0) {
-                <p class="item-stock-warning">
-                  ⚠️ Only {{ item.product!.quantity }} left in stock
-                </p>
+                <p class="item-stock-warning">⚠️ Only {{ item.product!.quantity }} left in stock</p>
               }
               @if (item.product!.quantity === 0) {
-                <p class="item-out-of-stock">
-                  ❌ Out of stock
-                </p>
+                <p class="item-out-of-stock">❌ Out of stock</p>
               }
             </div>
 
             <div class="item-actions">
               <div class="item-total">
-                {{ (item.product!.price * item.quantity) | currency: 'R' }}
+                {{ item.productPrice | currency: 'R' }}
               </div>
-              <button
-                type="button"
-                class="remove-button"
-                (click)="removeFromCart(item.productId)">
-                <app-trash-icon [width]="20" [height]="20"  color="currentColor" />
+              <button type="button" class="remove-button" (click)="removeFromCart(item.productId)">
+                <app-trash-icon [width]="20" [height]="20" color="currentColor" />
                 Remove
               </button>
             </div>
@@ -89,24 +97,16 @@
         </div>
 
         <div class="summary-actions">
-          <button 
-            type="button" 
-            class="checkout-button"
-            (click)="goToCheckout()">
+          <button type="button" class="checkout-button" (click)="goToCheckout()">
             Proceed to Checkout
           </button>
-          
-          <button 
-            type="button" 
-            class="continue-button"
-            (click)="continueShopping()">
+
+          <button type="button" class="continue-button" (click)="continueShopping()">
             Continue Shopping
           </button>
         </div>
 
-        <p class="summary-note">
-          💳 Secure checkout powered by our payment gateway
-        </p>
+        <p class="summary-note">💳 Secure checkout powered by our payment gateway</p>
       </div>
     </div>
   }

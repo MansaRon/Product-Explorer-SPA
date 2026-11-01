@@ -14,14 +14,16 @@
       </div>
 
       @if (hasFavorites()) {
-        <button
-          type="button"
-          class="clear-button"
-          (click)="clearAllFavorites()"
-          aria-label="Clear all favorites"
-        >
-          Clear All
-        </button>
+        <div class="clear-all-btn">
+          <button
+            type="button"
+            class="clear-button"
+            (click)="clearAllFavorites()"
+            aria-label="Clear all favorites"
+          >
+            Clear All
+          </button>
+        </div>
       }
     </div>
   </div>

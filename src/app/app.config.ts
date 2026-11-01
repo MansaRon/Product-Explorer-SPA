@@ -8,6 +8,7 @@ import { baseUrlInterceptor } from './core/services/interceptor/base-url/base-ur
 import { retryInterceptor } from './core/services/interceptor/retry/retry.interceptor';
 import { loadingInterceptor } from './core/services/interceptor/loading/loading.interceptor';
 import { errorInterceptor } from './core/services/interceptor/error/error.interceptor';
+import { cachingInterceptor } from './core/services/interceptor/caching/caching.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -21,7 +22,7 @@ export const appConfig: ApplicationConfig = {
         //loggingInterceptor,
         retryInterceptor,
         baseUrlInterceptor,
-        //cachingInterceptor,
+        cachingInterceptor,
       ])
     ),
   ],

@@ -2,7 +2,6 @@ import { CurrencyPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state.component';
 import { CartService } from '../../core/services/cart/cart.service';
-import { ProductService } from '../../core/services/product/product.service';
 import { Router } from '@angular/router';
 import { TrashIconComponent } from '../../shared/components/icons/trash-icon/trash-icon.component';
 
@@ -15,36 +14,34 @@ import { TrashIconComponent } from '../../shared/components/icons/trash-icon/tra
 })
 export class CartComponent {
   private readonly cartService = inject(CartService);
-  private readonly productService = inject(ProductService);
   private readonly router = inject(Router);
 
-  protected readonly cartItems = this.cartService.items;
+  protected readonly cartWithProducts = computed(() =>
+    this.cartService
+      .items()
+      .map((item) => ({
+        productId: item.productDTO?.id ?? '',
+        product: item.productDTO,
+        quantity: item.quantity,
+        productPrice: item.productPrice,
+      }))
+      .filter((item) => !!item.product)
+  );
 
-  protected readonly cartWithProducts = computed(() => {
-    return this.cartItems().map(item => {
-      const product = this.productService.getProductById(item.productId);
-      return {
-        ...item, product
-      };
-    }).filter(item => item.product !== undefined);
-  });
+  protected readonly subTotal = this.cartService.subTotal;
+  protected readonly tax = this.cartService.tax;
+  protected readonly total = this.cartService.total;
 
-  protected readonly subTotal = computed(() => {
-    return this.cartWithProducts().reduce((total, item) => {
-      return total + (item.product!.price * item.quantity);
-    }, 0)
-  });
+  protected increaseQuantity(productId: string): void {
+    this.cartService.increaseQuantity(productId);
+  }
 
-  protected readonly tax = computed(() => {
-    return this.subTotal() * 0.15;
-  });
-
-  protected readonly total = computed(() => {
-    return this.subTotal() + this.tax();
-  });
+  protected decreaseQuantity(productId: string): void {
+    this.cartService.decreaseQuantity(productId);
+  }
 
   protected removeFromCart(productId: string): void {
-    this.cartService.toggleCart(productId);
+    this.cartService.removeFromCart(productId);
   }
 
   protected continueShopping(): void {
@@ -54,5 +51,4 @@ export class CartComponent {
   protected goToCheckout(): void {
     this.router.navigate(['/checkout']);
   }
-
 }

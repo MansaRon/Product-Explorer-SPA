@@ -1,69 +1,68 @@
-import { computed, effect, inject, Injectable, signal } from '@angular/core';
-import { CartItem } from '../../models/cartitem';
-import { loadFromStorage, saveToStorage } from '../../../shared/utils/storage.util';
-import { CART_STORAGE_KEY } from '../../const/cart-keys';
-import { ProductService } from '../product/product.service';
+import { computed, DestroyRef, effect, inject, Injectable, signal } from '@angular/core';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { catchError, EMPTY, tap } from 'rxjs';
+import { AuthService } from '../auth/auth.service';
+import { CartItem, CartResponse } from '../../models/cartitem';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class CartService {
-  private readonly productService = inject(ProductService);
-  private readonly cartItemsSignal = signal<CartItem[]>(this.loadInitialCart());
-  
-  readonly itemCount = computed(() => this.cartItemsSignal().reduce((total, item) => total + item.quantity, 0));
+  private readonly http = inject(HttpClient);
+  private readonly authService = inject(AuthService);
+  private readonly destroyRef = inject(DestroyRef);
+
+  private readonly cartItemsSignal = signal<CartItem[]>([]);
+
+  readonly itemCount = computed(() =>
+    this.cartItemsSignal().reduce((total, item) => total + item.quantity, 0)
+  );
   readonly items = this.cartItemsSignal.asReadonly();
   readonly uniqueProductCount = computed(() => this.cartItemsSignal().length);
   readonly isEmpty = computed(() => this.cartItemsSignal().length === 0);
-  readonly productIds = computed(() => this.cartItemsSignal().map(item => item.productId));
+  readonly productIds = computed(() =>
+    this.cartItemsSignal()
+      .map((item) => item.productDTO?.id)
+      .filter((id): id is string => !!id)
+  );
 
-  readonly subTotal = computed(() => {
-    return this.cartItemsSignal().reduce((total, item) => {
-      const product = this.productService.getProductById(item.productId);
-      if (!product) return total;
-      return total + (product.price * item.quantity)
-    }, 0);
-  });
+  readonly subTotal = computed(() =>
+    this.cartItemsSignal().reduce((total, item) => total + item.productPrice, 0)
+  );
+  readonly tax = computed(() =>
+    this.cartItemsSignal().reduce((total, item) => total + item.tax, 0)
+  );
+  readonly total = computed(() => this.subTotal() + this.tax());
 
-  readonly tax = computed(() => {
-    return this.subTotal() * 0.15;
-  })
-
-  readonly total = computed(() => {
-    return this.subTotal() + this.tax();
-  });
-
-  readonly itemsWithProducts = computed(() => {
-    return this.cartItemsSignal().map(item => {
-      const product = this.productService.getProductById(item.productId);
-      return {
-        ...item,
-        product,
-        productName: product?.title || '',
-        price: product?.price || 0
-      };
-    });
-  });
+  readonly getCartSummary = computed(() => ({
+    totalItems: this.itemCount(),
+    uniqueProducts: this.uniqueProductCount(),
+    isEmpty: this.isEmpty(),
+    items: this.items(),
+  }));
 
   constructor() {
-    // Autosave to localstorage whenever the cart changes
     effect(() => {
-      const items = this.cartItemsSignal();
-      saveToStorage(CART_STORAGE_KEY, items);
-    })
+      const user = this.authService.currentUser();
+      if (user?.id) {
+        this.loadCart(user.id);
+      } else {
+        this.cartItemsSignal.set([]);
+      }
+    });
   }
 
   isInCart(productId: string): boolean {
-    return this.cartItemsSignal().some(item => item.productId === productId);
+    return this.cartItemsSignal().some((item) => item.productDTO?.id === productId);
   }
 
   getcartItem(productId: string): CartItem | undefined {
-    return this.cartItemsSignal().find(item => item.productId === productId);
+    return this.cartItemsSignal().find((item) => item.productDTO?.id === productId);
   }
 
   getQuantity(productId: string): number {
-    const item = this.getcartItem(productId);
-    return item?.quantity ?? 0;
+    return this.getcartItem(productId)?.quantity ?? 0;
   }
 
   toggleCart(productId: string): void {
@@ -74,63 +73,99 @@ export class CartService {
     }
   }
 
-  addToCart(productId: string, quantity: number = 1): void {
-    this.cartItemsSignal.update(items => {
-      const existingItem = items.find(item => item.productId === productId);
+  addToCart(productId: string, quantity = 1): void {
+    const user = this.authService.currentUser();
+    if (!user?.id) return;
 
-      if (existingItem) {
-        return items.map(item => 
-          item.productId === productId 
-          ? { ...item, quantity: item.quantity + quantity } 
-          : item
-        );
-      } else {
-        return [...items, { productId, quantity, addedAt: new Date() }];
-      }
-    });
+    const params = new HttpParams().set('quantity', quantity);
+    this.http
+      .post<CartResponse>(`/cart/${user.id}/add-item/${productId}`, null, { params })
+      .pipe(
+        tap((response) => this.syncFromResponse(response)),
+        takeUntilDestroyed(this.destroyRef),
+        catchError((err) => {
+          console.error('Failed to add to cart:', err);
+          return EMPTY;
+        })
+      )
+      .subscribe();
   }
 
   removeFromCart(productId: string): void {
-    this.cartItemsSignal.update(items => items.filter(item => item.productId !== productId));
+    const user = this.authService.currentUser();
+    if (!user?.id) return;
+
+    this.http
+      .delete<CartResponse>(`/cart/${user.id}/delete-item/${productId}`)
+      .pipe(
+        tap((response) => this.syncFromResponse(response)),
+        takeUntilDestroyed(this.destroyRef),
+        catchError((err) => {
+          console.error('Failed to remove from cart:', err);
+          return EMPTY;
+        })
+      )
+      .subscribe();
   }
 
   updateQuantity(productId: string, quantity: number): void {
-    if (quantity <= 0) {
-      this.removeFromCart(productId);
-      return;
-    }
+    const user = this.authService.currentUser();
+    if (!user?.id) return;
 
-    this.cartItemsSignal.update(items => 
-      items.map(item => 
-        item.productId === productId 
-        ? { ...item, quantity } 
-        : item
+    const params = new HttpParams().set('newQuantity', quantity);
+    this.http
+      .patch<CartResponse>(`/cart/${user.id}/update-item/${productId}`, null, { params })
+      .pipe(
+        tap((response) => this.syncFromResponse(response)),
+        takeUntilDestroyed(this.destroyRef),
+        catchError((err) => {
+          console.error('Failed to update cart:', err);
+          return EMPTY;
+        })
       )
-    );
+      .subscribe();
   }
 
   increaseQuantity(productId: string): void {
-    const currentQuantity = this.getQuantity(productId);
-    this.updateQuantity(productId, currentQuantity + 1);
+    this.updateQuantity(productId, this.getQuantity(productId) + 1);
   }
 
   decreaseQuantity(productId: string): void {
-    const currentQuantity = this.getQuantity(productId);
-    this.updateQuantity(productId, currentQuantity - 1);
+    this.updateQuantity(productId, this.getQuantity(productId) - 1);
   }
 
   clearCart(): void {
-    this.cartItemsSignal.set([]);
+    const user = this.authService.currentUser();
+    if (!user?.id) return;
+
+    this.http
+      .delete<CartResponse>(`/cart/${user.id}/clear`)
+      .pipe(
+        tap((response) => this.syncFromResponse(response)),
+        takeUntilDestroyed(this.destroyRef),
+        catchError((err) => {
+          console.error('Failed to clear cart:', err);
+          return EMPTY;
+        })
+      )
+      .subscribe();
   }
 
-  getCartSummary = computed(() => ({
-    totalItems: this.itemCount(),
-    uniqueProducts: this.uniqueProductCount(),
-    isEmpty: this.isEmpty(),
-    items: this.items()
-  }));
+  private loadCart(userId: string): void {
+    this.http
+      .get<CartResponse>(`/cart/${userId}`)
+      .pipe(
+        tap((response) => this.syncFromResponse(response)),
+        takeUntilDestroyed(this.destroyRef),
+        catchError((err) => {
+          console.error('Failed to load cart:', err);
+          return EMPTY;
+        })
+      )
+      .subscribe();
+  }
 
-  private loadInitialCart(): CartItem[] {
-    return loadFromStorage<CartItem[]>(CART_STORAGE_KEY, []);
+  private syncFromResponse(response: CartResponse): void {
+    this.cartItemsSignal.set(response?.data?.cartItems ?? []);
   }
 }
