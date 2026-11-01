@@ -1,4 +1,4 @@
-import { computed, effect, inject, Injectable, signal } from '@angular/core';
+import { computed, DestroyRef, effect, inject, Injectable, signal } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { catchError, EMPTY, tap } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
@@ -11,6 +11,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 export class CartService {
   private readonly http = inject(HttpClient);
   private readonly authService = inject(AuthService);
+  private readonly destroyRef = inject(DestroyRef);
 
   private readonly cartItemsSignal = signal<CartItem[]>([]);
 
@@ -81,7 +82,7 @@ export class CartService {
       .post<CartResponse>(`/cart/${user.id}/add-item/${productId}`, null, { params })
       .pipe(
         tap((response) => this.syncFromResponse(response)),
-        takeUntilDestroyed(),
+        takeUntilDestroyed(this.destroyRef),
         catchError((err) => {
           console.error('Failed to add to cart:', err);
           return EMPTY;
@@ -98,7 +99,7 @@ export class CartService {
       .delete<CartResponse>(`/cart/${user.id}/delete-item/${productId}`)
       .pipe(
         tap((response) => this.syncFromResponse(response)),
-        takeUntilDestroyed(),
+        takeUntilDestroyed(this.destroyRef),
         catchError((err) => {
           console.error('Failed to remove from cart:', err);
           return EMPTY;
@@ -116,7 +117,7 @@ export class CartService {
       .patch<CartResponse>(`/cart/${user.id}/update-item/${productId}`, null, { params })
       .pipe(
         tap((response) => this.syncFromResponse(response)),
-        takeUntilDestroyed(),
+        takeUntilDestroyed(this.destroyRef),
         catchError((err) => {
           console.error('Failed to update cart:', err);
           return EMPTY;
@@ -141,7 +142,7 @@ export class CartService {
       .delete<CartResponse>(`/cart/${user.id}/clear`)
       .pipe(
         tap((response) => this.syncFromResponse(response)),
-        takeUntilDestroyed(),
+        takeUntilDestroyed(this.destroyRef),
         catchError((err) => {
           console.error('Failed to clear cart:', err);
           return EMPTY;
@@ -155,7 +156,7 @@ export class CartService {
       .get<CartResponse>(`/cart/${userId}`)
       .pipe(
         tap((response) => this.syncFromResponse(response)),
-        takeUntilDestroyed(),
+        takeUntilDestroyed(this.destroyRef),
         catchError((err) => {
           console.error('Failed to load cart:', err);
           return EMPTY;
