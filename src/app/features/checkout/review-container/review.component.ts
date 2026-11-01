@@ -6,6 +6,7 @@ import { CheckoutService } from '../../../core/services/checkout/checkout.servic
 import { OrderService } from '../../../core/services/order/order.service';
 import { FooterComponent } from '../../../shared/components/footer/footer.component';
 import { AppRoutes } from '../../../shared/enums/app-routes-enum';
+import { NotificationService } from '../../../core/services/notification/notification.service';
 
 @Component({
   selector: 'app-review-container',
@@ -18,6 +19,7 @@ export class ReviewComponent {
   private readonly checkoutService = inject(CheckoutService);
   private readonly cartService = inject(CartService);
   private readonly orderService = inject(OrderService);
+  private readonly notifications = inject(NotificationService);
   private readonly router = inject(Router);
 
   protected readonly isSubmitting = signal(false);
@@ -37,58 +39,34 @@ export class ReviewComponent {
   }
 
   protected handlePlaceOrder(): void {
+    const shipping = this.shippingAddress();
+    const delivery = this.deliveryOption();
+    const payment = this.paymentMethod();
+
+    if (!shipping || !delivery || !payment) {
+      this.notifications.error('Missing required checkout information. Please complete all steps.');
+      return;
+    }
+
+    if (this.cartService.isEmpty()) {
+      this.notifications.error('Your cart is empty.');
+      return;
+    }
+
     this.isSubmitting.set(true);
 
-    try {
-      const subTotal = this.cartService.subTotal();
-      const tax = this.cartService.tax();
-      const total = this.cartService.total();
-      const shipping = this.shippingAddress();
-      const delivery = this.deliveryOption();
-      const payment = this.paymentMethod();
-
-      if (!shipping || !delivery || !payment) {
-        alert('Missing required checkout information. Please complete all steps.');
+    this.checkoutService.confirmCheckout({
+      onSuccess: (order) => {
+        this.orderService.setCurrentOrder(order);
+        this.cartService.clearCart();
+        this.checkoutService.goToStep('confirmation');
+        this.router.navigate([AppRoutes.CHECKOUT, AppRoutes.CONFIRMATION, order.id]);
         this.isSubmitting.set(false);
-        return;
-      }
-
-      const cartItems = this.cartService.items();
-
-      if (cartItems.length === 0) {
-        alert('Cart is empty');
+      },
+      onError: () => {
         this.isSubmitting.set(false);
-        return;
-      }
-
-      const orderItems = cartItems.map((cartItem) => ({
-        productId: cartItem.productDTO.id,
-        productName: cartItem.productDTO.title,
-        quantity: cartItem.quantity,
-        price: cartItem.productDTO.price,
-      }));
-
-      const order = this.orderService.createOrder({
-        items: orderItems,
-        subTotal,
-        tax,
-        total,
-        shippingAddress: shipping,
-        deliveryOption: delivery,
-        paymentMethod: payment,
-      });
-
-      this.cartService.clearCart();
-
-      this.checkoutService.goToStep('confirmation');
-
-      this.router.navigate([AppRoutes.CHECKOUT, AppRoutes.CONFIRMATION, order.id]);
-    } catch (error) {
-      console.log('Failed to place order', error);
-      alert('Failed to place order. Please try again');
-    } finally {
-      this.isSubmitting.set(false);
-    }
+      },
+    });
   }
 
   protected handleBack(): void {

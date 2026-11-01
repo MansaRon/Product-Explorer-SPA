@@ -51,4 +51,8 @@ export class CartComponent {
   protected goToCheckout(): void {
     this.router.navigate(['/checkout']);
   }
+
+  protected clearCart(): void {
+    this.cartService.clearCart();
+  }
 }

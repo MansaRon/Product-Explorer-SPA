@@ -1,6 +1,18 @@
-import { Injectable, signal, computed, effect } from '@angular/core';
-import { loadFromStorage, saveToStorage } from '../../../shared/utils/storage.util';
+import { computed, DestroyRef, effect, inject, Injectable, signal } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { catchError, EMPTY, tap } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { AuthService } from '../auth/auth.service';
+import { OrderApi, OrderApiResponse, OrderListApiResponse } from '../../models/order';
 import { DeliveryOption, PaymentMethod, ShippingAddress } from '../../models/checkout';
+
+// View-model types used by OrderConfirmationComponent
+export interface OrderItem {
+  productId: string;
+  productName: string;
+  quantity: number;
+  price: number;
+}
 
 export interface Order {
   id: string;
@@ -9,187 +21,90 @@ export interface Order {
   subtotal: number;
   tax: number;
   total: number;
-  status: 'pending' | 'confirmed' | 'shipped' | 'delivered' | 'cancelled';
+  status: string;
   createdAt: Date;
-  updatedAt: Date;
-  shippingAddress: ShippingAddress;
-  deliveryOption: DeliveryOption;
-  paymentMethod: PaymentMethod;
+  orderNumber?: string;
+  shippingAddress?: ShippingAddress;
+  deliveryOption?: DeliveryOption;
+  paymentMethod?: PaymentMethod;
 }
 
-export interface OrderItem {
-  productId: string;
-  productName: string;
-  quantity: number;
-  price: number;
+export function toOrderViewModel(api: OrderApi): Order {
+  return {
+    id: api.id,
+    userId: '',
+    orderNumber: api.orderNumber,
+    items: (api.orderItems ?? []).map((item) => ({
+      productId: item.productId,
+      productName: item.productTitle,
+      quantity: item.quantity,
+      price: item.unitPrice,
+    })),
+    subtotal: api.subtotal,
+    tax: api.tax,
+    total: api.totalAmount,
+    status: api.orderStatus,
+    createdAt: new Date(),
+  };
 }
-
-export interface CreateOrderInput {
-  items: OrderItem[];
-  subTotal: number;
-  tax: number;
-  total: number;
-  shippingAddress: ShippingAddress;
-  deliveryOption: DeliveryOption;
-  paymentMethod: PaymentMethod;
-  userId?: string;
-}
-
-const ORDERS_STORAGE_KEY = 'user_orders';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class OrderService {
-  // Private signal for order state
-  private readonly ordersSignal = signal<Order[]>(
-    this.loadInitialOrders()
-  );
+  private readonly http = inject(HttpClient);
+  private readonly authService = inject(AuthService);
+  private readonly destroyRef = inject(DestroyRef);
 
-  // Public readonly signals
+  private readonly ordersSignal = signal<OrderApi[]>([]);
+  private readonly currentOrderSignal = signal<OrderApi | null>(null);
+
   readonly orders = this.ordersSignal.asReadonly();
-
-  // Computed: Total number of orders
+  readonly currentOrder = this.currentOrderSignal.asReadonly();
   readonly orderCount = computed(() => this.ordersSignal().length);
-
-  // Computed: Pending orders
-  readonly pendingOrders = computed(() =>
-    this.ordersSignal().filter(order => order.status === 'pending')
-  );
-
-  readonly confirmedOrders = computed(() =>
-    this.ordersSignal().filter(order => order.status === 'confirmed')
-  );
-
-  // Computed: Shipped orders
-  readonly shippedOrders = computed(() =>
-    this.ordersSignal().filter(order => order.status === 'shipped')
-  );
-
-  // Computed: Delivered orders
-  readonly deliveredOrders = computed(() =>
-    this.ordersSignal().filter(order => order.status === 'delivered')
-  );
-
-  // Computed: Completed orders
-  readonly cancelledOrders = computed(() =>
-    this.ordersSignal().filter(order => order.status === 'cancelled')
-  );
-
-  readonly activeOrders = computed(() =>
-    this.ordersSignal().filter(order => order.status !== 'delivered' && order.status !== 'cancelled')
-  );
-
-  // Computed: Check if there are any orders
   readonly hasOrders = computed(() => this.ordersSignal().length > 0);
 
-  readonly totalRevenue = computed(() => this.ordersSignal().reduce((sum, order) => sum + order.total, 0));
-
   constructor() {
-    // Effect: Auto-save to localStorage whenever orders change
     effect(() => {
-      const orders = this.ordersSignal();
-      this.persistOrders(orders);
+      const user = this.authService.currentUser();
+      if (user?.id) {
+        this.loadUserOrders(user.id);
+      } else {
+        this.ordersSignal.set([]);
+        this.currentOrderSignal.set(null);
+      }
     });
   }
 
-  /**
-   * Create a new order
-   */
-  createOrder(input: CreateOrderInput): Order {
-    const newOrder: Order = {
-      id: this.generateOrderId(),
-      userId: input.userId || 'guest',
-      items: input.items,
-      subtotal: input.subTotal,
-      tax: input.tax,
-      total: input.total,
-      shippingAddress: input.shippingAddress,
-      deliveryOption: input.deliveryOption,
-      paymentMethod: input.paymentMethod,
-      status: 'pending',
-      createdAt: new Date(),
-      updatedAt: new Date()
-    };
-
-    this.ordersSignal.update(orders => [...orders, newOrder]);
-    return newOrder;
+  setCurrentOrder(order: OrderApi): void {
+    this.currentOrderSignal.set(order);
   }
 
-  /**
-   * GET ORDER BY ID
-   * Retrieves a specific order
-   */
-  getOrderById(orderId: string): Order | undefined {
-    return this.ordersSignal().find(order => order.id === orderId);
-  }
-
-  /**
-   * Update order status
-   */
-  updateOrderStatus(orderId: string, status: Order['status']): Order | undefined {
-    this.ordersSignal.update(orders =>
-      orders.map(order =>
-        order.id === orderId
-          ? { ...order, status, updatedAt: new Date() }
-          : order
+  loadOrderById(orderId: string): void {
+    this.http
+      .get<OrderApiResponse>(`/order/${orderId}`)
+      .pipe(
+        tap((response) => this.currentOrderSignal.set(response.data)),
+        takeUntilDestroyed(this.destroyRef),
+        catchError((err) => {
+          console.error('Failed to load order:', err);
+          return EMPTY;
+        })
       )
-    );
-
-    return this.getOrderById(orderId);
+      .subscribe();
   }
 
-  /**
-   * Cancel an order
-   */
-  cancelOrder(orderId: string): void {
-    this.updateOrderStatus(orderId, 'cancelled');
-  }
-
-  /**
-   * Delete an order completely
-   */
-  deleteOrder(orderId: string): void {
-    this.ordersSignal.update(orders =>
-      orders.filter(order => order.id !== orderId)
-    );
-  }
-
-  /**
-   * Clear all orders
-   */
-  clearAllOrders(): void {
-    this.ordersSignal.set([]);
-  }
-
-  /**
-   * Get orders by status
-   */
-  getOrdersByStatus(status: Order['status']): Order[] {
-    return this.ordersSignal().filter(order => order.status === status);
-  }
-
-  /**
-   * Get total spent across all orders
-   */
-  getTotalSpent = computed(() => {
-    return this.ordersSignal()
-      .filter(order => order.status !== 'cancelled')
-      .reduce((sum, order) => sum + order.total, 0);
-  });
-
-  // Private: Generate unique order ID
-  private generateOrderId(): string {
-    return `ORD-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-  }
-
-  // Private: Load orders from storage using StorageService
-  private loadInitialOrders(): Order[] {
-    return loadFromStorage<Order[]>(ORDERS_STORAGE_KEY, []);
-  }
-
-  // Private: Save orders to storage using StorageService
-  private persistOrders(orders: Order[]): void {
-    saveToStorage(ORDERS_STORAGE_KEY, orders);
+  private loadUserOrders(userId: string): void {
+    this.http
+      .get<OrderListApiResponse>(`/order/user/${userId}`)
+      .pipe(
+        tap((response) => this.ordersSignal.set(response.data ?? [])),
+        takeUntilDestroyed(this.destroyRef),
+        catchError((err) => {
+          console.error('Failed to load user orders:', err);
+          return EMPTY;
+        })
+      )
+      .subscribe();
   }
 }
