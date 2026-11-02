@@ -77,7 +77,9 @@ export class CheckoutComponent {
   constructor() {
     if (this.isEmpty()) {
       this.router.navigate(['/cart']);
+      return;
     }
+    this.checkoutService.initiateCheckout();
   }
 
   protected goToStep(step: CheckoutStep, route: string): void {

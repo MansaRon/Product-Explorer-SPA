@@ -17,7 +17,7 @@ This document tracks all planned improvements for the Product Explorer applicati
 9. [NestJS Backend](#9-nestjs-backend)
 10. [Playwright E2E Tests](#10-playwright-e2e-tests)
 11. [Update README & SOLUTION.md](#11-update-readme--solutionmd)
-12. []
+12. [Backend Gaps — Checkout Integration](#12-backend-gaps--checkout-integration)
 
 ---
 
@@ -700,5 +700,36 @@ Items will be tackled in the following sequence, one at a time:
 | 9 | NestJS Backend | Pending |
 | 10 | Playwright E2E Tests | Pending |
 | 11 | Update README & SOLUTION.md | Pending |
+| 12 | Backend Gaps — Checkout Integration | Pending |
 
 > Each item will be completed, tested, and committed before the next begins.
+
+---
+
+## 12. Backend Gaps — Checkout Integration
+
+These gaps were identified during the checkout integration sprint. Each needs a backend fix before the full end-to-end flow is verified.
+
+### Gap 1 — `AddressDTO` missing contact fields
+**What**: `AddressDTO` only has `streetAddress`, `city`, `state`, `country`, `postalCode`. The frontend shipping form also captures `fullName`, `phoneNumber`, `email`, and `apartment`. These are silently dropped during mapping.
+**Fix**: Add `fullName`, `phoneNumber`, `email`, `apartment` (optional) fields to `AddressDTO` so the backend can store them against the order.
+
+### Gap 2 — `DeliverMethod` enum doesn't match frontend options
+**What**: Frontend has `standard`, `express`, `overnight`. Backend enum is `DHL`, `FedEx`, `Express`, `FREE`. Current mapping: `standard → FREE`, `express → Express`, `overnight → DHL`.
+**Fix**: Either align the enum names with the frontend labels, or return available delivery methods from a backend endpoint (`GET /checkout/delivery-options`) so the frontend drives off real values.
+
+### Gap 3 — `PaymentMethod` enum missing EFT
+**What**: Backend `PaymentMethod` enum has `CREDIT_CARD`, `CASH_ON_DELIVERY`, `NOT_SELECTED`. There is no EFT option. Selecting EFT on the frontend currently maps to `NOT_SELECTED`.
+**Fix**: Add `EFT` or `BANK_TRANSFER` to the `PaymentMethod` enum.
+
+### Gap 4 — No separate billing address step in frontend
+**What**: `CheckoutDTO` marks `billingAddress` as `@NotNull`. The frontend has no billing address form. The current integration reuses the shipping address as billing.
+**Fix**: Either make `billingAddress` optional on the backend if it's the same as shipping, or add a "same as shipping" checkbox step on the frontend.
+
+### Gap 5 — `EFT` payment method has no backend support for payment flow
+**What**: Even once Gap 3 is fixed, EFT requires a separate bank transfer reference flow that the backend doesn't expose yet.
+**Fix**: Add an EFT payment initiation endpoint or clarify that EFT is manual (provide bank details on confirmation page).
+
+### Gap 6 — `shippingCost` not reflected in checkout total
+**What**: `OrderDTO.shippingCost` is set, but `CheckoutDTO.totalAmount` doesn't include delivery price at checkout stage. Frontend delivery options have prices (e.g. express = R50, overnight = R150) that aren't factored into the server total.
+**Fix**: Factor `shippingCost` into the checkout total during `updateCheckout` or return it separately so the frontend can display the correct pre-confirm total.
