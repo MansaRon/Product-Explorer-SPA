@@ -3,7 +3,7 @@ import { ConfirmationContainerComponent } from './confirmation-container.compone
 import { ActivatedRoute, Router } from '@angular/router';
 import { OrderService } from '../../../core/services/order/order.service';
 import { CheckoutService } from '../../../core/services/checkout/checkout.service';
-import { signal } from '@angular/core';
+import { signal, WritableSignal } from '@angular/core';
 import { fromPartial } from '@total-typescript/shoehorn';
 import { OrderApi } from '../../../core/models/order';
 
@@ -73,7 +73,7 @@ describe.skip('ConfirmationContainerComponent', () => {
   });
 
   it('should call loadOrderById when currentOrder is null', () => {
-    (mockOrderService.currentOrder as ReturnType<typeof signal<OrderApi | null>>).set(null);
+    (mockOrderService.currentOrder as unknown as WritableSignal<OrderApi | null>).set(null);
 
     component.ngOnInit();
 

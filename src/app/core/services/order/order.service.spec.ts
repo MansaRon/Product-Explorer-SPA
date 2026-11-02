@@ -7,7 +7,7 @@ import {
 import { OrderService } from './order.service';
 import { AuthService } from '../auth/auth.service';
 import { HttpClient } from '@angular/common/http';
-import { signal } from '@angular/core';
+import { signal, WritableSignal } from '@angular/core';
 import { User } from '../../models/user';
 import { of } from 'rxjs';
 import { fromPartial } from '@total-typescript/shoehorn';
@@ -120,7 +120,7 @@ describe.skip(OrderService.name, () => {
 
   describe('auth effect', () => {
     it('should call GET /order/user/{userId} when user logs in', () => {
-      (mockAuthService.currentUser as ReturnType<typeof signal<User | null>>).set(mockUser);
+      (mockAuthService.currentUser as unknown as WritableSignal<User | null>).set(mockUser);
 
       expect(mockHttp.get).toHaveBeenCalledWith(`/order/user/${mockUser.id}`);
     });
@@ -128,7 +128,7 @@ describe.skip(OrderService.name, () => {
     it('should clear orders and current order when user logs out', () => {
       service.setCurrentOrder(mockOrder);
 
-      (mockAuthService.currentUser as ReturnType<typeof signal<User | null>>).set(null);
+      (mockAuthService.currentUser as unknown as WritableSignal<User | null>).set(null);
 
       expect(service.currentOrder()).toBeNull();
       expect(service.orderCount()).toBe(0);

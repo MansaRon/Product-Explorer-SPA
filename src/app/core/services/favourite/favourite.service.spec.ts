@@ -3,7 +3,7 @@ import { FavouriteService } from './favourite.service';
 import { AuthService } from '../auth/auth.service';
 import { HttpClient } from '@angular/common/http';
 import { mockProvider } from '@ngneat/spectator/jest';
-import { signal } from '@angular/core';
+import { signal, WritableSignal } from '@angular/core';
 import { User } from '../../models/user';
 import { of } from 'rxjs';
 import { fromPartial } from '@total-typescript/shoehorn';
@@ -62,7 +62,7 @@ describe(FavouriteService.name, () => {
     it('should call POST /wishlist when user is authenticated', () => {
       const authService = spectator.inject(AuthService);
       const http = spectator.inject(HttpClient);
-      (authService.currentUser as ReturnType<typeof signal<User | null>>).set(mockUser);
+      (authService.currentUser as unknown as WritableSignal<User | null>).set(mockUser);
 
       spectator.service.addFavorite('product-1');
 
@@ -75,7 +75,7 @@ describe(FavouriteService.name, () => {
     it('should not call API for a duplicate', () => {
       const authService = spectator.inject(AuthService);
       const http = spectator.inject(HttpClient);
-      (authService.currentUser as ReturnType<typeof signal<User | null>>).set(mockUser);
+      (authService.currentUser as unknown as WritableSignal<User | null>).set(mockUser);
 
       spectator.service.addFavorite('product-1');
       spectator.service.addFavorite('product-1');
@@ -94,7 +94,7 @@ describe(FavouriteService.name, () => {
     it('should call DELETE /wishlist/{userId} when authenticated', () => {
       const authService = spectator.inject(AuthService);
       const http = spectator.inject(HttpClient);
-      (authService.currentUser as ReturnType<typeof signal<User | null>>).set(mockUser);
+      (authService.currentUser as unknown as WritableSignal<User | null>).set(mockUser);
 
       spectator.service.addFavorite('product-1');
       spectator.service.removeFavorite('product-1');
@@ -114,7 +114,7 @@ describe(FavouriteService.name, () => {
 
     it('should call removeFavorite when product is already in wishlist', () => {
       const authService = spectator.inject(AuthService);
-      (authService.currentUser as ReturnType<typeof signal<User | null>>).set(mockUser);
+      (authService.currentUser as unknown as WritableSignal<User | null>).set(mockUser);
 
       spectator.service.addFavorite('product-1');
       const removeSpy = jest.spyOn(spectator.service, 'removeFavorite');

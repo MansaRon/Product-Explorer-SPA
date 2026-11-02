@@ -1,6 +1,6 @@
 import { createComponentFactory, Spectator, SpyObject } from '@ngneat/spectator/jest';
 import { mockProvider } from '@ngneat/spectator/jest';
-import { signal } from '@angular/core';
+import { signal, WritableSignal } from '@angular/core';
 import { FavouritesComponent } from '../favourites/favourites.component';
 import { FavouriteService } from '../../core/services/favourite/favourite.service';
 import { Product } from '../../core/models/product';
@@ -57,7 +57,7 @@ describe.skip(FavouritesComponent.name, () => {
     });
 
     it('should compute hasFavorites as false when empty', () => {
-      (favouriteService.count as ReturnType<typeof signal<number>>).set(0);
+      (favouriteService.count as unknown as WritableSignal<number>).set(0);
       expect(spectator.component['hasFavorites']()).toBe(false);
     });
   });

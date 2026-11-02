@@ -7,7 +7,7 @@ import {
 import { CheckoutService } from './checkout.service';
 import { AuthService } from '../auth/auth.service';
 import { HttpClient } from '@angular/common/http';
-import { signal } from '@angular/core';
+import { signal, WritableSignal } from '@angular/core';
 import { User } from '../../models/user';
 import { of } from 'rxjs';
 import { fromPartial } from '@total-typescript/shoehorn';
@@ -48,6 +48,7 @@ const mockCheckoutData: CheckoutApiData = {
   subtotal: 100,
   discount: 0,
   tax: 15,
+  shippingCost: 0,
   totalAmount: 115,
   status: 'PENDING',
 };
@@ -199,7 +200,7 @@ describe(CheckoutService.name, () => {
     });
 
     it('should POST to initiate-checkout when user is authenticated', () => {
-      (mockAuthService.currentUser as ReturnType<typeof signal<User | null>>).set(mockUser);
+      (mockAuthService.currentUser as unknown as WritableSignal<User | null>).set(mockUser);
 
       service.initiateCheckout();
 
@@ -210,7 +211,7 @@ describe(CheckoutService.name, () => {
     });
 
     it('should store the checkoutId returned from the response', () => {
-      (mockAuthService.currentUser as ReturnType<typeof signal<User | null>>).set(mockUser);
+      (mockAuthService.currentUser as unknown as WritableSignal<User | null>).set(mockUser);
 
       service.initiateCheckout();
 
@@ -218,7 +219,7 @@ describe(CheckoutService.name, () => {
     });
 
     it('should not call the API a second time if checkoutId is already set', () => {
-      (mockAuthService.currentUser as ReturnType<typeof signal<User | null>>).set(mockUser);
+      (mockAuthService.currentUser as unknown as WritableSignal<User | null>).set(mockUser);
 
       service.initiateCheckout();
       service.initiateCheckout();
@@ -243,7 +244,7 @@ describe(CheckoutService.name, () => {
     });
 
     it('should call onError when checkout data is incomplete', () => {
-      (mockAuthService.currentUser as ReturnType<typeof signal<User | null>>).set(mockUser);
+      (mockAuthService.currentUser as unknown as WritableSignal<User | null>).set(mockUser);
       service.initiateCheckout();
 
       const onSuccess = jest.fn();
@@ -256,7 +257,7 @@ describe(CheckoutService.name, () => {
     });
 
     it('should PATCH to update checkout then POST to confirm and call onSuccess', () => {
-      (mockAuthService.currentUser as ReturnType<typeof signal<User | null>>).set(mockUser);
+      (mockAuthService.currentUser as unknown as WritableSignal<User | null>).set(mockUser);
       service.initiateCheckout();
 
       service.setShippingAddress(mockShipping);
@@ -280,7 +281,7 @@ describe(CheckoutService.name, () => {
     });
 
     it('should map payment type "card" to CREDIT_CARD in the PATCH body', () => {
-      (mockAuthService.currentUser as ReturnType<typeof signal<User | null>>).set(mockUser);
+      (mockAuthService.currentUser as unknown as WritableSignal<User | null>).set(mockUser);
       service.initiateCheckout();
       service.setShippingAddress(mockShipping);
       service.setDeliveryOption(mockDelivery);
@@ -295,8 +296,8 @@ describe(CheckoutService.name, () => {
       );
     });
 
-    it('should map delivery id "standard" to FREE in the PATCH body', () => {
-      (mockAuthService.currentUser as ReturnType<typeof signal<User | null>>).set(mockUser);
+    it('should map delivery id "standard" to STANDARD in the PATCH body', () => {
+      (mockAuthService.currentUser as unknown as WritableSignal<User | null>).set(mockUser);
       service.initiateCheckout();
       service.setShippingAddress(mockShipping);
       service.setDeliveryOption({ ...mockDelivery, id: 'standard' });
@@ -307,14 +308,46 @@ describe(CheckoutService.name, () => {
 
       expect(mockHttp.patch).toHaveBeenCalledWith(
         expect.any(String),
-        expect.objectContaining({ shippingMethod: 'FREE' })
+        expect.objectContaining({ shippingMethod: 'STANDARD' })
+      );
+    });
+
+    it('should map delivery id "express" to EXPRESS in the PATCH body', () => {
+      (mockAuthService.currentUser as unknown as WritableSignal<User | null>).set(mockUser);
+      service.initiateCheckout();
+      service.setShippingAddress(mockShipping);
+      service.setDeliveryOption({ ...mockDelivery, id: 'express' });
+      service.setPaymentMethod(mockPayment);
+
+      mockHttp.post.mockReturnValueOnce(of(mockOrderResponse));
+      service.confirmCheckout({ onSuccess: jest.fn(), onError: jest.fn() });
+
+      expect(mockHttp.patch).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({ shippingMethod: 'EXPRESS' })
+      );
+    });
+
+    it('should map payment type "eft" to EFT in the PATCH body', () => {
+      (mockAuthService.currentUser as unknown as WritableSignal<User | null>).set(mockUser);
+      service.initiateCheckout();
+      service.setShippingAddress(mockShipping);
+      service.setDeliveryOption(mockDelivery);
+      service.setPaymentMethod({ id: 'eft', type: 'eft', label: 'EFT/Bank Transfer' });
+
+      mockHttp.post.mockReturnValueOnce(of(mockOrderResponse));
+      service.confirmCheckout({ onSuccess: jest.fn(), onError: jest.fn() });
+
+      expect(mockHttp.patch).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({ paymentMethod: 'EFT' })
       );
     });
   });
 
   describe('resetCheckout', () => {
     it('should clear the checkoutId, step data, and return to the shipping step', () => {
-      (mockAuthService.currentUser as ReturnType<typeof signal<User | null>>).set(mockUser);
+      (mockAuthService.currentUser as unknown as WritableSignal<User | null>).set(mockUser);
       service.initiateCheckout();
       service.setShippingAddress(mockShipping);
       service.goToStep('review');
