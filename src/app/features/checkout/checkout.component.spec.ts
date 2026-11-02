@@ -3,7 +3,7 @@ import { CheckoutComponent } from './checkout.component';
 import { CheckoutService } from '../../core/services/checkout/checkout.service';
 import { CartService } from '../../core/services/cart/cart.service';
 import { Router } from '@angular/router';
-import { signal } from '@angular/core';
+import { signal, WritableSignal } from '@angular/core';
 import { CheckoutStep } from '../../core/models/checkout';
 
 describe.skip('CheckoutComponent', () => {
@@ -55,7 +55,7 @@ describe.skip('CheckoutComponent', () => {
   });
 
   it('should redirect to /cart when cart is empty', () => {
-    (mockCartService.isEmpty as ReturnType<typeof signal<boolean>>).set(true);
+    (mockCartService.isEmpty as unknown as WritableSignal<boolean>).set(true);
 
     spectator = createComponent({ detectChanges: false });
     mockRouter = spectator.inject(Router);

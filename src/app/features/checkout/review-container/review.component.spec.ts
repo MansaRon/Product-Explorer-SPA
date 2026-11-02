@@ -5,7 +5,7 @@ import { CheckoutService } from '../../../core/services/checkout/checkout.servic
 import { CartService } from '../../../core/services/cart/cart.service';
 import { OrderService } from '../../../core/services/order/order.service';
 import { NotificationService } from '../../../core/services/notification/notification.service';
-import { signal } from '@angular/core';
+import { signal, WritableSignal } from '@angular/core';
 import { fromPartial } from '@total-typescript/shoehorn';
 import { ShippingAddress, DeliveryOption, PaymentMethod } from '../../../core/models/checkout';
 
@@ -73,7 +73,7 @@ describe.skip('ReviewComponent', () => {
   });
 
   it('should not call confirmCheckout when cart is empty', () => {
-    (mockCartService.isEmpty as ReturnType<typeof signal<boolean>>).set(true);
+    (mockCartService.isEmpty as unknown as WritableSignal<boolean>).set(true);
 
     component['handlePlaceOrder']();
 

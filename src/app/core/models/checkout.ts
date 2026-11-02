@@ -91,10 +91,14 @@ export const PAYMENT_METHODS: PaymentMethod[] = [
 
 // --- Backend-aligned types ---
 
-export type BackendPaymentMethod = 'CREDIT_CARD' | 'CASH_ON_DELIVERY' | 'NOT_SELECTED';
-export type BackendDeliverMethod = 'DHL' | 'FedEx' | 'Express' | 'FREE';
+export type BackendPaymentMethod = 'CREDIT_CARD' | 'CASH_ON_DELIVERY' | 'EFT' | 'NOT_SELECTED';
+export type BackendDeliverMethod = 'STANDARD' | 'EXPRESS' | 'OVERNIGHT' | 'FREE';
 
 export interface AddressApiDto {
+  fullName?: string;
+  phoneNumber?: string;
+  email?: string;
+  apartment?: string;
   streetAddress: string;
   city: string;
   state: string;
@@ -105,7 +109,7 @@ export interface AddressApiDto {
 export interface CheckoutUpdateRequest {
   paymentMethod: BackendPaymentMethod;
   shippingAddress: AddressApiDto;
-  billingAddress: AddressApiDto;
+  billingAddress?: AddressApiDto;
   shippingMethod: BackendDeliverMethod;
 }
 
@@ -114,6 +118,7 @@ export interface CheckoutApiData {
   subtotal: number;
   discount: number;
   tax: number;
+  shippingCost: number;
   totalAmount: number;
   status: string;
   estimatedDeliveryDate?: string;
@@ -128,6 +133,10 @@ export interface CheckoutApiResponse {
 
 export function mapToAddressDto(address: ShippingAddress): AddressApiDto {
   return {
+    fullName: address.fullName,
+    phoneNumber: address.phoneNumber,
+    email: address.email,
+    apartment: address.apartment,
     streetAddress: address.streetAddress,
     city: address.city,
     state: address.province,
@@ -140,20 +149,22 @@ export function mapToBackendPaymentMethod(method: PaymentMethod): BackendPayment
   switch (method.type) {
     case 'card':
       return 'CREDIT_CARD';
+    case 'eft':
+      return 'EFT';
     case 'cash':
       return 'CASH_ON_DELIVERY';
     default:
-      return 'NOT_SELECTED'; // EFT has no backend equivalent — backend gap
+      return 'NOT_SELECTED';
   }
 }
 
 export function mapToBackendDeliverMethod(option: DeliveryOption): BackendDeliverMethod {
   switch (option.id) {
     case 'express':
-      return 'Express';
+      return 'EXPRESS';
     case 'overnight':
-      return 'DHL';
+      return 'OVERNIGHT';
     default:
-      return 'FREE'; // standard → FREE
+      return 'STANDARD';
   }
 }
