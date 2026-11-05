@@ -8,13 +8,13 @@ import { NavItem } from './core/models/navigation';
   imports: [RouterOutlet, HeaderComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppComponent {
   readonly navItems: NavItem[] = [
     { label: 'Catalog', link: '/catalog' },
     { label: 'Favorites', link: '/favorites' },
-    { label: 'Admin', link: '/admin' },
-    // { label: 'Cart', link: '/cart' }
+    { label: 'Orders', link: '/orders', requiresAuth: true },
+    { label: 'Admin', link: '/admin', requiresAdmin: true },
   ];
 }

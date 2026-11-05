@@ -34,14 +34,14 @@ const mockShipping: ShippingAddress = {
 };
 
 const mockDelivery: DeliveryOption = {
-  id: 'standard',
+  id: 'STANDARD',
   name: 'Standard Delivery',
   description: 'Delivered within 5-7 business days',
   estimatedDays: '5-7 days',
   price: 0,
 };
 
-const mockPayment: PaymentMethod = { id: 'card', type: 'card', label: 'Credit/Debit Card' };
+const mockPayment: PaymentMethod = { id: 'CREDIT_CARD', type: 'card', label: 'Credit/Debit Card' };
 
 const mockCheckoutData: CheckoutApiData = {
   id: 'checkout-456',
@@ -280,12 +280,12 @@ describe(CheckoutService.name, () => {
       expect(onError).not.toHaveBeenCalled();
     });
 
-    it('should map payment type "card" to CREDIT_CARD in the PATCH body', () => {
+    it('should map payment id "CREDIT_CARD" to CREDIT_CARD in the PATCH body', () => {
       (mockAuthService.currentUser as unknown as WritableSignal<User | null>).set(mockUser);
       service.initiateCheckout();
       service.setShippingAddress(mockShipping);
       service.setDeliveryOption(mockDelivery);
-      service.setPaymentMethod({ id: 'card', type: 'card', label: 'Credit/Debit Card' });
+      service.setPaymentMethod({ id: 'CREDIT_CARD', type: 'card', label: 'Credit/Debit Card' });
 
       mockHttp.post.mockReturnValueOnce(of(mockOrderResponse));
       service.confirmCheckout({ onSuccess: jest.fn(), onError: jest.fn() });
@@ -296,11 +296,11 @@ describe(CheckoutService.name, () => {
       );
     });
 
-    it('should map delivery id "standard" to STANDARD in the PATCH body', () => {
+    it('should send STANDARD as shippingMethod for the standard delivery option', () => {
       (mockAuthService.currentUser as unknown as WritableSignal<User | null>).set(mockUser);
       service.initiateCheckout();
       service.setShippingAddress(mockShipping);
-      service.setDeliveryOption({ ...mockDelivery, id: 'standard' });
+      service.setDeliveryOption({ ...mockDelivery, id: 'STANDARD' });
       service.setPaymentMethod(mockPayment);
 
       mockHttp.post.mockReturnValueOnce(of(mockOrderResponse));
@@ -312,11 +312,11 @@ describe(CheckoutService.name, () => {
       );
     });
 
-    it('should map delivery id "express" to EXPRESS in the PATCH body', () => {
+    it('should send EXPRESS as shippingMethod for the express delivery option', () => {
       (mockAuthService.currentUser as unknown as WritableSignal<User | null>).set(mockUser);
       service.initiateCheckout();
       service.setShippingAddress(mockShipping);
-      service.setDeliveryOption({ ...mockDelivery, id: 'express' });
+      service.setDeliveryOption({ ...mockDelivery, id: 'EXPRESS' });
       service.setPaymentMethod(mockPayment);
 
       mockHttp.post.mockReturnValueOnce(of(mockOrderResponse));
@@ -328,12 +328,12 @@ describe(CheckoutService.name, () => {
       );
     });
 
-    it('should map payment type "eft" to EFT in the PATCH body', () => {
+    it('should send EFT as paymentMethod for the EFT payment option', () => {
       (mockAuthService.currentUser as unknown as WritableSignal<User | null>).set(mockUser);
       service.initiateCheckout();
       service.setShippingAddress(mockShipping);
       service.setDeliveryOption(mockDelivery);
-      service.setPaymentMethod({ id: 'eft', type: 'eft', label: 'EFT/Bank Transfer' });
+      service.setPaymentMethod({ id: 'EFT', type: 'eft', label: 'EFT/Bank Transfer' });
 
       mockHttp.post.mockReturnValueOnce(of(mockOrderResponse));
       service.confirmCheckout({ onSuccess: jest.fn(), onError: jest.fn() });

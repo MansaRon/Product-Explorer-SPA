@@ -1,3 +1,5 @@
+import { DeliveryOption, PaymentMethod, ShippingAddress } from './checkout';
+
 export interface OrderItemApi {
   id: string;
   productId: string;
@@ -11,6 +13,10 @@ export interface OrderItemApi {
 }
 
 export interface OrderAddressApi {
+  fullName?: string;
+  phoneNumber?: string;
+  email?: string;
+  apartment?: string;
   streetAddress: string;
   city: string;
   state: string;
@@ -30,6 +36,7 @@ export interface OrderApi {
   totalAmount: number;
   shippingCost: number;
   transactionId?: string;
+  createdAt?: string;
   estimatedDeliveryDate?: string;
   deliveredDate?: string;
   orderItems: OrderItemApi[];
@@ -49,4 +56,26 @@ export interface OrderListApiResponse {
   message: string;
   status: string;
   statusCode: number;
+}
+
+export interface OrderItem {
+  productId: string;
+  productName: string;
+  quantity: number;
+  price: number;
+}
+
+export interface Order {
+  id: string;
+  userId: string;
+  items: OrderItem[];
+  subtotal: number;
+  tax: number;
+  total: number;
+  status: string;
+  createdAt: Date;
+  orderNumber?: string;
+  shippingAddress?: ShippingAddress;
+  deliveryOption?: DeliveryOption;
+  paymentMethod?: PaymentMethod;
 }

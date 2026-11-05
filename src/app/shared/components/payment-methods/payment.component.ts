@@ -1,7 +1,8 @@
-import { ChangeDetectionStrategy, Component, effect, input, output } from '@angular/core';
-import { PAYMENT_METHODS, PaymentMethod } from '../../../core/models/checkout';
+import { ChangeDetectionStrategy, Component, effect, inject, input, output } from '@angular/core';
+import { PaymentMethod } from '../../../core/models/checkout';
 import { CreditCardIconComponent } from '../icons/credit-card-icon/credit-card-icon.component';
 import { BanknoteIconComponent } from '../icons/banknote-icon/banknote-icon.component';
+import { LookupService } from '../../../core/services/lookup/lookup.service';
 
 @Component({
   selector: 'app-payment-options',
@@ -18,7 +19,7 @@ export class PaymentMethodComponent {
   formValidity = output<boolean>();
 
   protected selectedMethod: PaymentMethod | undefined;
-  protected readonly paymentMethods: PaymentMethod[] = PAYMENT_METHODS;
+  protected readonly paymentMethods = inject(LookupService).paymentMethods;
 
   constructor() {
     effect(() => {

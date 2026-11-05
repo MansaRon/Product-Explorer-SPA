@@ -32,7 +32,7 @@
         aria-label="Main navigation"
       >
         @for (item of navItems(); track item.label) {
-          @if (item.label !== 'Admin' || isAdmin()) {
+          @if ((!item.requiresAuth || isAuthenticated()) && (!item.requiresAdmin || isAdmin())) {
             <a
               class="nav-link"
               [routerLink]="item.link"
@@ -84,6 +84,15 @@
                     <span class="profile-name">{{ currentUser()?.name }}</span>
                     <span class="profile-email">{{ currentUser()?.email }}</span>
                   </div>
+                  <hr class="dropdown-divider" />
+                  <a
+                    class="dropdown-item"
+                    routerLink="/orders"
+                    role="menuitem"
+                    (click)="closeProfileMenu()"
+                  >
+                    My Orders
+                  </a>
                   <hr class="dropdown-divider" />
                   <button
                     type="button"

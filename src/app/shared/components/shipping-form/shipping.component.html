@@ -16,11 +16,12 @@
           [class.form-input--error]="hasError('fullName')"
           [attr.aria-invalid]="hasError('fullName')"
           [attr.aria-describedby]="hasError('fullName') ? 'fullName-error' : null"
-          placeholder="John Doe" />
+          placeholder="John Doe"
+        />
         @if (hasError('fullName')) {
-        <span id="fullName-error" class="error-message" role="alert">
-          {{ getErrorMessage("fullName") }}
-        </span>
+          <span id="fullName-error" class="error-message" role="alert">
+            {{ getErrorMessage('fullName') }}
+          </span>
         }
       </div>
     </div>
@@ -39,11 +40,12 @@
           [class.form-input--error]="hasError('phoneNumber')"
           [attr.aria-invalid]="hasError('phoneNumber')"
           [attr.aria-describedby]="hasError('phoneNumber') ? 'phoneNumber-error' : null"
-          placeholder="0821234567" />
+          placeholder="0821234567"
+        />
         @if (hasError('phoneNumber')) {
-        <span id="phoneNumber-error" class="error-message" role="alert">
-          {{ getErrorMessage("phoneNumber") }}
-        </span>
+          <span id="phoneNumber-error" class="error-message" role="alert">
+            {{ getErrorMessage('phoneNumber') }}
+          </span>
         }
       </div>
 
@@ -60,11 +62,12 @@
           [class.form-input--error]="hasError('email')"
           [attr.aria-invalid]="hasError('email')"
           [attr.aria-describedby]="hasError('email') ? 'email-error' : null"
-          placeholder="john@example.com" />
+          placeholder="john@example.com"
+        />
         @if (hasError('email')) {
-        <span id="email-error" class="error-message" role="alert">
-          {{ getErrorMessage("email") }}
-        </span>
+          <span id="email-error" class="error-message" role="alert">
+            {{ getErrorMessage('email') }}
+          </span>
         }
       </div>
     </div>
@@ -88,26 +91,26 @@
           [class.form-input--error]="hasError('streetAddress')"
           [attr.aria-invalid]="hasError('streetAddress')"
           [attr.aria-describedby]="hasError('streetAddress') ? 'streetAddress-error' : null"
-          placeholder="123 Main Street" />
+          placeholder="123 Main Street"
+        />
         @if (hasError('streetAddress')) {
-        <span id="streetAddress-error" class="error-message" role="alert">
-          {{ getErrorMessage("streetAddress") }}
-        </span>
+          <span id="streetAddress-error" class="error-message" role="alert">
+            {{ getErrorMessage('streetAddress') }}
+          </span>
         }
       </div>
     </div>
 
     <div class="form-row">
       <div class="form-field">
-        <label for="apartment" class="form-label">
-          Apartment, Suite, etc. (Optional)
-        </label>
+        <label for="apartment" class="form-label"> Apartment, Suite, etc. (Optional) </label>
         <input
           type="text"
           id="apartment"
           formControlName="apartment"
           class="form-input"
-          placeholder="Apt 4B" />
+          placeholder="Apt 4B"
+        />
       </div>
     </div>
 
@@ -125,11 +128,12 @@
           [class.form-input--error]="hasError('city')"
           [attr.aria-invalid]="hasError('city')"
           [attr.aria-describedby]="hasError('city') ? 'city-error' : null"
-          placeholder="Johannesburg" />
+          placeholder="Johannesburg"
+        />
         @if (hasError('city')) {
-        <span id="city-error" class="error-message" role="alert">
-          {{ getErrorMessage("city") }}
-        </span>
+          <span id="city-error" class="error-message" role="alert">
+            {{ getErrorMessage('city') }}
+          </span>
         }
       </div>
 
@@ -144,17 +148,17 @@
           class="form-select"
           [class.form-select--error]="hasError('province')"
           [attr.aria-invalid]="hasError('province')"
-          [attr.aria-describedby]="
-            hasError('province') ? 'province-error' : null" >
+          [attr.aria-describedby]="hasError('province') ? 'province-error' : null"
+        >
           <option value="">Select Province</option>
-          @for (province of provinces; track province) {
-          <option [value]="province">{{ province }}</option>
+          @for (province of provinces(); track province) {
+            <option [value]="province">{{ province }}</option>
           }
         </select>
         @if (hasError('province')) {
-        <span id="province-error" class="error-message" role="alert">
-          {{ getErrorMessage("province") }}
-        </span>
+          <span id="province-error" class="error-message" role="alert">
+            {{ getErrorMessage('province') }}
+          </span>
         }
       </div>
     </div>
@@ -172,26 +176,20 @@
           class="form-input"
           [class.form-input--error]="hasError('postalCode')"
           [attr.aria-invalid]="hasError('postalCode')"
-          [attr.aria-describedby]="
-            hasError('postalCode') ? 'postalCode-error' : null
-          "
+          [attr.aria-describedby]="hasError('postalCode') ? 'postalCode-error' : null"
           placeholder="2000"
-          maxlength="4" />
+          maxlength="4"
+        />
         @if (hasError('postalCode')) {
-        <span id="postalCode-error" class="error-message" role="alert">
-          {{ getErrorMessage("postalCode") }}
-        </span>
+          <span id="postalCode-error" class="error-message" role="alert">
+            {{ getErrorMessage('postalCode') }}
+          </span>
         }
       </div>
 
       <div class="form-field">
         <label for="country" class="form-label">Country</label>
-        <input
-          type="text"
-          id="country"
-          formControlName="country"
-          class="form-input"
-          readonly />
+        <input type="text" id="country" formControlName="country" class="form-input" readonly />
       </div>
     </div>
   </fieldset>

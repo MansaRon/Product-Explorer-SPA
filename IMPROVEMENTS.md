@@ -701,6 +701,7 @@ Items will be tackled in the following sequence, one at a time:
 | 10 | Playwright E2E Tests | Pending |
 | 11 | Update README & SOLUTION.md | Pending |
 | 12 | Backend Gaps — Checkout Integration | Done |
+| 13 | Order Tracking Page | Pending |
 
 > Each item will be completed, tested, and committed before the next begins.
 
@@ -718,3 +719,19 @@ All gaps identified during the checkout integration sprint have been resolved on
 | `billingAddress` required with no billing step | ✅ Fixed | `billingAddress` is now optional; backend defaults to shipping address |
 | EFT payment flow | ✅ Acknowledged | EFT is treated as manual — order is placed and bank details shown on confirmation |
 | `shippingCost` not in checkout total | ✅ Fixed | `shippingCost` is now a field in `CheckoutDTO` and factored into `totalAmount` |
+
+---
+
+## 13. Order Tracking Page 🔲 Pending
+
+### What
+Build a dedicated order tracking page at `/orders/:id/track` that shows real-time shipment status, courier info, and a visual progress timeline for the order.
+
+### Why
+The "Track Order" button exists on the order detail page (`OrderDetailComponent`) but currently shows a "coming soon" notification. Users need a way to follow their shipment after placing an order.
+
+### Implementation notes
+- Add `GET /api/v1/order/{orderId}/tracking` endpoint on the backend (or integrate a courier API)
+- Create `TrackOrderComponent` under `src/app/features/orders/track-order/`
+- Wire the "Track Order" button in `order-detail.component.ts` to navigate to the new route
+- Remove the `notifications.info('Order tracking is coming soon.')` placeholder and the TODO comment once implemented
