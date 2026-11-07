@@ -48,6 +48,6 @@ export class ConfirmationContainerComponent implements OnInit {
   }
 
   protected viewOrders(): void {
-    this.router.navigate([AppRoutes.CATALOG]);
+    this.router.navigate([AppRoutes.ORDERS]);
   }
 }

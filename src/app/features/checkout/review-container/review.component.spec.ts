@@ -17,8 +17,8 @@ const mockShipping: ShippingAddress = fromPartial({
   country: 'South Africa',
 });
 
-const mockDelivery: DeliveryOption = fromPartial({ id: 'standard', price: 0 });
-const mockPayment: PaymentMethod = fromPartial({ id: 'card', type: 'card' });
+const mockDelivery: DeliveryOption = fromPartial({ id: 'STANDARD', price: 0 });
+const mockPayment: PaymentMethod = fromPartial({ id: 'CREDIT_CARD', type: 'card' });
 
 describe.skip('ReviewComponent', () => {
   let spectator: Spectator<ReviewComponent>;

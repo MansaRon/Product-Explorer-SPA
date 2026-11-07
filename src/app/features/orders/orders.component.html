@@ -1,0 +1,82 @@
+<div class="container">
+  <div class="page-header">
+    <div class="header-content">
+      <div>
+        <h1 class="page-title">My Orders</h1>
+        <p class="page-description">
+          @if (hasOrders()) {
+            {{ orderCount() }} {{ orderCount() === 1 ? 'order' : 'orders' }} placed
+          } @else {
+            No orders yet
+          }
+        </p>
+      </div>
+    </div>
+  </div>
+
+  @if (!hasOrders()) {
+    <app-empty-state
+      icon="box"
+      title="No orders yet"
+      description="Once you place an order it will appear here"
+    >
+      <a
+        (click)="backToCatalog()"
+        (keydown.enter)="backToCatalog()"
+        class="browse-link"
+        tabindex="0"
+      >
+        Browse Catalog
+      </a>
+    </app-empty-state>
+  } @else {
+    <div class="orders-list">
+      @for (order of sortedOrders(); track order.id) {
+        <div
+          class="order-card"
+          (click)="viewOrder(order)"
+          (keydown.enter)="viewOrder(order)"
+          tabindex="0"
+          role="button"
+          [attr.aria-label]="'View order ' + order.orderNumber"
+        >
+          <div class="order-card__header">
+            <div class="order-card__meta">
+              <span class="order-number">{{ order.orderNumber }}</span>
+              <span class="order-date">{{ order.createdAt | date: 'mediumDate' }}</span>
+            </div>
+            <span [class]="'status-badge ' + statusClass(order.orderStatus)">
+              {{ order.orderStatus }}
+            </span>
+          </div>
+
+          <div class="order-card__body">
+            <p class="order-items-summary">{{ itemSummary(order) }}</p>
+            <div class="order-card__financials">
+              @if (order.shippingCost > 0) {
+                <span class="shipping-label"
+                  >Shipping: {{ order.shippingCost | currency: 'ZAR' : 'symbol-narrow' }}</span
+                >
+              } @else {
+                <span class="shipping-label">Free shipping</span>
+              }
+              <span class="order-total">{{
+                order.totalAmount | currency: 'ZAR' : 'symbol-narrow'
+              }}</span>
+            </div>
+          </div>
+
+          <div class="order-card__footer">
+            <button
+              type="button"
+              class="view-link"
+              (click)="$event.stopPropagation(); viewOrder(order)"
+            >
+              View details →
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>

@@ -4,6 +4,7 @@ import { catchError, EMPTY, tap } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
 import { CartItem, CartResponse } from '../../models/cartitem';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { silentRequest } from '../interceptor/error/error.interceptor';
 
 @Injectable({
   providedIn: 'root',
@@ -134,6 +135,11 @@ export class CartService {
     this.updateQuantity(productId, this.getQuantity(productId) - 1);
   }
 
+  /** Immediately clears the cart signal without an API call. Use after order confirmation. */
+  localClear(): void {
+    this.cartItemsSignal.set([]);
+  }
+
   clearCart(): void {
     const user = this.authService.currentUser();
     if (!user?.id) return;
@@ -145,6 +151,9 @@ export class CartService {
         takeUntilDestroyed(this.destroyRef),
         catchError((err) => {
           console.error('Failed to clear cart:', err);
+          // Backend may have already cleared the cart (e.g. during order confirmation).
+          // Clear the local signal regardless so the UI stays in sync.
+          this.cartItemsSignal.set([]);
           return EMPTY;
         })
       )
@@ -153,12 +162,14 @@ export class CartService {
 
   private loadCart(userId: string): void {
     this.http
-      .get<CartResponse>(`/cart/${userId}`)
+      .get<CartResponse>(`/cart/${userId}`, { context: silentRequest() })
       .pipe(
         tap((response) => this.syncFromResponse(response)),
         takeUntilDestroyed(this.destroyRef),
         catchError((err) => {
           console.error('Failed to load cart:', err);
+          // Cart doesn't exist yet or is in an error state — show empty cart.
+          this.cartItemsSignal.set([]);
           return EMPTY;
         })
       )

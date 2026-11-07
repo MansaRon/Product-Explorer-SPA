@@ -34,61 +34,6 @@ export interface CheckoutState {
 
 export type CheckoutStep = 'shipping' | 'delivery' | 'payment' | 'review' | 'confirmation';
 
-// TODO move this to the backend
-export const SOUTH_AFRICAN_PROVINCES = [
-  'Eastern Cape',
-  'Free State',
-  'Gauteng',
-  'KwaZulu-Natal',
-  'Limpopo',
-  'Mpumalanga',
-  'Northern Cape',
-  'North West',
-  'Western Cape',
-] as const;
-
-export const DELIVERY_OPTIONS: DeliveryOption[] = [
-  {
-    id: 'standard',
-    name: 'Standard Delivery',
-    description: 'Delivered within 5-7 business days',
-    estimatedDays: '5-7 days',
-    price: 0,
-  },
-  {
-    id: 'express',
-    name: 'Express Delivery',
-    description: 'Delivered within 2-3 business days',
-    estimatedDays: '2-3 days',
-    price: 50,
-  },
-  {
-    id: 'overnight',
-    name: 'Overnight Delivery',
-    description: 'Delivered next business day',
-    estimatedDays: 'Next day',
-    price: 150,
-  },
-];
-
-export const PAYMENT_METHODS: PaymentMethod[] = [
-  {
-    id: 'card',
-    type: 'card',
-    label: 'Credit/Debit Card',
-  },
-  {
-    id: 'eft',
-    type: 'eft',
-    label: 'EFT/Bank Transfer',
-  },
-  {
-    id: 'cash',
-    type: 'cash',
-    label: 'Cash on Delivery',
-  },
-];
-
 // --- Backend-aligned types ---
 
 export type BackendPaymentMethod = 'CREDIT_CARD' | 'CASH_ON_DELIVERY' | 'EFT' | 'NOT_SELECTED';
@@ -146,6 +91,15 @@ export function mapToAddressDto(address: ShippingAddress): AddressApiDto {
 }
 
 export function mapToBackendPaymentMethod(method: PaymentMethod): BackendPaymentMethod {
+  switch (method.id.toUpperCase()) {
+    case 'CREDIT_CARD':
+      return 'CREDIT_CARD';
+    case 'EFT':
+      return 'EFT';
+    case 'CASH_ON_DELIVERY':
+      return 'CASH_ON_DELIVERY';
+  }
+  // Fallback via type for legacy session state (id was lowercase before lookup integration)
   switch (method.type) {
     case 'card':
       return 'CREDIT_CARD';
@@ -159,11 +113,13 @@ export function mapToBackendPaymentMethod(method: PaymentMethod): BackendPayment
 }
 
 export function mapToBackendDeliverMethod(option: DeliveryOption): BackendDeliverMethod {
-  switch (option.id) {
-    case 'express':
+  switch (option.id.toUpperCase()) {
+    case 'EXPRESS':
       return 'EXPRESS';
-    case 'overnight':
+    case 'OVERNIGHT':
       return 'OVERNIGHT';
+    case 'FREE':
+      return 'FREE';
     default:
       return 'STANDARD';
   }

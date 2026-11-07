@@ -1,7 +1,8 @@
 import { ChangeDetectionStrategy, Component, effect, inject, input, output } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ShippingAddress, SOUTH_AFRICAN_PROVINCES } from '../../../core/models/checkout';
+import { ShippingAddress } from '../../../core/models/checkout';
 import { CheckoutValidators, getFormErrorMessage, hasFormError } from '../../utils/validators.util';
+import { LookupService } from '../../../core/services/lookup/lookup.service';
 
 @Component({
   selector: 'app-shipping',
@@ -19,7 +20,7 @@ export class ShippingDumbComponent {
   formSubmit = output<ShippingAddress>();
   formValidility = output<boolean>();
 
-  protected readonly provinces = SOUTH_AFRICAN_PROVINCES;
+  protected readonly provinces = inject(LookupService).provinces;
   protected readonly form: FormGroup = this.fb.group({
     fullName: ['', [Validators.required, Validators.minLength(2)]],
     phoneNumber: ['', [Validators.required, CheckoutValidators.saPhoneNumber]],

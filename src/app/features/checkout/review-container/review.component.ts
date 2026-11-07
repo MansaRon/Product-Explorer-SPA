@@ -57,8 +57,9 @@ export class ReviewComponent {
 
     this.checkoutService.confirmCheckout({
       onSuccess: (order) => {
-        this.orderService.setCurrentOrder(order);
-        this.cartService.clearCart();
+        this.orderService.addOrder(order);
+        this.cartService.localClear();
+        this.checkoutService.markStepCompleted('review');
         this.checkoutService.goToStep('confirmation');
         this.router.navigate([AppRoutes.CHECKOUT, AppRoutes.CONFIRMATION, order.id]);
         this.isSubmitting.set(false);

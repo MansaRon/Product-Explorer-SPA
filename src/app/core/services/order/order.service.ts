@@ -3,31 +3,9 @@ import { HttpClient } from '@angular/common/http';
 import { catchError, EMPTY, tap } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AuthService } from '../auth/auth.service';
-import { OrderApi, OrderApiResponse, OrderListApiResponse } from '../../models/order';
-import { DeliveryOption, PaymentMethod, ShippingAddress } from '../../models/checkout';
+import { Order, OrderApi, OrderApiResponse, OrderListApiResponse } from '../../models/order';
 
 // View-model types used by OrderConfirmationComponent
-export interface OrderItem {
-  productId: string;
-  productName: string;
-  quantity: number;
-  price: number;
-}
-
-export interface Order {
-  id: string;
-  userId: string;
-  items: OrderItem[];
-  subtotal: number;
-  tax: number;
-  total: number;
-  status: string;
-  createdAt: Date;
-  orderNumber?: string;
-  shippingAddress?: ShippingAddress;
-  deliveryOption?: DeliveryOption;
-  paymentMethod?: PaymentMethod;
-}
 
 export function toOrderViewModel(api: OrderApi): Order {
   return {
@@ -80,9 +58,24 @@ export class OrderService {
     this.currentOrderSignal.set(order);
   }
 
+  /** Use after placing a new order — sets the current order and prepends it to the orders list. */
+  addOrder(order: OrderApi): void {
+    this.currentOrderSignal.set(order);
+    this.ordersSignal.update((orders) => [order, ...orders]);
+  }
+
+  refreshOrders(): void {
+    const user = this.authService.currentUser();
+    if (user?.id) {
+      this.loadUserOrders(user.id);
+    }
+  }
+
   loadOrderById(orderId: string): void {
+    const user = this.authService.currentUser();
+    if (!user?.id) return;
     this.http
-      .get<OrderApiResponse>(`/order/${orderId}`)
+      .get<OrderApiResponse>(`/order/${user.id}/${orderId}`)
       .pipe(
         tap((response) => this.currentOrderSignal.set(response.data)),
         takeUntilDestroyed(this.destroyRef),

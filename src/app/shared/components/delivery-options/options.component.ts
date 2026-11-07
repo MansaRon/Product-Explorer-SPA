@@ -1,13 +1,14 @@
 import { CurrencyPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, effect, input, output } from '@angular/core';
-import { DELIVERY_OPTIONS, DeliveryOption } from '../../../core/models/checkout';
+import { ChangeDetectionStrategy, Component, effect, inject, input, output } from '@angular/core';
+import { DeliveryOption } from '../../../core/models/checkout';
+import { LookupService } from '../../../core/services/lookup/lookup.service';
 
 @Component({
   selector: 'app-options',
   templateUrl: './options.component.html',
   styleUrls: ['./options.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CurrencyPipe]
+  imports: [CurrencyPipe],
 })
 export class OptionsComponent {
   initialData = input<DeliveryOption | undefined>();
@@ -17,7 +18,7 @@ export class OptionsComponent {
   formValidity = output<boolean>();
 
   protected selectedOption: DeliveryOption | undefined;
-  protected readonly deliveryOption: DeliveryOption[] = DELIVERY_OPTIONS;
+  protected readonly deliveryOptions = inject(LookupService).deliveryOptions;
 
   constructor() {
     effect(() => {

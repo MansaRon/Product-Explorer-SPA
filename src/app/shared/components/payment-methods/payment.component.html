@@ -1,8 +1,6 @@
 <div class="payment-methods" role="radiogroup" aria-label="Payment method options">
-  @for (method of paymentMethods; track method.id) {
-    <label
-      class="payment-method"
-      [class.payment-method--selected]="isSelected(method.id)">
+  @for (method of paymentMethods(); track method.id) {
+    <label class="payment-method" [class.payment-method--selected]="isSelected(method.id)">
       <input
         type="radio"
         [name]="'payment'"
@@ -10,18 +8,19 @@
         [checked]="isSelected(method.id)"
         (change)="selectMethod(method)"
         class="payment-radio"
-        [attr.aria-label]="method.label" />
+        [attr.aria-label]="method.label"
+      />
       <div class="method-content">
         <div class="method-icon" aria-hidden="true">
           @switch (method.type) {
             @case ('card') {
-              <app-credit-card-icon [width]="32" [height]="32"  color="currentColor" />
+              <app-credit-card-icon [width]="32" [height]="32" color="currentColor" />
             }
             @case ('eft') {
-              <app-credit-card-icon [width]="32" [height]="32"  color="currentColor" />
+              <app-credit-card-icon [width]="32" [height]="32" color="currentColor" />
             }
             @case ('cash') {
-              <app-banknote-icon [width]="32" [height]="32"  color="currentColor" />
+              <app-banknote-icon [width]="32" [height]="32" color="currentColor" />
             }
           }
         </div>
@@ -43,7 +42,8 @@
   @if (selected.type === 'eft') {
     <div class="payment-note">
       <p class="note-text">
-        🏦 Bank details will be provided after order confirmation. Payment must be received within 24 hours.
+        🏦 Bank details will be provided after order confirmation. Payment must be received within
+        24 hours.
       </p>
     </div>
   }

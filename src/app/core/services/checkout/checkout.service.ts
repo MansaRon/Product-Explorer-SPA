@@ -101,6 +101,13 @@ export class CheckoutService {
     }));
   }
 
+  markStepCompleted(step: CheckoutStep): void {
+    this.checkoutState.update((state) => ({
+      ...state,
+      completedSteps: new Set([...state.completedSteps, step]),
+    }));
+  }
+
   goToStep(step: CheckoutStep): void {
     this.checkoutState.update((state) => ({ ...state, currentStep: step }));
   }

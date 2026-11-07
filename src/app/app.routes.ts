@@ -49,6 +49,11 @@ export const routes: Routes = [
     canActivate: [authGuard],
     loadChildren: () => import('./features/checkout/checkout.routing').then((c) => c.CHECKOUT),
   },
+  {
+    path: AppRoutes.ORDERS,
+    canActivate: [authGuard],
+    loadChildren: () => import('./features/orders/orders.routing').then((o) => o.ORDERS),
+  },
   // Must ALWAYS be last so that it does not cause a 404 whilst angular finds a route
   {
     path: AppRoutes.PAGE_NOT_FOUND,

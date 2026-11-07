@@ -1,8 +1,8 @@
 import { CurrencyPipe, DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
-import { Order, OrderItem } from '../../../core/services/order/order.service';
 import { Product } from '../../../core/models/product';
 import { CheckCircleIconComponent } from '../icons/check-circle-icon/check-circle-icon.component';
+import { Order, OrderItem } from '../../../core/models/order';
 
 export type OrderItemWithProduct = OrderItem & { product: Product | undefined };
 

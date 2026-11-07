@@ -1,0 +1,165 @@
+@if (orderExists()) {
+  @let o = order()!;
+
+  <div class="container">
+    <a [routerLink]="ordersRoute" class="back-link">← Back to Orders</a>
+
+    <div class="order-header">
+      <div class="order-header__title">
+        <h1 class="page-title">{{ o.orderNumber }}</h1>
+        @if (o.createdAt) {
+          <p class="page-description">Placed on {{ o.createdAt | date: 'mediumDate' }}</p>
+        }
+      </div>
+      <span [class]="'status-badge ' + statusClass(o.orderStatus)">{{ o.orderStatus }}</span>
+    </div>
+
+    <div class="review-sections">
+      <!-- Items -->
+      <section class="review-section" aria-labelledby="items-heading">
+        <div class="section-header">
+          <h2 id="items-heading" class="section-title">Items Ordered</h2>
+        </div>
+        <div class="order-items">
+          @for (item of o.orderItems; track item.id) {
+            <div class="order-item">
+              @if (item.imageUrls.length) {
+                <img [src]="item.imageUrls[0]" [alt]="item.productTitle" class="item-image" />
+              } @else {
+                <div class="item-image item-image--placeholder" aria-hidden="true"></div>
+              }
+              <div class="item-details">
+                <p class="item-name">{{ item.productTitle }}</p>
+                <p class="item-quantity">Qty: {{ item.quantity }}</p>
+              </div>
+              <p class="item-price">
+                {{ item.unitPrice * item.quantity | currency: 'ZAR' : 'symbol-narrow' }}
+              </p>
+            </div>
+          }
+        </div>
+      </section>
+
+      <!-- Shipping Address -->
+      <section class="review-section" aria-labelledby="address-heading">
+        <div class="section-header">
+          <h2 id="address-heading" class="section-title">Shipping Address</h2>
+        </div>
+        <div class="section-content">
+          @if (o.shippingAddress.fullName) {
+            <p class="info-line">
+              <strong>{{ o.shippingAddress.fullName }}</strong>
+            </p>
+          }
+          <p class="info-line">{{ o.shippingAddress.streetAddress }}</p>
+          @if (o.shippingAddress.apartment) {
+            <p class="info-line">{{ o.shippingAddress.apartment }}</p>
+          }
+          <p class="info-line">
+            {{ o.shippingAddress.city }}, {{ o.shippingAddress.state }}
+            {{ o.shippingAddress.postalCode }}
+          </p>
+          <p class="info-line">{{ o.shippingAddress.country }}</p>
+          @if (o.shippingAddress.phoneNumber) {
+            <p class="info-line contact">{{ o.shippingAddress.phoneNumber }}</p>
+          }
+          @if (o.shippingAddress.email) {
+            <p class="info-line contact">{{ o.shippingAddress.email }}</p>
+          }
+        </div>
+      </section>
+
+      <!-- Order Details -->
+      <section class="review-section" aria-labelledby="details-heading">
+        <div class="section-header">
+          <h2 id="details-heading" class="section-title">Order Details</h2>
+        </div>
+        <div class="section-content">
+          <div class="detail-row">
+            <span class="detail-label">Payment</span>
+            <span class="detail-value">{{ formatPaymentMethod(o.paymentMethod) }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Shipping</span>
+            <span class="detail-value">{{ formatShippingMethod(o.shippingMethod) }}</span>
+          </div>
+          @if (o.estimatedDeliveryDate) {
+            <div class="detail-row">
+              <span class="detail-label">Est. Delivery</span>
+              <span class="detail-value">{{ o.estimatedDeliveryDate | date: 'mediumDate' }}</span>
+            </div>
+          }
+          @if (o.deliveredDate) {
+            <div class="detail-row">
+              <span class="detail-label">Delivered</span>
+              <span class="detail-value">{{ o.deliveredDate | date: 'mediumDate' }}</span>
+            </div>
+          }
+          @if (o.transactionId) {
+            <div class="detail-row">
+              <span class="detail-label">Transaction ID</span>
+              <span class="detail-value detail-value--muted">{{ o.transactionId }}</span>
+            </div>
+          }
+        </div>
+      </section>
+
+      <!-- Order Summary -->
+      <section class="review-section" aria-labelledby="summary-heading">
+        <div class="section-header">
+          <h2 id="summary-heading" class="section-title">Order Summary</h2>
+        </div>
+        <div class="order-summary-details">
+          <div class="summary-line">
+            <span class="summary-label">Subtotal</span>
+            <span class="summary-value">{{ o.subtotal | currency: 'ZAR' : 'symbol-narrow' }}</span>
+          </div>
+          <div class="summary-line">
+            <span class="summary-label">Shipping</span>
+            <span class="summary-value">
+              {{
+                o.shippingCost === 0 ? 'FREE' : (o.shippingCost | currency: 'ZAR' : 'symbol-narrow')
+              }}
+            </span>
+          </div>
+          <div class="summary-line">
+            <span class="summary-label">Tax (15% VAT)</span>
+            <span class="summary-value">{{ o.tax | currency: 'ZAR' : 'symbol-narrow' }}</span>
+          </div>
+          @if (o.discount > 0) {
+            <div class="summary-line">
+              <span class="summary-label">Discount</span>
+              <span class="summary-value summary-value--discount"
+                >-{{ o.discount | currency: 'ZAR' : 'symbol-narrow' }}</span
+              >
+            </div>
+          }
+          <div class="summary-divider"></div>
+          <div class="summary-line summary-total">
+            <span class="summary-label">Total</span>
+            <span class="summary-value">{{
+              o.totalAmount | currency: 'ZAR' : 'symbol-narrow'
+            }}</span>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div class="order-actions">
+      <!-- TODO: Track order page to be implemented in a separate PR -->
+      <button type="button" class="button button--secondary" (click)="trackOrder()">
+        Track Order
+      </button>
+      <a [routerLink]="ordersRoute" class="button button--primary">Back to Orders</a>
+    </div>
+  </div>
+}
+
+@if (!orderExists()) {
+  <div class="container">
+    <a [routerLink]="ordersRoute" class="back-link">← Back to Orders</a>
+    <div class="not-found">
+      <p class="not-found__message">Order not found or still loading.</p>
+    </div>
+  </div>
+}

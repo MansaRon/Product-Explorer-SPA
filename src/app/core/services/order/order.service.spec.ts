@@ -7,13 +7,17 @@ import {
 import { OrderService } from './order.service';
 import { AuthService } from '../auth/auth.service';
 import { HttpClient } from '@angular/common/http';
-import { signal, WritableSignal } from '@angular/core';
+import { signal } from '@angular/core';
+import { TestBed } from '@angular/core/testing';
 import { User } from '../../models/user';
 import { of } from 'rxjs';
 import { fromPartial } from '@total-typescript/shoehorn';
 import { OrderApi, OrderApiResponse, OrderListApiResponse } from '../../models/order';
 
 const mockUser: User = fromPartial({ id: 'user-123', accessToken: 'token-abc' });
+
+// Defined at module level so it's shared — must be reset in beforeEach to avoid cross-test leakage
+const currentUserSignal = signal<User | null>(null);
 
 const mockOrder: OrderApi = fromPartial({
   id: 'order-789',
@@ -39,27 +43,24 @@ const mockOrderListResponse: OrderListApiResponse = {
   statusCode: 200,
 };
 
-describe.skip(OrderService.name, () => {
+describe(OrderService.name, () => {
   let spectator: SpectatorService<OrderService>;
   let service: OrderService;
-  let mockAuthService: SpyObject<AuthService>;
   let mockHttp: SpyObject<HttpClient>;
 
   const createService = createServiceFactory({
     service: OrderService,
     providers: [
-      mockProvider(AuthService, {
-        currentUser: signal<User | null>(null),
-      }),
+      mockProvider(AuthService, { currentUser: currentUserSignal }),
       mockProvider(HttpClient),
     ],
   });
 
   beforeEach(() => {
+    currentUserSignal.set(null);
     spectator = createService();
     service = spectator.service;
 
-    mockAuthService = spectator.inject(AuthService);
     mockHttp = spectator.inject(HttpClient);
 
     mockHttp.get.mockReturnValue(of(mockOrderListResponse));
@@ -100,16 +101,77 @@ describe.skip(OrderService.name, () => {
     });
   });
 
+  describe('addOrder', () => {
+    it('should set the current order', () => {
+      service.addOrder(mockOrder);
+
+      expect(service.currentOrder()).toEqual(mockOrder);
+    });
+
+    it('should prepend the order to the orders list', () => {
+      currentUserSignal.set(mockUser);
+
+      const newOrder: OrderApi = fromPartial({
+        id: 'order-new',
+        orderNumber: 'ORD-002',
+        orderItems: [],
+      });
+      service.addOrder(newOrder);
+
+      expect(service.orders()[0]).toEqual(newOrder);
+      expect(service.orderCount()).toBeGreaterThanOrEqual(1);
+    });
+
+    it('should increment hasOrders to true when list was empty', () => {
+      expect(service.hasOrders()).toBe(false);
+
+      service.addOrder(mockOrder);
+
+      expect(service.hasOrders()).toBe(true);
+      expect(service.orderCount()).toBe(1);
+    });
+  });
+
+  describe('refreshOrders', () => {
+    it('should not call the API when no user is logged in', () => {
+      jest.clearAllMocks();
+
+      service.refreshOrders();
+
+      expect(mockHttp.get).not.toHaveBeenCalled();
+    });
+
+    it('should call GET /order/user/{userId} when user is logged in', () => {
+      currentUserSignal.set(mockUser);
+      jest.clearAllMocks();
+      mockHttp.get.mockReturnValue(of(mockOrderListResponse));
+
+      service.refreshOrders();
+
+      expect(mockHttp.get).toHaveBeenCalledWith(`/order/user/${mockUser.id}`);
+    });
+  });
+
   describe('loadOrderById', () => {
-    it('should call GET /order/{orderId}', () => {
+    it('should call GET /order/{userId}/{orderId} when user is logged in', () => {
+      currentUserSignal.set(mockUser);
       mockHttp.get.mockReturnValue(of(mockOrderResponse));
 
       service.loadOrderById('order-789');
 
-      expect(mockHttp.get).toHaveBeenCalledWith('/order/order-789');
+      expect(mockHttp.get).toHaveBeenCalledWith(`/order/${mockUser.id}/order-789`);
+    });
+
+    it('should not call the API when no user is logged in', () => {
+      jest.clearAllMocks();
+
+      service.loadOrderById('order-789');
+
+      expect(mockHttp.get).not.toHaveBeenCalled();
     });
 
     it('should set the current order from the HTTP response', () => {
+      currentUserSignal.set(mockUser);
       mockHttp.get.mockReturnValue(of(mockOrderResponse));
 
       service.loadOrderById('order-789');
@@ -120,15 +182,20 @@ describe.skip(OrderService.name, () => {
 
   describe('auth effect', () => {
     it('should call GET /order/user/{userId} when user logs in', () => {
-      (mockAuthService.currentUser as unknown as WritableSignal<User | null>).set(mockUser);
+      currentUserSignal.set(mockUser);
+      TestBed.flushEffects();
 
       expect(mockHttp.get).toHaveBeenCalledWith(`/order/user/${mockUser.id}`);
     });
 
     it('should clear orders and current order when user logs out', () => {
+      currentUserSignal.set(mockUser);
+      TestBed.flushEffects();
+      jest.clearAllMocks();
       service.setCurrentOrder(mockOrder);
 
-      (mockAuthService.currentUser as unknown as WritableSignal<User | null>).set(null);
+      currentUserSignal.set(null);
+      TestBed.flushEffects();
 
       expect(service.currentOrder()).toBeNull();
       expect(service.orderCount()).toBe(0);

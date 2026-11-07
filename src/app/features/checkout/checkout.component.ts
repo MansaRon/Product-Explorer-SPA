@@ -7,6 +7,7 @@ import { CheckIconComponent } from '../../shared/components/icons/check-icon/che
 import { TruckIconComponent } from '../../shared/components/icons/truck-icon/truck-icon.component';
 import { CalendarIconComponent } from '../../shared/components/icons/calendar-icon/calendar-icon.component';
 import { CreditCardIconComponent } from '../../shared/components/icons/credit-card-icon/credit-card-icon.component';
+import { AppRoutes } from '../../shared/enums/app-routes-enum';
 
 @Component({
   selector: 'app-checkout',
@@ -44,7 +45,7 @@ export class CheckoutComponent {
       id: 'shipping' satisfies CheckoutStep,
       label: 'Shipping',
       icon: 'truck',
-      route: '/checkout/shipping',
+      route: `/${AppRoutes.CHECKOUT_SHIPPING}`,
       isActive: this.currentStep() === 'shipping',
       isCompleted: this.checkoutService.isStepCompleted()('shipping'),
     },
@@ -52,7 +53,7 @@ export class CheckoutComponent {
       id: 'delivery' satisfies CheckoutStep,
       label: 'Delivery',
       icon: 'calendar',
-      route: '/checkout/delivery',
+      route: `/${AppRoutes.CHECKOUT_DELIVERY}`,
       isActive: this.currentStep() === 'delivery',
       isCompleted: this.checkoutService.isStepCompleted()('delivery'),
     },
@@ -60,7 +61,7 @@ export class CheckoutComponent {
       id: 'payment' satisfies CheckoutStep,
       label: 'Payment',
       icon: 'card',
-      route: '/checkout/payment',
+      route: `/${AppRoutes.CHECKOUT_PAYMENT}`,
       isActive: this.currentStep() === 'payment',
       isCompleted: this.checkoutService.isStepCompleted()('payment'),
     },
@@ -68,9 +69,9 @@ export class CheckoutComponent {
       id: 'review' satisfies CheckoutStep,
       label: 'Review',
       icon: 'check',
-      route: '/checkout/review',
+      route: `/${AppRoutes.CHECKOUT_REVIEW}`,
       isActive: this.currentStep() === 'review',
-      isCompleted: false,
+      isCompleted: this.checkoutService.isStepCompleted()('review'),
     },
   ]);
 
