@@ -1,15 +1,16 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { ProductCardComponent } from '../../shared/components/product-card/product-card.component';
 import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state.component';
 import { FavouriteService } from '../../core/services/favourite/favourite.service';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ConfirmModalComponent } from '../../shared/components/confirm-modal/confirm-modal.component';
 
 @Component({
   selector: 'app-favourites',
   templateUrl: './favourites.component.html',
   styleUrls: ['./favourites.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ProductCardComponent, EmptyStateComponent],
+  imports: [ProductCardComponent, EmptyStateComponent, ConfirmModalComponent],
 })
 export class FavouritesComponent {
   private readonly favouriteService = inject(FavouriteService);
@@ -20,6 +21,13 @@ export class FavouritesComponent {
   protected readonly favoriteCount = this.favouriteService.count;
   protected readonly hasFavorites = computed(() => this.favouriteService.count() > 0);
 
+  protected readonly showClearConfirm = signal(false);
+
+  protected readonly clearConfirmMessage = computed(() => {
+    const count = this.favoriteCount();
+    return `Are you sure you want to remove all ${count} ${count === 1 ? 'favorite' : 'favorites'}? This action cannot be undone.`;
+  });
+
   protected isFavorite(productId: string): boolean {
     return this.favouriteService.isFavorite(productId);
   }
@@ -29,9 +37,16 @@ export class FavouritesComponent {
   }
 
   protected clearAllFavorites(): void {
-    if (confirm('Are you sure you want to remove all favorites?')) {
-      this.favouriteService.clearAll();
-    }
+    this.showClearConfirm.set(true);
+  }
+
+  protected onConfirmClear(): void {
+    this.favouriteService.clearAll();
+    this.showClearConfirm.set(false);
+  }
+
+  protected onCancelClear(): void {
+    this.showClearConfirm.set(false);
   }
 
   protected back(): void {

@@ -50,4 +50,17 @@
       }
     </div>
   }
+
+  @defer (when showClearConfirm()) {
+    @if (showClearConfirm()) {
+      <app-confirm-modal
+        title="Remove all favorites?"
+        [message]="clearConfirmMessage()"
+        confirmLabel="Remove All"
+        [dangerous]="true"
+        (confirmed)="onConfirmClear()"
+        (cancelled)="onCancelClear()"
+      />
+    }
+  }
 </div>

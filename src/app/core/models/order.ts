@@ -1,5 +1,31 @@
 import { DeliveryOption, PaymentMethod, ShippingAddress } from './checkout';
 
+export interface OrderStatusHistoryEntry {
+  status: string;
+  timestamp: string;
+  notes?: string;
+  updatedBy?: string;
+}
+
+export interface OrderTrackingData {
+  orderNumber: string;
+  currentStatus: string;
+  shippingMethod: string;
+  cancellable: boolean;
+  placedAt?: string;
+  estimatedDeliveryDate?: string;
+  shippedDate?: string;
+  deliveredDate?: string;
+  history: OrderStatusHistoryEntry[];
+}
+
+export interface OrderTrackingApiResponse {
+  data: OrderTrackingData;
+  message: string;
+  status: string;
+  statusCode: number;
+}
+
 export interface OrderItemApi {
   id: string;
   productId: string;
@@ -38,6 +64,7 @@ export interface OrderApi {
   transactionId?: string;
   createdAt?: string;
   estimatedDeliveryDate?: string;
+  shippedDate?: string;
   deliveredDate?: string;
   orderItems: OrderItemApi[];
   shippingAddress: OrderAddressApi;
