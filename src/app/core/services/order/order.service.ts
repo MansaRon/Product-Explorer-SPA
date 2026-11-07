@@ -3,7 +3,14 @@ import { HttpClient } from '@angular/common/http';
 import { catchError, EMPTY, tap } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AuthService } from '../auth/auth.service';
-import { Order, OrderApi, OrderApiResponse, OrderListApiResponse } from '../../models/order';
+import {
+  Order,
+  OrderApi,
+  OrderApiResponse,
+  OrderListApiResponse,
+  OrderTrackingApiResponse,
+  OrderTrackingData,
+} from '../../models/order';
 
 // View-model types used by OrderConfirmationComponent
 
@@ -36,9 +43,13 @@ export class OrderService {
 
   private readonly ordersSignal = signal<OrderApi[]>([]);
   private readonly currentOrderSignal = signal<OrderApi | null>(null);
+  private readonly trackingDataSignal = signal<OrderTrackingData | null>(null);
+  private readonly isLoadingTrackingSignal = signal(false);
 
   readonly orders = this.ordersSignal.asReadonly();
   readonly currentOrder = this.currentOrderSignal.asReadonly();
+  readonly trackingData = this.trackingDataSignal.asReadonly();
+  readonly isLoadingTracking = this.isLoadingTrackingSignal.asReadonly();
   readonly orderCount = computed(() => this.ordersSignal().length);
   readonly hasOrders = computed(() => this.ordersSignal().length > 0);
 
@@ -81,6 +92,53 @@ export class OrderService {
         takeUntilDestroyed(this.destroyRef),
         catchError((err) => {
           console.error('Failed to load order:', err);
+          return EMPTY;
+        })
+      )
+      .subscribe();
+  }
+
+  loadTrackingData(orderId: string): void {
+    const user = this.authService.currentUser();
+    if (!user?.id) return;
+    this.trackingDataSignal.set(null);
+    this.isLoadingTrackingSignal.set(true);
+    this.http
+      .get<OrderTrackingApiResponse>(`/order/${user.id}/${orderId}/track`)
+      .pipe(
+        tap((res) => {
+          this.trackingDataSignal.set(res.data);
+          this.isLoadingTrackingSignal.set(false);
+        }),
+        takeUntilDestroyed(this.destroyRef),
+        catchError((err) => {
+          console.error('Failed to load tracking data:', err);
+          this.isLoadingTrackingSignal.set(false);
+          return EMPTY;
+        })
+      )
+      .subscribe();
+  }
+
+  cancelOrder(
+    orderId: string,
+    reason: string | undefined,
+    callbacks: { onSuccess: (order: OrderApi) => void; onError: (message: string) => void }
+  ): void {
+    const user = this.authService.currentUser();
+    if (!user?.id) {
+      callbacks.onError('Not authenticated');
+      return;
+    }
+    const body = reason?.trim() ? { reason: reason.trim() } : null;
+    this.http
+      .post<OrderApiResponse>(`/order/${user.id}/${orderId}/cancel`, body)
+      .pipe(
+        tap((res) => callbacks.onSuccess(res.data)),
+        takeUntilDestroyed(this.destroyRef),
+        catchError((err) => {
+          const msg: string = err?.error?.message ?? 'Failed to cancel order. Please try again.';
+          callbacks.onError(msg);
           return EMPTY;
         })
       )

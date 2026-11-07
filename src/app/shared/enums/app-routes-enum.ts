@@ -18,6 +18,7 @@ export const AppRoutes = {
   CHECKOUT_PAYMENT: 'checkout/payment',
   CHECKOUT_REVIEW: 'checkout/review',
   ORDERS: 'orders',
+  ORDER_TRACKING: 'track',
   LOGIN: 'login',
   REGISTER: 'register',
   FORGOT_PASSWORD: 'forgot-password',

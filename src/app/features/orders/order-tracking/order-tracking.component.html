@@ -1,0 +1,185 @@
+<div class="container">
+  <a [routerLink]="detailRoute()" class="back-link">← Back to Order</a>
+
+  @if (isLoading()) {
+    <app-loader label="Loading tracking information" />
+  }
+
+  @if (!isLoading() && trackingData()) {
+    @let t = trackingData()!;
+
+    <div class="tracking-header">
+      <div class="tracking-header__title">
+        <h1 class="page-title">Track Order</h1>
+        <p class="page-description">{{ t.orderNumber }}</p>
+      </div>
+      <span [class]="'status-badge ' + (t.currentStatus | orderStatusClass)">
+        {{ t.currentStatus }}
+      </span>
+    </div>
+
+    <!-- Terminal state (cancelled / refunded) -->
+    @if (isTerminal()) {
+      <div
+        class="terminal-banner"
+        [class.terminal-banner--cancelled]="t.currentStatus === 'CANCELLED'"
+        role="alert"
+      >
+        <p class="terminal-banner__message">
+          @if (t.currentStatus === 'CANCELLED') {
+            This order has been cancelled.
+          } @else {
+            This order has been refunded.
+          }
+        </p>
+      </div>
+    }
+
+    <!-- Status stepper — only shown for active-flow orders -->
+    @if (!isTerminal()) {
+      <section class="tracking-section" aria-labelledby="progress-heading">
+        <h2 id="progress-heading" class="section-title">Order Progress</h2>
+
+        <div class="stepper" role="list">
+          @for (s of computedSteps(); track s.step; let i = $index) {
+            <div class="stepper__item {{ s.stepClass }}" role="listitem">
+              <div class="stepper__node" aria-hidden="true">
+                @if (s.stepClass === 'step--completed') {
+                  <span class="stepper__check">✓</span>
+                }
+              </div>
+              <div class="stepper__content">
+                <span class="stepper__label">{{ s.label }}</span>
+                @if (s.timestamp) {
+                  <span class="stepper__timestamp">{{ s.timestamp | date: 'mediumDate' }}</span>
+                }
+              </div>
+            </div>
+            @if (i < computedSteps().length - 1) {
+              <div class="stepper__connector {{ s.connectorClass }}" aria-hidden="true"></div>
+            }
+          }
+        </div>
+      </section>
+    }
+
+    <!-- Status history log — shown for cancelled / refunded orders -->
+    @if (isTerminal() && t.history.length) {
+      <section class="tracking-section" aria-labelledby="history-heading">
+        <h2 id="history-heading" class="section-title">Status History</h2>
+        <div class="history-list">
+          @for (entry of t.history; track entry.timestamp) {
+            <div class="history-entry">
+              <span class="history-entry__status">{{ entry.status }}</span>
+              <span class="history-entry__timestamp">{{ entry.timestamp | date: 'medium' }}</span>
+              @if (entry.notes) {
+                <p class="history-entry__notes">{{ entry.notes }}</p>
+              }
+            </div>
+          }
+        </div>
+      </section>
+    }
+
+    <!-- Key dates -->
+    <section class="tracking-section" aria-labelledby="dates-heading">
+      <h2 id="dates-heading" class="section-title">Key Dates</h2>
+      <div class="dates-grid">
+        @if (t.placedAt) {
+          <div class="date-row">
+            <span class="date-label">Order Placed</span>
+            <span class="date-value">{{ t.placedAt | date: 'mediumDate' }}</span>
+          </div>
+        }
+        @if (t.shippedDate) {
+          <div class="date-row">
+            <span class="date-label">Shipped</span>
+            <span class="date-value">{{ t.shippedDate | date: 'mediumDate' }}</span>
+          </div>
+        }
+        @if (t.estimatedDeliveryDate) {
+          <div class="date-row">
+            <span class="date-label">Estimated Delivery</span>
+            <span class="date-value">{{ t.estimatedDeliveryDate | date: 'mediumDate' }}</span>
+          </div>
+        }
+        @if (t.deliveredDate) {
+          <div class="date-row date-row--highlight">
+            <span class="date-label">Delivered</span>
+            <span class="date-value">{{ t.deliveredDate | date: 'mediumDate' }}</span>
+          </div>
+        }
+        @if (t.shippingMethod) {
+          <div class="date-row">
+            <span class="date-label">Shipping Method</span>
+            <span class="date-value">{{ t.shippingMethod | shippingMethodLabel }}</span>
+          </div>
+        }
+      </div>
+    </section>
+
+    <!-- Cancel order -->
+    @if (isCancellable()) {
+      <section class="tracking-section tracking-section--cancel" aria-labelledby="cancel-heading">
+        <h2 id="cancel-heading" class="section-title">Cancel Order</h2>
+        <p class="cancel-description">
+          You can cancel this order while it has not yet been dispatched. Cancellations are only
+          accepted within 72 hours of placing the order.
+        </p>
+
+        @if (!showCancelForm()) {
+          <button
+            type="button"
+            class="button button--danger-outline"
+            (click)="showCancelForm.set(true)"
+          >
+            Cancel Order
+          </button>
+        } @else {
+          <div class="cancel-form">
+            <label for="cancel-reason" class="cancel-form__label">
+              Reason for cancellation <span class="optional-hint">(optional)</span>
+            </label>
+            <textarea
+              id="cancel-reason"
+              class="cancel-form__textarea"
+              rows="3"
+              maxlength="500"
+              placeholder="Tell us why you'd like to cancel…"
+              [value]="cancelReason"
+              (input)="onCancelReasonInput($event)"
+            ></textarea>
+            <div class="cancel-form__actions">
+              <button
+                type="button"
+                class="button button--secondary"
+                [disabled]="isCancelling()"
+                (click)="showCancelForm.set(false)"
+              >
+                Keep Order
+              </button>
+              <button
+                type="button"
+                class="button button--danger"
+                [disabled]="isCancelling()"
+                (click)="confirmCancel()"
+              >
+                {{ isCancelling() ? 'Cancelling…' : 'Confirm Cancellation' }}
+              </button>
+            </div>
+          </div>
+        }
+      </section>
+    }
+  }
+
+  @if (!isLoading() && !trackingData()) {
+    <app-empty-state
+      icon="info"
+      title="Tracking unavailable"
+      description="Tracking information could not be loaded for this order."
+    >
+      <a [routerLink]="detailRoute()" class="button button--primary">Back to Order</a>
+    </app-empty-state>
+  }
+</div>

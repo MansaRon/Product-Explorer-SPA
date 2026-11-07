@@ -2,25 +2,40 @@ import { ChangeDetectionStrategy, Component, computed, inject, OnInit } from '@a
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CurrencyPipe, DatePipe } from '@angular/common';
 import { OrderService } from '../../../core/services/order/order.service';
-import { NotificationService } from '../../../core/services/notification/notification.service';
 import { AppRoutes } from '../../../shared/enums/app-routes-enum';
+import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
+import { OrderStatusClassPipe } from '../../../shared/pipes/order-status-class.pipe';
+import { PaymentMethodLabelPipe } from '../../../shared/pipes/payment-method-label.pipe';
+import { ShippingMethodLabelPipe } from '../../../shared/pipes/shipping-method-label.pipe';
 
 @Component({
   selector: 'app-order-detail',
   templateUrl: './order-detail.component.html',
   styleUrls: ['./order-detail.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CurrencyPipe, DatePipe, RouterLink],
+  imports: [
+    CurrencyPipe,
+    DatePipe,
+    RouterLink,
+    EmptyStateComponent,
+    OrderStatusClassPipe,
+    PaymentMethodLabelPipe,
+    ShippingMethodLabelPipe,
+  ],
 })
 export class OrderDetailComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly orderService = inject(OrderService);
-  private readonly notifications = inject(NotificationService);
 
   protected readonly ordersRoute = `/${AppRoutes.ORDERS}`;
   protected readonly order = this.orderService.currentOrder;
   protected readonly orderExists = computed(() => !!this.order());
+
+  protected get trackingRoute(): string {
+    const id = this.route.snapshot.paramMap.get('id');
+    return `/${AppRoutes.ORDERS}/${id}/${AppRoutes.ORDER_TRACKING}`;
+  }
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
@@ -33,51 +48,8 @@ export class OrderDetailComponent implements OnInit {
     }
   }
 
-  protected statusClass(status: string): string {
-    switch (status?.toUpperCase()) {
-      case 'DELIVERED':
-        return 'status--delivered';
-      case 'SHIPPED':
-        return 'status--shipped';
-      case 'CONFIRMED':
-      case 'PROCESSING':
-        return 'status--processing';
-      case 'CANCELLED':
-      case 'REFUNDED':
-        return 'status--cancelled';
-      default:
-        return 'status--pending';
-    }
-  }
-
-  protected formatPaymentMethod(method: string): string {
-    switch (method?.toUpperCase()) {
-      case 'CREDIT_CARD':
-        return 'Credit / Debit Card';
-      case 'EFT':
-        return 'EFT / Bank Transfer';
-      case 'CASH_ON_DELIVERY':
-        return 'Cash on Delivery';
-      default:
-        return method ?? '—';
-    }
-  }
-
-  protected formatShippingMethod(method: string): string {
-    switch (method?.toUpperCase()) {
-      case 'EXPRESS':
-        return 'Express Delivery (2–3 days)';
-      case 'OVERNIGHT':
-        return 'Overnight Delivery (next day)';
-      case 'FREE':
-        return 'Free Delivery (5–7 days)';
-      default:
-        return 'Standard Delivery (5–7 days)';
-    }
-  }
-
-  // TODO: Navigate to order tracking page — to be implemented in a separate PR.
   protected trackOrder(): void {
-    this.notifications.info('Order tracking is coming soon.');
+    const id = this.route.snapshot.paramMap.get('id');
+    void this.router.navigate([AppRoutes.ORDERS, id, AppRoutes.ORDER_TRACKING]);
   }
 }
