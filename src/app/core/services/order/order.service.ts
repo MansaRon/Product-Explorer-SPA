@@ -58,6 +58,19 @@ export class OrderService {
     this.currentOrderSignal.set(order);
   }
 
+  /** Use after placing a new order — sets the current order and prepends it to the orders list. */
+  addOrder(order: OrderApi): void {
+    this.currentOrderSignal.set(order);
+    this.ordersSignal.update((orders) => [order, ...orders]);
+  }
+
+  refreshOrders(): void {
+    const user = this.authService.currentUser();
+    if (user?.id) {
+      this.loadUserOrders(user.id);
+    }
+  }
+
   loadOrderById(orderId: string): void {
     const user = this.authService.currentUser();
     if (!user?.id) return;

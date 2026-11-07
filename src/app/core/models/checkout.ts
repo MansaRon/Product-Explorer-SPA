@@ -91,9 +91,36 @@ export function mapToAddressDto(address: ShippingAddress): AddressApiDto {
 }
 
 export function mapToBackendPaymentMethod(method: PaymentMethod): BackendPaymentMethod {
-  return method.id as BackendPaymentMethod;
+  switch (method.id.toUpperCase()) {
+    case 'CREDIT_CARD':
+      return 'CREDIT_CARD';
+    case 'EFT':
+      return 'EFT';
+    case 'CASH_ON_DELIVERY':
+      return 'CASH_ON_DELIVERY';
+  }
+  // Fallback via type for legacy session state (id was lowercase before lookup integration)
+  switch (method.type) {
+    case 'card':
+      return 'CREDIT_CARD';
+    case 'eft':
+      return 'EFT';
+    case 'cash':
+      return 'CASH_ON_DELIVERY';
+    default:
+      return 'NOT_SELECTED';
+  }
 }
 
 export function mapToBackendDeliverMethod(option: DeliveryOption): BackendDeliverMethod {
-  return option.id as BackendDeliverMethod;
+  switch (option.id.toUpperCase()) {
+    case 'EXPRESS':
+      return 'EXPRESS';
+    case 'OVERNIGHT':
+      return 'OVERNIGHT';
+    case 'FREE':
+      return 'FREE';
+    default:
+      return 'STANDARD';
+  }
 }

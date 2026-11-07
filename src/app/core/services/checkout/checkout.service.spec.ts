@@ -345,6 +345,30 @@ describe(CheckoutService.name, () => {
     });
   });
 
+  describe('markStepCompleted', () => {
+    it('should mark the given step as completed without changing other state', () => {
+      service.markStepCompleted('review');
+
+      expect(service.isStepCompleted()('review')).toBe(true);
+      expect(service.currentStep()).toBe('shipping');
+    });
+
+    it('should not affect already-completed steps when marking a new one', () => {
+      service.setShippingAddress(mockShipping);
+      service.markStepCompleted('review');
+
+      expect(service.isStepCompleted()('shipping')).toBe(true);
+      expect(service.isStepCompleted()('review')).toBe(true);
+    });
+
+    it('should be idempotent — marking an already-completed step changes nothing', () => {
+      service.setShippingAddress(mockShipping);
+      service.markStepCompleted('shipping');
+
+      expect(service.isStepCompleted()('shipping')).toBe(true);
+    });
+  });
+
   describe('resetCheckout', () => {
     it('should clear the checkoutId, step data, and return to the shipping step', () => {
       (mockAuthService.currentUser as unknown as WritableSignal<User | null>).set(mockUser);

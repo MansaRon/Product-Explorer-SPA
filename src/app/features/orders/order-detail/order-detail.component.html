@@ -23,7 +23,7 @@
         <div class="order-items">
           @for (item of o.orderItems; track item.id) {
             <div class="order-item">
-              @if (item.imageUrls?.length) {
+              @if (item.imageUrls.length) {
                 <img [src]="item.imageUrls[0]" [alt]="item.productTitle" class="item-image" />
               } @else {
                 <div class="item-image item-image--placeholder" aria-hidden="true"></div>

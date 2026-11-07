@@ -8,11 +8,9 @@ describe.skip(AppComponent.name, () => {
 
   const createComponent = createComponentFactory({
     component: AppComponent,
-    providers: [
-      provideRouter([])
-    ],
+    providers: [provideRouter([])],
     shallow: true,
-    detectChanges: false
+    detectChanges: false,
   });
 
   beforeEach(() => {
@@ -37,7 +35,7 @@ describe.skip(AppComponent.name, () => {
       const catalogItem = spectator.component.navItems.find(
         (item: NavItem) => item.label === 'Catalog'
       );
-      
+
       expect(catalogItem).toBeDefined();
       expect(catalogItem?.link).toBe('/catalog');
     });
@@ -46,7 +44,7 @@ describe.skip(AppComponent.name, () => {
       const adminItem = spectator.component.navItems.find(
         (item: NavItem) => item.label === 'Admin'
       );
-      
+
       expect(adminItem).toBeDefined();
       expect(adminItem?.link).toBe('/admin');
     });
@@ -126,8 +124,6 @@ describe.skip(AppComponent.name, () => {
   describe('Layout', () => {
     it('should have host element with flex layout', () => {
       const host = spectator.element;
-      const styles = window.getComputedStyle(host);
-      
       // Verify flex layout is applied (from :host styles)
       expect(host).toBeDefined();
     });
@@ -143,7 +139,7 @@ describe.skip(AppComponent.name, () => {
   describe('Component Properties', () => {
     it('should have navItems as readonly property', () => {
       const component = spectator.component;
-      
+
       expect(component.navItems).toBeDefined();
       expect(Array.isArray(component.navItems)).toBe(true);
     });
@@ -151,10 +147,10 @@ describe.skip(AppComponent.name, () => {
     it('should not allow navItems modification', () => {
       const component = spectator.component;
       const originalLength = component.navItems.length;
-      
+
       // This should not affect the original array (readonly)
       const navItems = component.navItems;
-      
+
       expect(navItems.length).toBe(originalLength);
     });
   });
