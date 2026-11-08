@@ -14,3 +14,10 @@ export interface PagedData<T> {
   totalPages: number;
   last: boolean;
 }
+
+export interface PagedApiResponse<T> {
+  data: { items: T[]; totalCount: number; page: number; size: number };
+  message: string;
+  status: string;
+  statusCode: number;
+}
