@@ -27,9 +27,10 @@ export class AuthService {
 
   readonly currentUser = this.currentUserSignal.asReadonly();
   readonly isAuthenticated = computed(() => !!this.currentUserSignal());
-  readonly isAdmin = computed(
-    () => this.currentUserSignal()?.roles?.includes('ADMIN') ?? this.adminOverrideSignal()
-  );
+  readonly isAdmin = computed(() => {
+    const roles = this.currentUserSignal()?.roles ?? [];
+    return roles.some((r) => r === 'ADMIN' || r === 'ROLE_ADMIN') || this.adminOverrideSignal();
+  });
 
   getAccessToken(): string | null {
     return this.currentUserSignal()?.accessToken ?? null;

@@ -10,6 +10,7 @@ import { CloseIconComponent } from '../icons/close-icon/close-icon.component';
 import { MoonIconComponent } from '../icons/moon-icon/moon-icon.component';
 import { SunIconComponent } from '../icons/sun-icon/sun-icon.component';
 import { UserCircleIconComponent } from '../icons/user-circle-icon/user-circle-icon.component';
+import { BrandLogoComponent } from '../icons/brand-logo/brand-logo.component';
 
 @Component({
   selector: 'app-header',
@@ -18,6 +19,7 @@ import { UserCircleIconComponent } from '../icons/user-circle-icon/user-circle-i
   imports: [
     RouterLink,
     RouterLinkActive,
+    BrandLogoComponent,
     CartIconComponent,
     MenuIconComponent,
     CloseIconComponent,

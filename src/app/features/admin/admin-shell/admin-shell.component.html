@@ -1,0 +1,85 @@
+<div class="admin-layout">
+  <aside class="admin-sidebar" aria-label="Admin navigation">
+    <div class="sidebar-brand">
+      <app-brand-logo [width]="28" [height]="28" />
+      <span class="brand-name">Admin Panel</span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a
+        class="nav-item"
+        [routerLink]="routes.dashboard"
+        routerLinkActive="nav-item--active"
+        aria-label="Dashboard"
+      >
+        <app-home-icon [width]="18" [height]="18" color="currentColor" />
+        <span>Dashboard</span>
+      </a>
+
+      <a
+        class="nav-item"
+        [routerLink]="routes.orders"
+        routerLinkActive="nav-item--active"
+        aria-label="Orders"
+      >
+        <app-truck-icon [width]="18" [height]="18" color="currentColor" />
+        <span>Orders</span>
+      </a>
+
+      <a
+        class="nav-item"
+        [routerLink]="routes.users"
+        routerLinkActive="nav-item--active"
+        aria-label="Users"
+      >
+        <app-user-circle-icon [width]="18" [height]="18" color="currentColor" />
+        <span>Users</span>
+      </a>
+
+      <a
+        class="nav-item"
+        [routerLink]="routes.catalog"
+        routerLinkActive="nav-item--active"
+        aria-label="Catalog"
+      >
+        <app-table-icon [width]="18" [height]="18" color="currentColor" />
+        <span>Catalog</span>
+      </a>
+
+      <a
+        class="nav-item"
+        [routerLink]="routes.categories"
+        routerLinkActive="nav-item--active"
+        aria-label="Categories"
+      >
+        <app-check-circle-icon [width]="18" [height]="18" color="currentColor" />
+        <span>Categories</span>
+      </a>
+
+      <a
+        class="nav-item"
+        [routerLink]="routes.coupons"
+        routerLinkActive="nav-item--active"
+        aria-label="Coupons"
+      >
+        <app-banknote-icon [width]="18" [height]="18" color="currentColor" />
+        <span>Coupons</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="user-info">
+        <span class="user-avatar" aria-hidden="true">{{ userInitial() }}</span>
+        <div class="user-meta">
+          <p class="user-name">{{ currentUser()?.name }}</p>
+          <p class="user-role">Administrator</p>
+        </div>
+      </div>
+      <button type="button" class="logout-btn" (click)="logout()">Sign Out</button>
+    </div>
+  </aside>
+
+  <main class="admin-content">
+    <router-outlet />
+  </main>
+</div>
