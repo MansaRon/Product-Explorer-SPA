@@ -4,6 +4,7 @@ import { AuthService } from '../../../core/services/auth/auth.service';
 import { AuthFormData } from '../../../core/models/auth';
 import { AuthFormComponent } from '../../../shared/components/auth-form/auth-form.component';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { AppRoutes } from '../../../shared/enums/app-routes-enum';
 
 @Component({
   selector: 'app-login-page',
@@ -23,7 +24,7 @@ export class LoginPageComponent {
 
   constructor() {
     if (this.authService.isAuthenticated()) {
-      this.router.navigate(['/catalog']);
+      this.redirectAfterLogin();
     }
   }
 
@@ -38,13 +39,25 @@ export class LoginPageComponent {
       .pipe(takeUntilDestroyed(this.destryRef))
       .subscribe({
         next: () => {
-          const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl') ?? '/catalog';
-          this.router.navigateByUrl(returnUrl);
+          const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
+          if (returnUrl) {
+            this.router.navigateByUrl(returnUrl);
+          } else {
+            this.redirectAfterLogin();
+          }
         },
         error: (err: { message?: string }) => {
           this.error.set(err.message ?? 'Login failed. Please check your credentials.');
           this.loading.set(false);
         },
       });
+  }
+
+  private redirectAfterLogin(): void {
+    if (this.authService.isAdmin()) {
+      this.router.navigate([`/${AppRoutes.ADMIN}`]);
+    } else {
+      this.router.navigate([`/${AppRoutes.CATALOG}`]);
+    }
   }
 }
