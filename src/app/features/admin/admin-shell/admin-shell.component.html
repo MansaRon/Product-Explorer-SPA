@@ -75,7 +75,21 @@
           <p class="user-role">Administrator</p>
         </div>
       </div>
-      <button type="button" class="logout-btn" (click)="logout()">Sign Out</button>
+      <div class="footer-actions">
+        <button
+          type="button"
+          class="theme-btn"
+          (click)="toggleTheme()"
+          [attr.aria-label]="theme() === 'light' ? 'Switch to dark mode' : 'Switch to light mode'"
+        >
+          @if (theme() === 'light') {
+            <app-moon-icon [width]="18" [height]="18" color="currentColor" />
+          } @else {
+            <app-sun-icon [width]="18" [height]="18" color="currentColor" />
+          }
+        </button>
+        <button type="button" class="logout-btn" (click)="logout()">Sign Out</button>
+      </div>
     </div>
   </aside>
 

@@ -1,13 +1,17 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, OnInit } from '@angular/core';
+import { CurrencyPipe, DatePipe, DecimalPipe, LowerCasePipe } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { ProductService } from '../../../core/services/product/product.service';
-import { FavouriteService } from '../../../core/services/favourite/favourite.service';
-import { CurrencyPipe } from '@angular/common';
+import { AdminStatsService } from '../../../core/services/admin/admin-stats.service';
+import { AppRoutes } from '../../../shared/enums/app-routes-enum';
+import { SalesChartComponent } from '../../../shared/components/charts/sales-chart/sales-chart.component';
 import { TableIconComponent } from '../../../shared/components/icons/table-icon/table-icon.component';
 import { CurrencyIconComponent } from '../../../shared/components/icons/currency-icon/currency-icon.component';
 import { AlertTriangleIconComponent } from '../../../shared/components/icons/alert-triangle-icon/alert-triangle-icon.component';
 import { XCircleIconComponent } from '../../../shared/components/icons/x-circle-icon/x-circle-icon.component';
 import { StarIconComponent } from '../../../shared/components/icons/star-icon/star-icon.component';
-import { HeartIconComponent } from '../../../shared/components/icons/heart-icon/heart-icon.component';
+import { UserCircleIconComponent } from '../../../shared/components/icons/user-circle-icon/user-circle-icon.component';
+import { BanknoteIconComponent } from '../../../shared/components/icons/banknote-icon/banknote-icon.component';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -16,58 +20,51 @@ import { HeartIconComponent } from '../../../shared/components/icons/heart-icon/
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CurrencyPipe,
+    DatePipe,
+    RouterLink,
+    SalesChartComponent,
     TableIconComponent,
     CurrencyIconComponent,
     AlertTriangleIconComponent,
     XCircleIconComponent,
     StarIconComponent,
-    HeartIconComponent,
+    UserCircleIconComponent,
+    BanknoteIconComponent,
+    LowerCasePipe,
+    DecimalPipe,
   ],
 })
-export class DashboardComponent {
+export class DashboardComponent implements OnInit {
   private readonly productService = inject(ProductService);
-  private readonly favouriteService = inject(FavouriteService);
+  private readonly adminStatsService = inject(AdminStatsService);
 
-  protected readonly products = this.productService.filterProducts;
-  protected readonly categories = this.productService.categories;
-  protected readonly favoriteCount = this.favouriteService.count;
+  protected readonly adminRoutes = {
+    orders: `/${AppRoutes.ADMIN}/${AppRoutes.ADMIN_ORDERS}`,
+    catalog: `/${AppRoutes.ADMIN}/${AppRoutes.ADMIN_CATALOG}`,
+  };
 
-  protected readonly stats = computed(() => {
-    const allProducts = this.products();
-    const totalProducts = allProducts.length;
-    const totalValue = allProducts.reduce((sum, p) => sum + p.price * p.quantity, 0);
-    const lowStock = allProducts.filter((p) => p.quantity < 10 && p.quantity > 0).length;
-    const outOfStock = allProducts.filter((p) => p.quantity === 0).length;
-    const avgRating =
-      totalProducts > 0 ? allProducts.reduce((sum, p) => sum + p.rate, 0) / totalProducts : 0;
+  protected readonly stats = this.adminStatsService.stats;
+  protected readonly isLoading = this.adminStatsService.isLoading;
+  protected readonly statusBreakdown = this.adminStatsService.statusBreakdown;
+  protected readonly salesByDay = this.adminStatsService.salesByDay;
+  protected readonly topProducts = this.adminStatsService.topProducts;
+  protected readonly recentOrders = this.adminStatsService.recentOrders;
+  protected readonly isLoadingOrders = this.adminStatsService.isLoadingOrders;
 
+  private readonly products = this.productService.filterProducts;
+
+  protected readonly productStats = computed(() => {
+    const all = this.products();
     return {
-      totalProducts,
-      totalValue,
-      lowStock,
-      outOfStock,
-      avgRating,
-      totalCategories: this.categories().length,
-      totalFavorites: this.favoriteCount(),
+      total: all.length,
+      lowStock: all.filter((p) => p.quantity > 0 && p.quantity < 10).length,
+      outOfStock: all.filter((p) => p.quantity === 0).length,
+      avgRating: all.length > 0 ? all.reduce((s, p) => s + p.rate, 0) / all.length : 0,
     };
   });
 
-  protected readonly topRatedProducts = computed(() =>
-    [...this.products()].sort((a, b) => b.rate - a.rate).slice(0, 5)
-  );
-
-  protected readonly categoryStats = computed(() => {
-    const products = this.products();
-    const stats = new Map<string, { count: number; totalValue: number }>();
-
-    products.forEach((p) => {
-      const current = stats.get(p.category) ?? { count: 0, totalValue: 0 };
-      stats.set(p.category, {
-        count: current.count + 1,
-        totalValue: current.totalValue + p.price * p.quantity,
-      });
-    });
-
-    return Array.from(stats.entries()).map(([category, data]) => ({ category, ...data }));
-  });
+  ngOnInit(): void {
+    this.adminStatsService.loadStats();
+    this.adminStatsService.loadRecentOrders();
+  }
 }

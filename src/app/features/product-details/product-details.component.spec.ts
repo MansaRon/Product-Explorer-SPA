@@ -1,4 +1,3 @@
-/* tslint:disable:no-unused-variable */
 import { createComponentFactory, Spectator, SpyObject } from '@ngneat/spectator/jest';
 import { mockProvider } from '@ngneat/spectator/jest';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -25,21 +24,21 @@ describe(ProductDetailsComponent.name, () => {
     providers: [
       mockProvider(FavouriteService, {
         isFavorite: jest.fn().mockReturnValue(false),
-        toggleFavorite: jest.fn()
+        toggleFavorite: jest.fn(),
       }),
       mockProvider(CartService, {
         isInCart: jest.fn().mockReturnValue(false),
-        toggleCart: jest.fn()
+        toggleCart: jest.fn(),
       }),
       mockProvider(Router, {
-        navigate: jest.fn().mockResolvedValue(true)
+        navigate: jest.fn().mockResolvedValue(true),
       }),
       mockProvider(ActivatedRoute, {
-        data: of({ product: mockProduct })
-      })
+        data: of({ product: mockProduct }),
+      }),
     ],
     shallow: true,
-    detectChanges: false
+    detectChanges: false,
   });
 
   beforeEach(() => {
@@ -100,10 +99,9 @@ describe(ProductDetailsComponent.name, () => {
     it('should navigate to parent route on goBack', () => {
       spectator.component['goBack']();
 
-      expect(router.navigate).toHaveBeenCalledWith(
-        ['..'],
-        { relativeTo: spectator.inject(ActivatedRoute) }
-      );
+      expect(router.navigate).toHaveBeenCalledWith(['..'], {
+        relativeTo: spectator.inject(ActivatedRoute),
+      });
     });
   });
 });
