@@ -1,0 +1,152 @@
+.table-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+// ── Table ─────────────────────────────────────────────────────────────────────
+
+.table-container {
+  overflow-x: auto;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--font-size-sm);
+
+  thead {
+    background-color: var(--color-bg-secondary);
+
+    th {
+      padding: var(--spacing-sm) var(--spacing-md);
+      text-align: left;
+      font-weight: 600;
+      color: var(--color-text);
+      white-space: nowrap;
+      border-bottom: 1px solid var(--color-border);
+    }
+  }
+
+  tbody tr {
+    border-bottom: 1px solid var(--color-border);
+    transition: background-color 0.1s;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    &:hover:not(.skeleton-row) {
+      background-color: var(--color-bg-secondary);
+    }
+
+    td {
+      padding: var(--spacing-sm) var(--spacing-md);
+      color: var(--color-text-secondary);
+    }
+  }
+}
+
+// ── Cell modifiers (applied via TableColumnDef.cellClass) ─────────────────────
+
+:host ::ng-deep {
+  .td--mono {
+    font-family: monospace;
+    font-size: var(--font-size-xs);
+    color: var(--color-text);
+    font-weight: 600;
+  }
+
+  .td--name {
+    font-weight: 500;
+    color: var(--color-text);
+  }
+
+  .td--price {
+    font-weight: 600;
+    color: var(--color-text);
+    white-space: nowrap;
+  }
+
+  .td--action {
+    text-align: right;
+    white-space: nowrap;
+  }
+}
+
+// ── Loading skeleton ──────────────────────────────────────────────────────────
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.skeleton-cell {
+  height: 18px;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(
+    90deg,
+    var(--color-bg-secondary) 25%,
+    var(--color-bg-tertiary) 50%,
+    var(--color-bg-secondary) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+}
+
+// ── Pagination ────────────────────────────────────────────────────────────────
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-top: 1px solid var(--color-border);
+  gap: var(--spacing-md);
+  flex-wrap: wrap;
+}
+
+.pagination__info {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.pagination__controls {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.page-btn {
+  width: 2rem;
+  height: 2rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-size: var(--font-size-base);
+  cursor: pointer;
+  transition: background-color 0.1s;
+
+  &:hover:not(:disabled) {
+    background-color: var(--color-bg-secondary);
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: default;
+  }
+}
+
+.page-indicator {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  min-width: 60px;
+  text-align: center;
+}

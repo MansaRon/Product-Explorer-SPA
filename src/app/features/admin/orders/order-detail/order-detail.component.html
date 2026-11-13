@@ -1,0 +1,415 @@
+<div class="container">
+  <div class="page-nav">
+    <a routerLink="/admin/orders" class="back-link">
+      <app-arrow-left-icon [width]="15" [height]="15" color="currentColor" />
+      Orders
+    </a>
+  </div>
+
+  @if (isLoadingDetail()) {
+    <div class="skeleton-detail">
+      <div class="skeleton-header"></div>
+      <div class="skeleton-body">
+        <div class="skeleton-main">
+          <div class="skeleton-panel"></div>
+          <div class="skeleton-panel"></div>
+          <div class="skeleton-panel"></div>
+        </div>
+        <div class="skeleton-sidebar">
+          <div class="skeleton-panel"></div>
+          <div class="skeleton-panel"></div>
+        </div>
+      </div>
+    </div>
+  } @else if (!order()) {
+    <div class="error-state">
+      <p>Order not found.</p>
+      <a routerLink="/admin/orders" class="back-link">Back to Orders</a>
+    </div>
+  } @else {
+    <div class="order-header">
+      <div class="order-header__left">
+        <h1 class="page-title">{{ order()!.orderNumber }}</h1>
+        <span class="status-badge status-badge--{{ order()!.orderStatus | lowercase }}">
+          {{ order()!.orderStatus | lowercase }}
+        </span>
+      </div>
+      <div class="order-header__right">
+        <span class="order-date"
+          >Created {{ order()!.createdAt | date: 'dd MMM yyyy, HH:mm' }}</span
+        >
+        @if (order()!.updatedAt) {
+          <span class="order-date order-date--muted">
+            Updated {{ order()!.updatedAt | date: 'dd MMM yyyy, HH:mm' }}
+          </span>
+        }
+      </div>
+    </div>
+
+    <div class="order-layout">
+      <!-- ── Left column: order info ─────────────────────────────────────── -->
+      <div class="order-main">
+        <!-- Customer -->
+        <div class="panel">
+          <div class="panel-header">
+            <app-user-circle-icon [width]="16" [height]="16" color="currentColor" />
+            <h2 class="panel-title">Customer</h2>
+          </div>
+          <div class="info-grid">
+            <span class="info-label">Name</span>
+            <span class="info-value">{{ order()!.customerInfo?.name ?? '—' }}</span>
+            <span class="info-label">Email</span>
+            <span class="info-value">{{ order()!.customerInfo?.email ?? '—' }}</span>
+            <span class="info-label">Phone</span>
+            <span class="info-value">{{ order()!.customerInfo?.phone ?? '—' }}</span>
+          </div>
+        </div>
+
+        <!-- Order items -->
+        <div class="panel">
+          <div class="panel-header">
+            <app-truck-icon [width]="16" [height]="16" color="currentColor" />
+            <h2 class="panel-title">Items</h2>
+          </div>
+          <div class="table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Product</th>
+                  <th>Qty</th>
+                  <th>Unit Price</th>
+                  <th>Discount</th>
+                  <th>Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (item of order()!.orderItems; track item.id) {
+                  <tr>
+                    <td class="td--name">{{ item.productTitle }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td class="td--price">
+                      {{ item.unitPrice | currency: 'ZAR' : 'symbol-narrow' : '1.2-2' }}
+                    </td>
+                    <td>
+                      @if (item.discount > 0) {
+                        {{ item.discount | currency: 'ZAR' : 'symbol-narrow' : '1.2-2' }}
+                      } @else {
+                        —
+                      }
+                    </td>
+                    <td class="td--price">
+                      {{ item.totalPrice | currency: 'ZAR' : 'symbol-narrow' : '1.2-2' }}
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+          <div class="order-totals">
+            <div class="totals-row">
+              <span>Subtotal</span>
+              <span>{{ order()!.subtotal | currency: 'ZAR' : 'symbol-narrow' : '1.2-2' }}</span>
+            </div>
+            @if (order()!.discount > 0) {
+              <div class="totals-row totals-row--discount">
+                <span>Discount</span>
+                <span>−{{ order()!.discount | currency: 'ZAR' : 'symbol-narrow' : '1.2-2' }}</span>
+              </div>
+            }
+            <div class="totals-row">
+              <span>Tax</span>
+              <span>{{ order()!.tax | currency: 'ZAR' : 'symbol-narrow' : '1.2-2' }}</span>
+            </div>
+            <div class="totals-row">
+              <span>Shipping</span>
+              <span>{{ order()!.shippingCost | currency: 'ZAR' : 'symbol-narrow' : '1.2-2' }}</span>
+            </div>
+            <div class="totals-row totals-row--total">
+              <span>Total</span>
+              <span>{{ order()!.totalAmount | currency: 'ZAR' : 'symbol-narrow' : '1.2-2' }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Addresses -->
+        <div class="panel">
+          <div class="panel-header">
+            <app-check-circle-icon [width]="16" [height]="16" color="currentColor" />
+            <h2 class="panel-title">Addresses</h2>
+          </div>
+          <div class="address-grid">
+            <div class="address-block">
+              <h3 class="address-title">Shipping</h3>
+              @if (order()!.shippingAddress; as addr) {
+                <p>{{ addr.fullName }}</p>
+                @if (addr.apartment) {
+                  <p>{{ addr.apartment }}</p>
+                }
+                <p>{{ addr.streetAddress }}</p>
+                <p>{{ addr.city }}, {{ addr.state }} {{ addr.postalCode }}</p>
+                <p>{{ addr.country }}</p>
+              }
+            </div>
+            <div class="address-block">
+              <h3 class="address-title">Billing</h3>
+              @if (order()!.billingAddress; as addr) {
+                <p>{{ addr.fullName }}</p>
+                @if (addr.apartment) {
+                  <p>{{ addr.apartment }}</p>
+                }
+                <p>{{ addr.streetAddress }}</p>
+                <p>{{ addr.city }}, {{ addr.state }} {{ addr.postalCode }}</p>
+                <p>{{ addr.country }}</p>
+              }
+            </div>
+          </div>
+        </div>
+
+        <!-- Payment -->
+        <div class="panel">
+          <div class="panel-header">
+            <app-credit-card-icon [width]="16" [height]="16" color="currentColor" />
+            <h2 class="panel-title">Payment</h2>
+          </div>
+          <div class="info-grid">
+            <span class="info-label">Method</span>
+            <span class="info-value">
+              {{ order()!.paymentDetails?.paymentMethod ?? order()!.paymentMethod | titlecase }}
+            </span>
+            <span class="info-label">Status</span>
+            <span class="info-value">
+              {{ order()!.paymentDetails?.paymentStatus ?? '—' | titlecase }}
+            </span>
+            @if (order()!.paymentDetails?.paymentDate) {
+              <span class="info-label">Date</span>
+              <span class="info-value">
+                {{ order()!.paymentDetails!.paymentDate | date: 'dd MMM yyyy' }}
+              </span>
+            }
+            <span class="info-label">Transaction ID</span>
+            <span class="info-value td--mono">
+              {{ order()!.paymentDetails?.transactionId ?? order()!.transactionId ?? '—' }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Refunds -->
+        @if (order()!.refunds.length > 0) {
+          <div class="panel">
+            <div class="panel-header">
+              <app-currency-icon [width]="16" [height]="16" color="currentColor" />
+              <h2 class="panel-title">Refunds</h2>
+            </div>
+            <div class="table-container">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Amount</th>
+                    <th>Reason</th>
+                    <th>Status</th>
+                    <th>Processed by</th>
+                    <th>Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (refund of order()!.refunds; track refund.id) {
+                    <tr>
+                      <td class="td--price">
+                        {{ refund.amount | currency: 'ZAR' : 'symbol-narrow' : '1.2-2' }}
+                      </td>
+                      <td>{{ refund.reason }}</td>
+                      <td>
+                        <span class="status-badge status-badge--{{ refund.status | lowercase }}">
+                          {{ refund.status | lowercase }}
+                        </span>
+                      </td>
+                      <td>{{ refund.processedBy ?? '—' }}</td>
+                      <td>{{ refund.createdAt | date: 'dd MMM yyyy' }}</td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+        }
+
+        <!-- Status history -->
+        <div class="panel">
+          <div class="panel-header">
+            <app-check-circle-icon [width]="16" [height]="16" color="currentColor" />
+            <h2 class="panel-title">Status History</h2>
+          </div>
+          @if (statusHistory().length === 0) {
+            <p class="panel-empty">No history recorded.</p>
+          } @else {
+            <ul class="timeline">
+              @for (entry of statusHistory(); track entry.timestamp) {
+                <li class="timeline-item">
+                  <span class="timeline-dot timeline-dot--{{ entry.status | lowercase }}"></span>
+                  <div class="timeline-body">
+                    <div class="timeline-header">
+                      <span class="status-badge status-badge--{{ entry.status | lowercase }}">
+                        {{ entry.status | lowercase }}
+                      </span>
+                      <span class="timeline-time">
+                        {{ entry.timestamp | date: 'dd MMM yyyy, HH:mm' }}
+                      </span>
+                    </div>
+                    @if (entry.notes) {
+                      <p class="timeline-notes">{{ entry.notes }}</p>
+                    }
+                    @if (entry.updatedBy) {
+                      <p class="timeline-by">by {{ entry.updatedBy }}</p>
+                    }
+                  </div>
+                </li>
+              }
+            </ul>
+          }
+        </div>
+      </div>
+
+      <!-- ── Right column: actions ──────────────────────────────────────────── -->
+      <div class="order-actions">
+        <!-- Update status -->
+        <div class="action-card">
+          <h3 class="action-title">Update Status</h3>
+          <form [formGroup]="forms.statusForm" (ngSubmit)="forms.submitStatus()">
+            <div class="form-group">
+              <label class="form-label" for="newStatus">New status</label>
+              <select id="newStatus" class="form-select" formControlName="newStatus">
+                <option value="" disabled>Select status...</option>
+                @for (s of forms.ORDER_STATUSES; track s) {
+                  <option [value]="s">{{ s | titlecase }}</option>
+                }
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="statusNotes">Notes (optional)</label>
+              <textarea
+                id="statusNotes"
+                class="form-textarea"
+                formControlName="notes"
+                rows="3"
+                placeholder="Reason for status change..."
+              ></textarea>
+            </div>
+            <button
+              type="submit"
+              class="action-btn action-btn--primary"
+              [disabled]="forms.statusForm.invalid || isMutating()"
+            >
+              {{ isMutating() ? 'Updating...' : 'Update Status' }}
+            </button>
+            @if (forms.statusFeedback()) {
+              <div
+                class="feedback"
+                [class.feedback--ok]="forms.statusFeedback()!.ok"
+                [class.feedback--err]="!forms.statusFeedback()!.ok"
+              >
+                {{ forms.statusFeedback()!.msg }}
+              </div>
+            }
+          </form>
+        </div>
+
+        <!-- Adjust pricing -->
+        <div class="action-card">
+          <h3 class="action-title">Adjust Pricing</h3>
+          <form [formGroup]="forms.pricingForm" (ngSubmit)="forms.submitPricing()">
+            <div class="form-group">
+              <label class="form-label" for="discount">Discount (R)</label>
+              <input
+                id="discount"
+                type="number"
+                class="form-input"
+                formControlName="discount"
+                min="0"
+                step="0.01"
+                placeholder="Leave blank to keep current"
+              />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="shippingCost">Shipping cost (R)</label>
+              <input
+                id="shippingCost"
+                type="number"
+                class="form-input"
+                formControlName="shippingCost"
+                min="0"
+                step="0.01"
+                placeholder="Leave blank to keep current"
+              />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="pricingReason">
+                Reason <span class="required">*</span>
+              </label>
+              <textarea
+                id="pricingReason"
+                class="form-textarea"
+                formControlName="reason"
+                rows="2"
+                placeholder="Required — explain the price adjustment..."
+              ></textarea>
+            </div>
+            <button
+              type="submit"
+              class="action-btn action-btn--primary"
+              [disabled]="forms.pricingForm.invalid || isMutating()"
+            >
+              {{ isMutating() ? 'Updating...' : 'Apply Adjustment' }}
+            </button>
+            @if (forms.pricingFeedback()) {
+              <div
+                class="feedback"
+                [class.feedback--ok]="forms.pricingFeedback()!.ok"
+                [class.feedback--err]="!forms.pricingFeedback()!.ok"
+              >
+                {{ forms.pricingFeedback()!.msg }}
+              </div>
+            }
+          </form>
+        </div>
+
+        <!-- Rebook (only for cancelled / refunded) -->
+        @if (canRebook()) {
+          <div class="action-card action-card--danger">
+            <h3 class="action-title">Rebook Order</h3>
+            <p class="action-description">
+              Re-activates this order, resetting its status to Pending and restoring inventory.
+            </p>
+            <button
+              type="button"
+              class="action-btn action-btn--danger"
+              [disabled]="isMutating()"
+              (click)="forms.openRebookConfirm()"
+            >
+              Rebook Order
+            </button>
+            @if (forms.rebookFeedback()) {
+              <div
+                class="feedback"
+                [class.feedback--ok]="forms.rebookFeedback()!.ok"
+                [class.feedback--err]="!forms.rebookFeedback()!.ok"
+              >
+                {{ forms.rebookFeedback()!.msg }}
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </div>
+  }
+</div>
+
+@if (forms.showRebookConfirm()) {
+  <app-confirm-modal
+    title="Rebook Order"
+    message="This will re-activate the order and reset its status to Pending. Are you sure?"
+    confirmLabel="Rebook"
+    [dangerous]="true"
+    (confirmed)="forms.executeRebook()"
+    (cancelled)="forms.cancelRebook()"
+  />
+}

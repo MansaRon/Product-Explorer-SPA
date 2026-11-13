@@ -1,7 +1,26 @@
-import { CustomerInfo, OrderApi } from './order';
+import { CustomerInfo, OrderApi, OrderStatusHistoryEntry } from './order';
+
+export interface PaymentDetails {
+  paymentMethod: string;
+  paymentStatus: string;
+  paymentDate?: string;
+  transactionId?: string;
+}
 
 export interface AdminOrderApi extends OrderApi {
   customerInfo: CustomerInfo;
+  updatedAt?: string;
+  paymentDetails?: PaymentDetails;
+  statusHistory?: OrderStatusHistoryEntry[];
+  refunds: RefundRecord[];
+}
+
+export interface AdminOrderApiResponse {
+  data: AdminOrderApi;
+  message: string;
+  status: string;
+  statusCode: number;
+  timestamp?: string;
 }
 
 export interface AdminOrderListApiResponse {
@@ -26,13 +45,13 @@ export interface AdminOrderFilterParams {
 }
 
 export interface OrderStatusUpdateRequest {
-  status: string;
+  newStatus: string;
   notes?: string;
 }
 
 export interface OrderPriceAdjustRequest {
   discount?: number;
-  totalAmount?: number;
+  shippingCost?: number;
   reason: string;
 }
 
@@ -45,10 +64,23 @@ export interface RefundRequest {
 
 export interface RefundRecord {
   id: string;
-  type: 'FULL' | 'PARTIAL';
   amount: number;
   reason: string;
-  initiatedBy: string;
-  createdAt: string;
   status: string;
+  createdAt: string;
+  processedBy?: string;
+}
+
+export interface RefundListApiResponse {
+  data: RefundRecord[];
+  message: string;
+  status: string;
+  statusCode: number;
+}
+
+export interface DeleteStaleApiResponse {
+  data: null;
+  message: string;
+  status: string;
+  statusCode: number;
 }

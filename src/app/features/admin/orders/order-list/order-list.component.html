@@ -1,0 +1,86 @@
+<div class="container">
+  <div class="page-header">
+    <div class="page-header__text">
+      <h1 class="page-title">Orders</h1>
+      <p class="page-description">Manage and monitor all platform orders</p>
+    </div>
+    <button type="button" class="btn-stale" (click)="list.openDeleteConfirm()">
+      <app-trash-icon [width]="15" [height]="15" color="currentColor" />
+      Delete Stale
+    </button>
+  </div>
+
+  @if (list.deleteMessage()) {
+    <div
+      class="alert"
+      [class.alert--success]="list.deleteMessage()!.ok"
+      [class.alert--error]="!list.deleteMessage()!.ok"
+    >
+      {{ list.deleteMessage()!.text }}
+    </div>
+  }
+
+  <div class="filters">
+    <div class="search-wrapper">
+      <app-search-icon [width]="16" [height]="16" color="currentColor" class="search-icon" />
+      <input
+        type="text"
+        class="search-input"
+        [formControl]="list.searchControl"
+        placeholder="Search by order # or customer name..."
+        aria-label="Search orders"
+      />
+    </div>
+    <select
+      class="status-select"
+      [value]="list.statusFilter()"
+      (change)="list.onStatusChange($event)"
+      aria-label="Filter by status"
+    >
+      @for (option of list.statusOptions(); track option) {
+        <option [value]="option">{{ option }}</option>
+      }
+    </select>
+  </div>
+
+  <div class="panel">
+    <app-data-table
+      [columns]="list.columns"
+      [rows]="list.orders()"
+      [totalCount]="list.totalCount()"
+      [currentPage]="list.currentPage()"
+      [pageSize]="list.pageSize()"
+      [isLoading]="list.isLoading()"
+      (pageChange)="list.goToPage($event)"
+    >
+      <ng-template appTableCell="orderStatus" let-row>
+        <span class="status-badge status-badge--{{ asOrder(row).orderStatus | lowercase }}">
+          {{ asOrder(row).orderStatus | lowercase }}
+        </span>
+      </ng-template>
+
+      <ng-template appTableCell="totalAmount" let-row>
+        {{ asOrder(row).totalAmount | currency: 'ZAR' : 'symbol-narrow' : '1.2-2' }}
+      </ng-template>
+
+      <ng-template appTableCell="createdAt" let-row>
+        {{ asOrder(row).createdAt | date: 'dd MMM yyyy' }}
+      </ng-template>
+
+      <ng-template appTableCell="actions" let-row>
+        <a [routerLink]="['/admin/orders', asOrder(row).id]" class="view-btn">View</a>
+      </ng-template>
+    </app-data-table>
+  </div>
+</div>
+
+@if (list.showDeleteConfirm()) {
+  <app-confirm-modal
+    title="Delete Stale Orders"
+    message="This will soft-delete all orders older than 30 days. This cannot be undone."
+    confirmLabel="Delete Stale"
+    [dangerous]="true"
+    (confirmed)="list.executeDeleteStale()"
+    (cancelled)="list.cancelDelete()"
+  />
+}
