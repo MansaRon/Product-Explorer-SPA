@@ -1,0 +1,73 @@
+<div class="table-wrapper">
+  <div class="table-container">
+    <table class="data-table">
+      <thead>
+        <tr>
+          @for (col of columns(); track col.key) {
+            <th>{{ col.header }}</th>
+          }
+        </tr>
+      </thead>
+
+      @if (isLoading()) {
+        <tbody>
+          @for (_ of skeletonRows(); track $index) {
+            <tr class="skeleton-row">
+              @for (col of columns(); track col.key) {
+                <td><div class="skeleton-cell"></div></td>
+              }
+            </tr>
+          }
+        </tbody>
+      } @else {
+        <tbody>
+          @for (row of rows(); track $index) {
+            <tr>
+              @for (col of columns(); track col.key) {
+                <td [class]="col.cellClass ?? ''">
+                  @if (templateMap().get(col.key); as tmpl) {
+                    <ng-container
+                      [ngTemplateOutlet]="tmpl"
+                      [ngTemplateOutletContext]="{ $implicit: row }"
+                    />
+                  } @else {
+                    {{ getCellValue(row, col) }}
+                  }
+                </td>
+              }
+            </tr>
+          }
+        </tbody>
+      }
+    </table>
+  </div>
+
+  @if (!isLoading() && totalCount() > 0) {
+    <div class="pagination">
+      <span class="pagination__info">
+        {{ pageStart() }}–{{ pageEnd() }} of {{ totalCount() }}
+      </span>
+      <div class="pagination__controls">
+        <button
+          type="button"
+          class="page-btn"
+          [disabled]="currentPage() === 0"
+          (click)="prevPage()"
+          aria-label="Previous page"
+        >
+          &#8249;
+        </button>
+        <span class="page-indicator">{{ currentPage() + 1 }} / {{ totalPages() }}</span>
+        <button
+          type="button"
+          class="page-btn"
+          [disabled]="currentPage() >= totalPages() - 1"
+          (click)="nextPage()"
+          aria-label="Next page"
+        >
+          &#8250;
+        </button>
+      </div>
+    </div>
+  }
+</div>

@@ -9,8 +9,8 @@ Branch strategy: all sub-branches merge into `feature/admin-panel`, which merges
 | # | Branch | Status | Notes |
 |---|--------|--------|-------|
 | ① | `admin/shell-layout` | ✅ Done | App-level layout refactor + admin shell + routing scaffold |
-| ② | `admin/dashboard` | 🔲 Pending | Stats cards + analytics charts — requires branch ① |
-| ③ | `admin/orders` | 🔲 Pending | Order list, status/pricing updates, rebook, refunds, stale purge |
+| ② | `admin/dashboard` | ✅ Done | Stats cards + analytics charts — requires branch ① |
+| ③ | `admin/orders` | ✅ Done | Order list, status/pricing updates, rebook, refunds, stale purge |
 | ④ | `admin/users` | 🔲 Pending | User list, user detail, block/unblock, reset |
 | ⑤ | `admin/catalog` | 🔲 Pending | Product CRUD, image management, review moderation |
 | ⑥ | `admin/categories` | 🔲 Pending | Category list + add/edit |

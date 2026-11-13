@@ -1,22 +1,40 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { EmptyStateComponent } from '../../../../shared/components/empty-state/empty-state.component';
+import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
+import { CurrencyPipe, DatePipe, LowerCasePipe } from '@angular/common';
+import { ReactiveFormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
+import { AdminOrderListService } from '../../../../core/services/admin/admin-order-list.service';
+import { AdminOrderApi } from '../../../../core/models/admin-order';
+import { DataTableComponent } from '../../../../shared/components/data-table/data-table.component';
+import { TableCellDirective } from '../../../../shared/components/data-table/table-cell.directive';
+import { ConfirmModalComponent } from '../../../../shared/components/confirm-modal/confirm-modal.component';
+import { SearchIconComponent } from '../../../../shared/components/icons/search-icon/search-icon.component';
+import { TrashIconComponent } from '../../../../shared/components/icons/trash-icon/trash-icon.component';
 
 @Component({
   selector: 'app-admin-order-list',
-  template: `
-    <div class="container">
-      <div class="page-header">
-        <h1 class="page-title">Orders</h1>
-        <p class="page-description">Manage and monitor all orders across the platform</p>
-      </div>
-      <app-empty-state
-        icon="info"
-        title="Coming soon"
-        description="Order management is being built and will be available shortly."
-      />
-    </div>
-  `,
+  templateUrl: './order-list.component.html',
+  styleUrls: ['./order-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [EmptyStateComponent],
+  providers: [AdminOrderListService],
+  imports: [
+    CurrencyPipe,
+    DatePipe,
+    LowerCasePipe,
+    ReactiveFormsModule,
+    RouterLink,
+    DataTableComponent,
+    TableCellDirective,
+    ConfirmModalComponent,
+    SearchIconComponent,
+    TrashIconComponent,
+  ],
 })
-export class OrderListComponent {}
+export class OrderListComponent implements OnInit {
+  protected readonly list = inject(AdminOrderListService);
+
+  protected readonly asOrder = (row: unknown): AdminOrderApi => row as AdminOrderApi;
+
+  ngOnInit(): void {
+    this.list.load();
+  }
+}

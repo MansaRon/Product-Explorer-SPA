@@ -19,6 +19,13 @@ export const ADMIN: Routes = [
           import('./orders/order-list/order-list.component').then((m) => m.OrderListComponent),
       },
       {
+        path: `${AppRoutes.ADMIN_ORDERS}/:id`,
+        loadComponent: () =>
+          import('./orders/order-detail/order-detail.component').then(
+            (m) => m.OrderDetailComponent
+          ),
+      },
+      {
         path: AppRoutes.ADMIN_USERS,
         loadComponent: () =>
           import('./users/user-list/user-list.component').then((m) => m.UserListComponent),
