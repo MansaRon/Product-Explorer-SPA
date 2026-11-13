@@ -21,9 +21,7 @@ export interface TableColumnDef {
   templateUrl: './data-table.component.html',
   styleUrls: ['./data-table.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  // TableCellDirective imported here so the query token is resolvable;
-  // parent components must also import it to use the [appTableCell] attribute.
-  imports: [NgTemplateOutlet, TableCellDirective],
+  imports: [NgTemplateOutlet],
 })
 export class DataTableComponent {
   readonly columns = input.required<TableColumnDef[]>();
