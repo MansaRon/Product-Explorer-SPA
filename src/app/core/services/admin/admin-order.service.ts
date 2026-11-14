@@ -66,7 +66,7 @@ export class AdminOrderService {
       .pipe(
         tap((r) => {
           this.ordersSignal.set(r.data.orders);
-          this.totalCountSignal.set(r.data.totalCount);
+          this.totalCountSignal.set(r.data.totalElements);
           this.isLoadingSignal.set(false);
         }),
         takeUntilDestroyed(this.destroyRef),

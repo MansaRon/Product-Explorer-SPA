@@ -59,7 +59,9 @@ export class AdminOrderListService {
   }
 
   load(): void {
-    this.adminOrderService.loadOrders();
+    this.statusFilter.set('ALL');
+    this.searchControl.setValue('', { emitEvent: false });
+    this.adminOrderService.loadOrders({ page: 0, size: 20, status: undefined, search: undefined });
   }
 
   goToPage(page: number): void {

@@ -1,22 +1,34 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { EmptyStateComponent } from '../../../../shared/components/empty-state/empty-state.component';
+import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
+import { DatePipe, LowerCasePipe } from '@angular/common';
+import { AdminUserListService } from '../../../../core/services/admin/admin-user-list.service';
+import { DataTableComponent } from '../../../../shared/components/data-table/data-table.component';
+import { TableCellDirective } from '../../../../shared/components/data-table/table-cell.directive';
+import { ConfirmModalComponent } from '../../../../shared/components/confirm-modal/confirm-modal.component';
+import { SearchInputComponent } from '../../../../shared/components/search-input/search-input.component';
 
 @Component({
   selector: 'app-admin-user-list',
-  template: `
-    <div class="container">
-      <div class="page-header">
-        <h1 class="page-title">Users</h1>
-        <p class="page-description">View and manage all registered users</p>
-      </div>
-      <app-empty-state
-        icon="info"
-        title="Coming soon"
-        description="User management is being built and will be available shortly."
-      />
-    </div>
-  `,
+  templateUrl: './user-list.component.html',
+  styleUrls: ['./user-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [EmptyStateComponent],
+  providers: [AdminUserListService],
+  imports: [
+    DatePipe,
+    LowerCasePipe,
+    ReactiveFormsModule,
+    RouterLink,
+    DataTableComponent,
+    TableCellDirective,
+    ConfirmModalComponent,
+    SearchInputComponent,
+  ],
 })
-export class UserListComponent {}
+export class UserListComponent implements OnInit {
+  protected readonly list = inject(AdminUserListService);
+
+  ngOnInit(): void {
+    this.list.load();
+  }
+}

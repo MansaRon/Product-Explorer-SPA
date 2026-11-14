@@ -7,7 +7,7 @@ import { AdminOrderApi } from '../../../../core/models/admin-order';
 import { DataTableComponent } from '../../../../shared/components/data-table/data-table.component';
 import { TableCellDirective } from '../../../../shared/components/data-table/table-cell.directive';
 import { ConfirmModalComponent } from '../../../../shared/components/confirm-modal/confirm-modal.component';
-import { SearchIconComponent } from '../../../../shared/components/icons/search-icon/search-icon.component';
+import { SearchInputComponent } from '../../../../shared/components/search-input/search-input.component';
 import { TrashIconComponent } from '../../../../shared/components/icons/trash-icon/trash-icon.component';
 
 @Component({
@@ -25,7 +25,7 @@ import { TrashIconComponent } from '../../../../shared/components/icons/trash-ic
     DataTableComponent,
     TableCellDirective,
     ConfirmModalComponent,
-    SearchIconComponent,
+    SearchInputComponent,
     TrashIconComponent,
   ],
 })

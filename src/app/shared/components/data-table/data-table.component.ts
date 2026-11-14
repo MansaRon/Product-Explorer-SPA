@@ -31,6 +31,7 @@ export class DataTableComponent {
   readonly pageSize = input<number>(20);
   readonly isLoading = input<boolean>(false);
   readonly skeletonRowCount = input<number>(8);
+  readonly emptyMessage = input<string>('No results found.');
 
   readonly pageChange = output<number>();
 

@@ -4,11 +4,7 @@
   align-items: center;
   justify-content: center;
   padding: var(--spacing-xl);
-  background: linear-gradient(
-    135deg,
-    var(--color-bg) 0%,
-    var(--color-bg-secondary) 100%
-  );
+  background: linear-gradient(135deg, var(--color-bg) 0%, var(--color-bg-secondary) 100%);
 }
 
 .not-found-content {
@@ -31,9 +27,14 @@
 
 /* Illustration */
 .illustration {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   margin-bottom: var(--spacing-2xl);
   color: var(--color-primary);
   animation: float 3s ease-in-out infinite;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
 }
 
 @keyframes float {
@@ -46,8 +47,14 @@
   }
 }
 
-.illustration svg {
-  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+.illustration__search {
+  display: block;
+}
+
+.illustration__alert {
+  position: absolute;
+  top: -8px;
+  right: -12px;
 }
 
 /* Error Content */
@@ -61,11 +68,7 @@
   color: var(--color-primary);
   line-height: 1;
   margin: 0 0 var(--spacing-md);
-  background: linear-gradient(
-    135deg,
-    var(--color-primary) 0%,
-    var(--color-primary-dark) 100%
-  );
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -206,7 +209,7 @@
   position: relative;
 
   &::after {
-    content: "";
+    content: '';
     position: absolute;
     bottom: -2px;
     left: 0;

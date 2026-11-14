@@ -21,16 +21,11 @@
   }
 
   <div class="filters">
-    <div class="search-wrapper">
-      <app-search-icon [width]="16" [height]="16" color="currentColor" class="search-icon" />
-      <input
-        type="text"
-        class="search-input"
-        [formControl]="list.searchControl"
-        placeholder="Search by order # or customer name..."
-        aria-label="Search orders"
-      />
-    </div>
+    <app-search-input
+      [control]="list.searchControl"
+      placeholder="Search by order # or customer name..."
+      ariaLabel="Search orders"
+    />
     <select
       class="status-select"
       [value]="list.statusFilter()"

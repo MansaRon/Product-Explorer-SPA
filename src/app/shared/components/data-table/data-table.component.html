@@ -19,6 +19,14 @@
             </tr>
           }
         </tbody>
+      } @else if (rows().length === 0) {
+        <tbody>
+          <tr>
+            <td [attr.colspan]="columns().length" class="empty-cell">
+              {{ emptyMessage() }}
+            </td>
+          </tr>
+        </tbody>
       } @else {
         <tbody>
           @for (row of rows(); track $index) {
