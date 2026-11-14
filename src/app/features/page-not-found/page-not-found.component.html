@@ -2,20 +2,18 @@
   <div class="not-found-content">
     <!-- 404 Illustration -->
     <div class="illustration" role="img" aria-label="404 Error - Page not found">
-      <svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <!-- Magnifying Glass -->
-        <circle cx="80" cy="80" r="40" stroke="currentColor" stroke-width="4" fill="none"/>
-        <line x1="110" y1="110" x2="140" y2="140" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
-        
-        <!-- Question Mark -->
-        <path d="M75 70 Q80 60, 85 70 L85 75" stroke="currentColor" stroke-width="3" stroke-linecap="round" fill="none"/>
-        <circle cx="85" cy="85" r="2" fill="currentColor"/>
-        
-        <!-- Alert Circle -->
-        <circle cx="150" cy="50" r="15" stroke="var(--color-danger)" stroke-width="3" fill="none"/>
-        <line x1="150" y1="43" x2="150" y2="52" stroke="var(--color-danger)" stroke-width="3" stroke-linecap="round"/>
-        <circle cx="150" cy="57" r="1.5" fill="var(--color-danger)"/>
-      </svg>
+      <app-search-icon
+        [width]="96"
+        [height]="96"
+        color="currentColor"
+        class="illustration__search"
+      />
+      <app-alert-triangle-icon
+        [width]="40"
+        [height]="40"
+        color="var(--color-danger)"
+        class="illustration__alert"
+      />
     </div>
 
     <!-- Error Message -->
@@ -29,7 +27,9 @@
 
     <!-- Countdown -->
     <div class="countdown-message" role="status" aria-live="polite">
-      <p>Redirecting to home page in <strong>{{ countdown() }}</strong> seconds...</p>
+      <p>
+        Redirecting to home page in <strong>{{ countdown() }}</strong> seconds...
+      </p>
     </div>
 
     <!-- Action Buttons -->
@@ -40,7 +40,7 @@
         (click)="goHome()"
         aria-label="Go to home page"
       >
-        <app-home-icon [width]="20" [height]="20"  color="currentColor" />
+        <app-home-icon [width]="20" [height]="20" color="currentColor" />
         Go to Home
       </button>
 
@@ -50,7 +50,7 @@
         (click)="goBack()"
         aria-label="Go back to previous page"
       >
-        <app-arrow-left-icon [width]="20" [height]="20"  color="currentColor" />
+        <app-arrow-left-icon [width]="20" [height]="20" color="currentColor" />
         Go Back
       </button>
     </div>

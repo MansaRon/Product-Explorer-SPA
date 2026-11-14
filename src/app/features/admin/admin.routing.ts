@@ -31,6 +31,11 @@ export const ADMIN: Routes = [
           import('./users/user-list/user-list.component').then((m) => m.UserListComponent),
       },
       {
+        path: `${AppRoutes.ADMIN_USERS}/:id`,
+        loadComponent: () =>
+          import('./users/user-detail/user-detail.component').then((m) => m.UserDetailComponent),
+      },
+      {
         path: AppRoutes.ADMIN_CATALOG,
         loadComponent: () =>
           import('./catalog/product-list/product-list.component').then(

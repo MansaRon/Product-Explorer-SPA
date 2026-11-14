@@ -1,0 +1,265 @@
+<div class="container">
+  <a [routerLink]="['/admin/users']" class="back-link">
+    <app-arrow-left-icon [width]="16" [height]="16" color="currentColor" />
+    Back to Users
+  </a>
+
+  @if (isLoadingDetail()) {
+    <div class="skeleton-layout">
+      <div class="skeleton-header"></div>
+      <div class="skeleton-body">
+        <div class="skeleton-col">
+          <div class="skeleton-block skeleton-block--tall"></div>
+          <div class="skeleton-block"></div>
+        </div>
+        <div class="skeleton-col">
+          <div class="skeleton-block"></div>
+          <div class="skeleton-block"></div>
+        </div>
+      </div>
+    </div>
+  } @else if (!user()) {
+    <div class="error-state">
+      <p>User not found or failed to load.</p>
+      <a [routerLink]="['/admin/users']" class="btn-secondary">Return to list</a>
+    </div>
+  } @else {
+    <div class="detail-header">
+      <div class="detail-header__info">
+        <div class="user-avatar">{{ userInitials() }}</div>
+        <div>
+          <h1 class="detail-title">{{ user()!.name }}</h1>
+          <p class="detail-subtitle">{{ user()!.email }}</p>
+        </div>
+      </div>
+      <span
+        class="status-badge"
+        [class.status-badge--active]="user()!.status === 'ACTIVE'"
+        [class.status-badge--suspended]="user()!.status === 'SUSPENDED'"
+        [class.status-badge--awaiting]="user()!.status === 'AWAITING_CONFIRMATION'"
+      >
+        {{ user()!.status | lowercase }}
+      </span>
+    </div>
+
+    <div class="detail-layout">
+      <!-- Left column: profile info + order history -->
+      <div class="detail-main">
+        <div class="panel">
+          <div class="panel__header">
+            <h2 class="panel__title">Profile</h2>
+          </div>
+          <div class="panel__body">
+            <dl class="info-grid">
+              <dt>Name</dt>
+              <dd>{{ user()!.name }}</dd>
+              <dt>Email</dt>
+              <dd>{{ user()!.email }}</dd>
+              <dt>Phone</dt>
+              <dd>{{ user()!.phone || '—' }}</dd>
+              <dt>Role</dt>
+              <dd>{{ user()!.roles.join(', ') | titlecase }}</dd>
+              <dt>Joined</dt>
+              <dd>{{ user()!.createdAt | date: 'dd MMM yyyy' }}</dd>
+              @if (user()!.updatedAt) {
+                <dt>Last updated</dt>
+                <dd>{{ user()!.updatedAt | date: 'dd MMM yyyy' }}</dd>
+              }
+              @if (isSuspended() && user()!.blockedReason) {
+                <dt>Block reason</dt>
+                <dd class="text--danger">{{ user()!.blockedReason }}</dd>
+              }
+            </dl>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel__header">
+            <h2 class="panel__title">Order History</h2>
+          </div>
+          <app-data-table
+            [columns]="forms.orderColumns"
+            [rows]="userOrders()"
+            [totalCount]="userOrders().length"
+            [isLoading]="isLoadingOrders()"
+            [pageSize]="userOrders().length || 20"
+          >
+            <ng-template appTableCell="orderStatus" let-row>
+              <span
+                class="order-status-badge order-status-badge--{{
+                  forms.asOrder(row).orderStatus | lowercase
+                }}"
+              >
+                {{ forms.asOrder(row).orderStatus | lowercase }}
+              </span>
+            </ng-template>
+
+            <ng-template appTableCell="totalAmount" let-row>
+              {{ forms.asOrder(row).totalAmount | currency: 'ZAR' : 'symbol-narrow' : '1.2-2' }}
+            </ng-template>
+
+            <ng-template appTableCell="createdAt" let-row>
+              {{ forms.asOrder(row).createdAt | date: 'dd MMM yyyy' }}
+            </ng-template>
+
+            <ng-template appTableCell="actions" let-row>
+              <a [routerLink]="['/admin/orders', forms.asOrder(row).id]" class="view-btn"> View </a>
+            </ng-template>
+          </app-data-table>
+        </div>
+      </div>
+
+      <!-- Right column: action cards -->
+      <div class="detail-aside">
+        <!-- Edit profile card -->
+        <div class="action-card">
+          <h2 class="action-card__title">Edit Profile</h2>
+          <form [formGroup]="forms.resetForm" (ngSubmit)="forms.submitReset()">
+            <div class="form-group">
+              <label class="form-label" for="name">Name</label>
+              <input
+                id="name"
+                type="text"
+                class="form-input"
+                formControlName="name"
+                placeholder="Full name"
+              />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="email">Email</label>
+              <input
+                id="email"
+                type="email"
+                class="form-input"
+                formControlName="email"
+                placeholder="Email address"
+              />
+              @if (forms.resetForm.get('email')?.invalid && forms.resetForm.get('email')?.dirty) {
+                <span class="form-error">Invalid email address</span>
+              }
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="phone">Phone</label>
+              <input
+                id="phone"
+                type="text"
+                class="form-input"
+                formControlName="phone"
+                placeholder="Phone number"
+              />
+            </div>
+            <button
+              type="submit"
+              class="btn-primary"
+              [disabled]="forms.resetForm.invalid || forms.resetForm.pristine || isMutating()"
+            >
+              Save Changes
+            </button>
+            @if (forms.resetFeedback()) {
+              <p
+                class="feedback"
+                [class.feedback--ok]="forms.resetFeedback()!.ok"
+                [class.feedback--err]="!forms.resetFeedback()!.ok"
+              >
+                {{ forms.resetFeedback()!.msg }}
+              </p>
+            }
+          </form>
+        </div>
+
+        <!-- Suspend / Reinstate card -->
+        <div class="action-card" [class.action-card--danger]="!isSuspended()">
+          <h2 class="action-card__title">
+            {{ isSuspended() ? 'Reinstate User' : 'Suspend User' }}
+          </h2>
+          <p class="action-card__description">
+            @if (isSuspended()) {
+              Restore this user's ability to log in and place orders.
+            } @else {
+              Suspend this user's access. They will be unable to log in until reinstated.
+            }
+          </p>
+          @if (isSuspended()) {
+            <button
+              type="button"
+              class="btn-success"
+              [disabled]="isMutating()"
+              (click)="forms.openUnblockConfirm()"
+            >
+              Reinstate User
+            </button>
+          } @else {
+            <button
+              type="button"
+              class="btn-danger"
+              [disabled]="isMutating()"
+              (click)="forms.openBlockConfirm()"
+            >
+              Suspend User
+            </button>
+          }
+          @if (forms.blockFeedback()) {
+            <p
+              class="feedback"
+              [class.feedback--ok]="forms.blockFeedback()!.ok"
+              [class.feedback--err]="!forms.blockFeedback()!.ok"
+            >
+              {{ forms.blockFeedback()!.msg }}
+            </p>
+          }
+        </div>
+
+        <!-- Password reset card -->
+        <div class="action-card">
+          <h2 class="action-card__title">Password Reset</h2>
+          <p class="action-card__description">
+            Send a password reset email to this user's registered email address.
+          </p>
+          <button
+            type="button"
+            class="btn-secondary"
+            [disabled]="isMutating()"
+            (click)="forms.triggerPasswordReset()"
+          >
+            Send Reset Email
+          </button>
+          @if (forms.passwordResetFeedback()) {
+            <p
+              class="feedback"
+              [class.feedback--ok]="forms.passwordResetFeedback()!.ok"
+              [class.feedback--err]="!forms.passwordResetFeedback()!.ok"
+            >
+              {{ forms.passwordResetFeedback()!.msg }}
+            </p>
+          }
+        </div>
+      </div>
+    </div>
+  }
+</div>
+
+@defer (when forms.showBlockConfirm()) {
+  @if (forms.showBlockConfirm()) {
+    <app-confirm-modal
+      title="Suspend User"
+      message="This user will be suspended and unable to log in. This can be reversed at any time."
+      confirmLabel="Suspend User"
+      [dangerous]="true"
+      (confirmed)="forms.executeBlock()"
+      (cancelled)="forms.cancelBlock()"
+    />
+  }
+}
+
+@defer (when forms.showUnblockConfirm()) {
+  @if (forms.showUnblockConfirm()) {
+    <app-confirm-modal
+      title="Reinstate User"
+      message="This user will be able to log in and place orders again."
+      confirmLabel="Reinstate"
+      [dangerous]="false"
+      (confirmed)="forms.executeUnblock()"
+      (cancelled)="forms.cancelUnblock()"
+    />
+  }
+}

@@ -26,9 +26,11 @@ export interface AdminOrderApiResponse {
 export interface AdminOrderListApiResponse {
   data: {
     orders: AdminOrderApi[];
-    totalCount: number;
-    page: number;
-    size: number;
+    pageNo: number;
+    pageSize: number;
+    totalElements: number;
+    totalPages: number;
+    last: boolean;
   };
   message: string;
   status: string;

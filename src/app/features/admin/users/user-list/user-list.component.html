@@ -1,0 +1,120 @@
+<div class="container">
+  <div class="page-header">
+    <div class="page-header__text">
+      <h1 class="page-title">Users</h1>
+      <p class="page-description">Manage and monitor all registered users</p>
+    </div>
+  </div>
+
+  @if (list.actionMessage()) {
+    <div
+      class="alert"
+      [class.alert--success]="list.actionMessage()!.ok"
+      [class.alert--error]="!list.actionMessage()!.ok"
+    >
+      {{ list.actionMessage()!.text }}
+    </div>
+  }
+
+  <div class="filters">
+    <app-search-input
+      [control]="list.searchControl"
+      placeholder="Search by name or email..."
+      ariaLabel="Search users"
+    />
+    <select
+      class="status-select"
+      [value]="list.statusFilter()"
+      (change)="list.onStatusChange($event)"
+      aria-label="Filter by status"
+    >
+      @for (option of list.statusOptions(); track option) {
+        <option [value]="option">{{ option }}</option>
+      }
+    </select>
+  </div>
+
+  <div class="panel">
+    <app-data-table
+      [columns]="list.columns"
+      [rows]="list.users()"
+      [totalCount]="list.totalCount()"
+      [currentPage]="list.currentPage()"
+      [pageSize]="list.pageSize()"
+      [isLoading]="list.isLoading()"
+      (pageChange)="list.goToPage($event)"
+    >
+      <ng-template appTableCell="roles" let-row>
+        <div class="role-chips">
+          @for (role of list.asUser(row).roles; track role) {
+            <span class="role-chip">{{ role.replace('ROLE_', '') | lowercase }}</span>
+          }
+        </div>
+      </ng-template>
+
+      <ng-template appTableCell="status" let-row>
+        <span
+          class="status-badge"
+          [class.status-badge--active]="list.asUser(row).status === 'ACTIVE'"
+          [class.status-badge--suspended]="list.asUser(row).status === 'SUSPENDED'"
+          [class.status-badge--awaiting]="list.asUser(row).status === 'AWAITING_CONFIRMATION'"
+        >
+          {{ list.asUser(row).status | lowercase }}
+        </span>
+      </ng-template>
+
+      <ng-template appTableCell="createdAt" let-row>
+        {{ list.asUser(row).createdAt | date: 'dd MMM yyyy' }}
+      </ng-template>
+
+      <ng-template appTableCell="actions" let-row>
+        <div class="action-cell">
+          <a [routerLink]="['/admin/users', list.asUser(row).id]" class="view-btn">View</a>
+          @if (list.asUser(row).status === 'SUSPENDED') {
+            <button
+              type="button"
+              class="btn-action btn-action--reinstate"
+              (click)="list.openUnblockConfirm(list.asUser(row).id)"
+            >
+              Reinstate
+            </button>
+          } @else {
+            <button
+              type="button"
+              class="btn-action btn-action--suspend"
+              (click)="list.openBlockConfirm(list.asUser(row).id)"
+            >
+              Suspend
+            </button>
+          }
+        </div>
+      </ng-template>
+    </app-data-table>
+  </div>
+</div>
+
+@defer (when list.showBlockConfirm()) {
+  @if (list.showBlockConfirm()) {
+    <app-confirm-modal
+      title="Suspend User"
+      message="This user will be suspended and unable to log in. This can be reversed at any time."
+      confirmLabel="Suspend User"
+      [dangerous]="true"
+      (confirmed)="list.executeBlock()"
+      (cancelled)="list.cancelBlock()"
+    />
+  }
+}
+
+@defer (when list.showUnblockConfirm()) {
+  @if (list.showUnblockConfirm()) {
+    <app-confirm-modal
+      title="Reinstate User"
+      message="This user will be able to log in again."
+      confirmLabel="Reinstate"
+      [dangerous]="false"
+      (confirmed)="list.executeUnblock()"
+      (cancelled)="list.cancelUnblock()"
+    />
+  }
+}
