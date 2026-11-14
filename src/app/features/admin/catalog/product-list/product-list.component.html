@@ -1,0 +1,109 @@
+<div class="container">
+  <div class="page-header">
+    <div class="page-header__text">
+      <h1 class="page-title">Catalog</h1>
+      <p class="page-description">Add, edit, and manage the product catalog</p>
+    </div>
+    <a routerLink="/admin/catalog/new" class="btn-add">+ Add Product</a>
+  </div>
+
+  @if (list.actionMessage()) {
+    <div
+      class="alert"
+      [class.alert--success]="list.actionMessage()!.ok"
+      [class.alert--error]="!list.actionMessage()!.ok"
+    >
+      {{ list.actionMessage()!.text }}
+    </div>
+  }
+
+  <div class="filters">
+    <app-search-input
+      [control]="list.searchControl"
+      placeholder="Search products..."
+      ariaLabel="Search catalog"
+    />
+    <select
+      class="category-select"
+      [value]="list.categoryFilter()"
+      (change)="list.onCategoryChange($event)"
+      aria-label="Filter by category"
+    >
+      <option value="">All Categories</option>
+      @for (cat of list.categories(); track cat) {
+        <option [value]="cat">{{ cat }}</option>
+      }
+    </select>
+  </div>
+
+  <div class="panel">
+    <app-data-table
+      [columns]="list.columns"
+      [rows]="list.products()"
+      [totalCount]="list.totalCount()"
+      [currentPage]="list.currentPage()"
+      [pageSize]="list.pageSize()"
+      [isLoading]="list.isLoading()"
+      (pageChange)="list.goToPage($event)"
+    >
+      <ng-template appTableCell="thumbnail" let-row>
+        @if (asProduct(row).imageUrls?.[0]) {
+          <img
+            [src]="asProduct(row).imageUrls[0]"
+            class="product-thumbnail"
+            alt=""
+            loading="lazy"
+          />
+        } @else {
+          <div class="product-thumbnail product-thumbnail--placeholder">?</div>
+        }
+      </ng-template>
+
+      <ng-template appTableCell="price" let-row>
+        {{ asProduct(row).price | currency: 'ZAR' : 'symbol-narrow' : '1.2-2' }}
+      </ng-template>
+
+      <ng-template appTableCell="quantity" let-row>
+        <span class="stock-badge" [ngClass]="list.stockClass(asProduct(row).quantity)">
+          {{ list.stockLabel(asProduct(row).quantity) }}
+        </span>
+      </ng-template>
+
+      <ng-template appTableCell="rate" let-row>
+        <span class="stars" [attr.aria-label]="asProduct(row).rate + ' out of 5 stars'">
+          {{ asProduct(row).rate | starRating }}
+        </span>
+      </ng-template>
+
+      <ng-template appTableCell="actions" let-row>
+        <div class="action-cell">
+          <a [routerLink]="['/admin/catalog', asProduct(row).id, 'reviews']" class="view-btn">
+            Reviews
+          </a>
+          <a [routerLink]="['/admin/catalog', asProduct(row).id, 'edit']" class="edit-btn">
+            Edit
+          </a>
+          <button
+            type="button"
+            class="btn-action btn-action--delete"
+            (click)="list.openDeleteConfirm(asProduct(row).id)"
+            [attr.aria-label]="'Delete ' + asProduct(row).title"
+          >
+            <app-trash-icon [width]="13" [height]="13" color="currentColor" />
+          </button>
+        </div>
+      </ng-template>
+    </app-data-table>
+  </div>
+</div>
+
+@if (list.showDeleteConfirm()) {
+  <app-confirm-modal
+    title="Delete Product"
+    message="This product will be permanently removed from the catalog. This cannot be undone."
+    confirmLabel="Delete"
+    [dangerous]="true"
+    (confirmed)="list.executeDelete()"
+    (cancelled)="list.cancelDelete()"
+  />
+}
