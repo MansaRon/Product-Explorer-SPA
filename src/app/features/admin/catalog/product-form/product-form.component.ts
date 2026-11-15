@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  inject,
+  OnDestroy,
+  OnInit,
+  viewChild,
+} from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { AdminProductFormService } from '../../../../core/services/admin/admin-product-form.service';
@@ -14,6 +22,8 @@ import { AdminProductFormService } from '../../../../core/services/admin/admin-p
 export class ProductFormComponent implements OnInit, OnDestroy {
   protected readonly forms = inject(AdminProductFormService);
 
+  private readonly fileInputEl = viewChild<ElementRef<HTMLInputElement>>('fileInput');
+
   ngOnInit(): void {
     if (this.forms.categories().length === 0) {
       this.forms.adminProductService.loadProducts({ page: 0, size: 100 });
@@ -24,6 +34,13 @@ export class ProductFormComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.forms.revokePreviewUrls();
     this.forms.adminProductService.clearSelectedProduct();
+  }
+
+  protected clearAllFiles(): void {
+    this.forms.clearFiles();
+    const el = this.fileInputEl();
+    if (el) el.nativeElement.value = '';
   }
 }

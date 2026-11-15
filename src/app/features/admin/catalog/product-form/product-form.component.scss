@@ -147,85 +147,117 @@
   color: var(--color-danger);
 }
 
-// ── Image URLs ────────────────────────────────────────────────────────────────
+// ── File upload ───────────────────────────────────────────────────────────────
 
-.image-url-list {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-sm);
-}
-
-.image-url-row {
-  display: flex;
-  gap: var(--spacing-sm);
-
-  .form-input {
-    flex: 1;
-  }
-}
-
-.btn-remove-url {
-  flex-shrink: 0;
-  width: 34px;
-  height: 34px;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  background: transparent;
+.form-hint {
+  font-size: var(--font-size-xs);
   color: var(--color-text-muted);
-  cursor: pointer;
-  font-size: var(--font-size-sm);
+  margin: 0;
+}
+
+.file-label {
   display: flex;
   align-items: center;
-  justify-content: center;
-  transition:
-    color 0.15s,
-    border-color 0.15s;
-
-  &:hover:not(:disabled) {
-    color: var(--color-danger);
-    border-color: var(--color-danger);
-  }
-
-  &:disabled {
-    opacity: 0.4;
-    cursor: default;
-  }
+  gap: var(--spacing-sm);
+  cursor: pointer;
+  flex-wrap: wrap;
 }
 
-.btn-add-url {
-  align-self: flex-start;
-  padding: var(--spacing-xs) var(--spacing-sm);
+.file-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.file-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--spacing-xs) var(--spacing-md);
   border: 1px dashed var(--color-border);
   border-radius: var(--radius-md);
   background: transparent;
   color: var(--color-text-secondary);
-  font-size: var(--font-size-xs);
-  cursor: pointer;
+  font-size: var(--font-size-sm);
   transition:
     color 0.15s,
     border-color 0.15s;
 
-  &:hover {
+  .file-label:hover & {
     color: var(--color-primary);
     border-color: var(--color-primary);
   }
 }
 
-// ── Image preview ─────────────────────────────────────────────────────────────
-
-.image-preview {
-  margin-top: var(--spacing-sm);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  overflow: hidden;
+.file-hint {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
 }
 
-.preview-img {
-  width: 100%;
-  max-height: 200px;
-  object-fit: contain;
-  display: block;
+// ── Image grid (existing + preview thumbnails) ────────────────────────────────
+
+.image-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-xs);
+}
+
+.thumb-wrapper {
+  position: relative;
+  display: inline-block;
+  line-height: 0;
+}
+
+.thumb {
+  width: 72px;
+  height: 72px;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
   background-color: var(--color-bg-secondary);
+  display: block;
+}
+
+.thumb-remove {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background-color: var(--color-danger);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-size: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  transition: background-color 0.15s;
+
+  &:hover {
+    background-color: var(--color-danger-dark, #c0392b);
+  }
+}
+
+.btn-clear-all {
+  align-self: flex-start;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border: 1px solid var(--color-danger);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-danger);
+  font-size: var(--font-size-xs);
+  cursor: pointer;
+  transition: background-color 0.15s;
+  margin-top: var(--spacing-xs);
+
+  &:hover {
+    background-color: var(--color-danger-tint);
+  }
 }
 
 // ── Form actions ──────────────────────────────────────────────────────────────
@@ -241,7 +273,7 @@
 .btn-primary {
   padding: var(--spacing-sm) var(--spacing-xl);
   background-color: var(--color-primary);
-  color: #fff;
+  color: var(--color-bg);
   border: none;
   border-radius: var(--radius-md);
   font-size: var(--font-size-sm);

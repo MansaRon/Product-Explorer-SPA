@@ -13,7 +13,7 @@ export interface ProductCreateRequest {
   price: number;
   category: string;
   quantity: number;
-  imageUrls: string[];
+  rate: number;
 }
 
 export type ProductUpdateRequest = Partial<ProductCreateRequest>;

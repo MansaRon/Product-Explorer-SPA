@@ -20,7 +20,7 @@
   } @else {
     <form [formGroup]="forms.form" (ngSubmit)="forms.submit()" class="product-form">
       <div class="form-grid">
-        <!-- Left column -->
+        <!-- Left column: product details -->
         <div class="form-col">
           <div class="form-group">
             <label class="form-label" for="title">Title <span class="required">*</span></label>
@@ -91,6 +91,23 @@
           </div>
 
           <div class="form-group">
+            <label class="form-label" for="rate">Rating <span class="required">*</span></label>
+            <input
+              id="rate"
+              type="number"
+              class="form-input"
+              formControlName="rate"
+              placeholder="0.0"
+              min="0"
+              max="5"
+              step="0.1"
+            />
+            @if (forms.form.controls.rate.invalid && forms.form.controls.rate.touched) {
+              <span class="form-error">Rating must be between 0 and 5.</span>
+            }
+          </div>
+
+          <div class="form-group">
             <label class="form-label" for="category"
               >Category <span class="required">*</span></label
             >
@@ -106,48 +123,71 @@
           </div>
         </div>
 
-        <!-- Right column: image URLs -->
+        <!-- Right column: images -->
         <div class="form-col">
           <div class="form-group">
-            <label class="form-label">Image URLs</label>
-            <div formArrayName="imageUrls" class="image-url-list">
-              @for (ctrl of forms.imageUrlsArray.controls; track $index; let i = $index) {
-                <div class="image-url-row">
-                  <input
-                    type="url"
-                    class="form-input"
-                    [formControlName]="i"
-                    placeholder="https://example.com/image.jpg"
-                  />
-                  <button
-                    type="button"
-                    class="btn-remove-url"
-                    [disabled]="forms.imageUrlsArray.length <= 1"
-                    (click)="forms.removeImageUrl(i)"
-                    aria-label="Remove image URL"
-                  >
-                    ✕
-                  </button>
-                </div>
+            <label class="form-label">
+              Product Images
+              @if (!forms.isEditMode) {
+                <span class="required">*</span>
               }
-              <button type="button" class="btn-add-url" (click)="forms.addImageUrl()">
-                + Add Image URL
-              </button>
-            </div>
-          </div>
+            </label>
 
-          <!-- Preview of first image -->
-          @if (forms.imageUrlsArray.controls[0]?.value) {
-            <div class="image-preview">
-              <img
-                #previewImg
-                [src]="forms.imageUrlsArray.controls[0].value"
-                class="preview-img"
-                alt="Product preview"
-                (error)="previewImg.style.display = 'none'"
+            @if (forms.isEditMode && forms.existingImageUrls().length > 0) {
+              <p class="form-hint">Current images</p>
+              <div class="image-grid">
+                @for (url of forms.existingImageUrls(); track url) {
+                  <img [src]="url" class="thumb" alt="Current product image" loading="lazy" />
+                }
+              </div>
+            }
+
+            <label class="file-label">
+              <input
+                #fileInput
+                type="file"
+                class="file-input"
+                accept="image/*"
+                multiple
+                (change)="forms.onFilesChange($event)"
               />
-            </div>
-          }
+              <span class="file-btn">
+                {{ forms.isEditMode ? 'Replace images' : 'Choose images' }}
+              </span>
+              <span class="file-hint">
+                @if (forms.selectedFiles().length > 0) {
+                  {{ forms.selectedFiles().length }} file(s) selected
+                } @else if (forms.isEditMode) {
+                  No new files — existing images will be kept
+                } @else {
+                  JPG, PNG, WebP accepted
+                }
+              </span>
+            </label>
+
+            @if (forms.previewUrls().length > 0) {
+              <div class="image-grid">
+                @for (url of forms.previewUrls(); track url; let i = $index) {
+                  <div class="thumb-wrapper">
+                    <img [src]="url" class="thumb" alt="New image preview" />
+                    <button
+                      type="button"
+                      class="thumb-remove"
+                      (click)="forms.removeFile(i)"
+                      aria-label="Remove image"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                }
+              </div>
+              @if (forms.selectedFiles().length > 1) {
+                <button type="button" class="btn-clear-all" (click)="clearAllFiles()">
+                  Clear all
+                </button>
+              }
+            }
+          </div>
         </div>
       </div>
 

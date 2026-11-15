@@ -1,6 +1,6 @@
 import { computed, DestroyRef, inject, Injectable, signal } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { catchError, EMPTY, map, Observable, retry, tap, throwError } from 'rxjs';
+import { catchError, EMPTY, map, Observable, shareReplay, tap, throwError } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Product } from '../../models/product';
 import {
@@ -9,9 +9,8 @@ import {
   AdminProductListApiResponse,
   AdminReview,
   AdminReviewListApiResponse,
-  ProductCreateRequest,
-  ProductUpdateRequest,
 } from '../../models/admin-product';
+import { skipNotFoundRedirect } from '../interceptor/error/error.interceptor';
 
 @Injectable({ providedIn: 'root' })
 export class AdminProductService {
@@ -62,6 +61,7 @@ export class AdminProductService {
           this.isLoadingSignal.set(false);
         }),
         takeUntilDestroyed(this.destroyRef),
+        shareReplay({ bufferSize: 1, refCount: true }),
         catchError((err) => {
           console.error('Failed to load products:', err);
           this.isLoadingSignal.set(false);
@@ -91,63 +91,76 @@ export class AdminProductService {
       .subscribe();
   }
 
-  createProduct(body: ProductCreateRequest): Observable<Product> {
+  createProduct(formData: FormData): Observable<Product> {
     this.isMutatingSignal.set(true);
-    return this.http.post<AdminProductApiResponse>('/admin/products', body).pipe(
-      tap((r) => {
-        this.selectedProductSignal.set(r.data);
-        this.isMutatingSignal.set(false);
-      }),
-      map((r) => r.data),
-      takeUntilDestroyed(this.destroyRef),
-      catchError((err) => {
-        this.isMutatingSignal.set(false);
-        return throwError(() => err);
+    return this.http
+      .post<AdminProductApiResponse>('/products', formData, {
+        context: skipNotFoundRedirect(),
       })
-    );
+      .pipe(
+        tap((r) => {
+          this.selectedProductSignal.set(r.data);
+          this.isMutatingSignal.set(false);
+        }),
+        map((r) => r.data),
+        takeUntilDestroyed(this.destroyRef),
+        catchError((err) => {
+          this.isMutatingSignal.set(false);
+          return throwError(() => err);
+        })
+      );
   }
 
-  updateProduct(id: string, body: ProductUpdateRequest): Observable<Product> {
+  updateProduct(id: string, formData: FormData): Observable<Product> {
     this.isMutatingSignal.set(true);
-    return this.http.put<AdminProductApiResponse>(`/admin/products/${id}`, body).pipe(
-      tap((r) => {
-        this.selectedProductSignal.set(r.data);
-        this.isMutatingSignal.set(false);
-      }),
-      map((r) => r.data),
-      takeUntilDestroyed(this.destroyRef),
-      catchError((err) => {
-        this.isMutatingSignal.set(false);
-        return throwError(() => err);
+    return this.http
+      .patch<AdminProductApiResponse>(`/products/product/${id}`, formData, {
+        context: skipNotFoundRedirect(),
       })
-    );
+      .pipe(
+        tap((r) => {
+          this.selectedProductSignal.set(r.data);
+          this.isMutatingSignal.set(false);
+        }),
+        map((r) => r.data),
+        takeUntilDestroyed(this.destroyRef),
+        catchError((err) => {
+          this.isMutatingSignal.set(false);
+          return throwError(() => err);
+        })
+      );
   }
 
   deleteProduct(id: string): Observable<void> {
     this.isMutatingSignal.set(true);
-    return this.http.delete<{ message: string }>(`/admin/products/${id}`).pipe(
-      tap(() => this.isMutatingSignal.set(false)),
-      map(() => undefined),
-      takeUntilDestroyed(this.destroyRef),
-      catchError((err) => {
-        this.isMutatingSignal.set(false);
-        return throwError(() => err);
+    return this.http
+      .delete<{ message: string }>(`/products/product/${id}`, {
+        context: skipNotFoundRedirect(),
       })
-    );
+      .pipe(
+        tap(() => this.isMutatingSignal.set(false)),
+        map(() => undefined),
+        takeUntilDestroyed(this.destroyRef),
+        catchError((err) => {
+          this.isMutatingSignal.set(false);
+          return throwError(() => err);
+        })
+      );
   }
 
   loadProductReviews(productId: string): void {
     this.isLoadingReviewsSignal.set(true);
     this.reviewsSignal.set([]);
     this.http
-      .get<AdminReviewListApiResponse>(`/admin/products/${productId}/reviews`)
+      .get<AdminReviewListApiResponse>(`/admin/products/${productId}/reviews`, {
+        context: skipNotFoundRedirect(),
+      })
       .pipe(
         tap((r) => {
           this.reviewsSignal.set(r.data ?? []);
           this.isLoadingReviewsSignal.set(false);
         }),
         takeUntilDestroyed(this.destroyRef),
-        retry(3),
         catchError((err) => {
           console.error('Failed to load reviews:', err);
           this.isLoadingReviewsSignal.set(false);
@@ -159,7 +172,9 @@ export class AdminProductService {
 
   removeReview(productId: string, reviewId: string): Observable<void> {
     return this.http
-      .delete<{ message: string }>(`/admin/products/${productId}/reviews/${reviewId}`)
+      .delete<{ message: string }>(`/admin/products/${productId}/reviews/${reviewId}`, {
+        context: skipNotFoundRedirect(),
+      })
       .pipe(
         map(() => undefined),
         takeUntilDestroyed(this.destroyRef),
@@ -169,9 +184,11 @@ export class AdminProductService {
 
   flagReview(productId: string, reviewId: string, flagged: boolean): Observable<AdminReview> {
     return this.http
-      .patch<{ data: AdminReview }>(`/admin/products/${productId}/reviews/${reviewId}/flag`, {
-        flagged,
-      })
+      .patch<{ data: AdminReview }>(
+        `/admin/products/${productId}/reviews/${reviewId}/flag`,
+        { flagged },
+        { context: skipNotFoundRedirect() }
+      )
       .pipe(
         map((r) => r.data),
         takeUntilDestroyed(this.destroyRef),
