@@ -1,0 +1,206 @@
+<div class="container">
+  <a routerLink="/admin/catalog" class="back-link">← Back to Catalog</a>
+
+  <div class="page-header">
+    <h1 class="page-title">{{ forms.isEditMode ? 'Edit Product' : 'Add Product' }}</h1>
+  </div>
+
+  @if (forms.submitFeedback()) {
+    <div
+      class="alert"
+      [class.alert--success]="forms.submitFeedback()!.ok"
+      [class.alert--error]="!forms.submitFeedback()!.ok"
+    >
+      {{ forms.submitFeedback()!.msg }}
+    </div>
+  }
+
+  @if (forms.isEditMode && forms.adminProductService.isLoadingDetail()) {
+    <div class="loading-state">Loading product...</div>
+  } @else {
+    <form [formGroup]="forms.form" (ngSubmit)="forms.submit()" class="product-form">
+      <div class="form-grid">
+        <!-- Left column: product details -->
+        <div class="form-col">
+          <div class="form-group">
+            <label class="form-label" for="title">Title <span class="required">*</span></label>
+            <input
+              id="title"
+              type="text"
+              class="form-input"
+              formControlName="title"
+              placeholder="Product name"
+            />
+            @if (forms.form.controls.title.invalid && forms.form.controls.title.touched) {
+              <span class="form-error">Title is required.</span>
+            }
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="description">
+              Description <span class="required">*</span>
+            </label>
+            <textarea
+              id="description"
+              class="form-input form-textarea"
+              formControlName="description"
+              placeholder="Describe the product..."
+              rows="5"
+            ></textarea>
+            @if (
+              forms.form.controls.description.invalid && forms.form.controls.description.touched
+            ) {
+              <span class="form-error">Description is required.</span>
+            }
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="price"
+                >Price (ZAR) <span class="required">*</span></label
+              >
+              <input
+                id="price"
+                type="number"
+                class="form-input"
+                formControlName="price"
+                placeholder="0.00"
+                min="0.01"
+                step="0.01"
+              />
+              @if (forms.form.controls.price.invalid && forms.form.controls.price.touched) {
+                <span class="form-error">Enter a valid price (min R0.01).</span>
+              }
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="quantity">Stock <span class="required">*</span></label>
+              <input
+                id="quantity"
+                type="number"
+                class="form-input"
+                formControlName="quantity"
+                placeholder="0"
+                min="0"
+                step="1"
+              />
+              @if (forms.form.controls.quantity.invalid && forms.form.controls.quantity.touched) {
+                <span class="form-error">Enter a valid stock quantity.</span>
+              }
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="rate">Rating <span class="required">*</span></label>
+            <input
+              id="rate"
+              type="number"
+              class="form-input"
+              formControlName="rate"
+              placeholder="0.0"
+              min="0"
+              max="5"
+              step="0.1"
+            />
+            @if (forms.form.controls.rate.invalid && forms.form.controls.rate.touched) {
+              <span class="form-error">Rating must be between 0 and 5.</span>
+            }
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="category"
+              >Category <span class="required">*</span></label
+            >
+            <select id="category" class="form-input form-select" formControlName="category">
+              <option value="">Select a category</option>
+              @for (cat of forms.categories(); track cat) {
+                <option [value]="cat">{{ cat }}</option>
+              }
+            </select>
+            @if (forms.form.controls.category.invalid && forms.form.controls.category.touched) {
+              <span class="form-error">Category is required.</span>
+            }
+          </div>
+        </div>
+
+        <!-- Right column: images -->
+        <div class="form-col">
+          <div class="form-group">
+            <label class="form-label">
+              Product Images
+              @if (!forms.isEditMode) {
+                <span class="required">*</span>
+              }
+            </label>
+
+            @if (forms.isEditMode && forms.existingImageUrls().length > 0) {
+              <p class="form-hint">Current images</p>
+              <div class="image-grid">
+                @for (url of forms.existingImageUrls(); track url) {
+                  <img [src]="url" class="thumb" alt="Current product image" loading="lazy" />
+                }
+              </div>
+            }
+
+            <label class="file-label">
+              <input
+                #fileInput
+                type="file"
+                class="file-input"
+                accept="image/*"
+                multiple
+                (change)="forms.onFilesChange($event)"
+              />
+              <span class="file-btn">
+                {{ forms.isEditMode ? 'Replace images' : 'Choose images' }}
+              </span>
+              <span class="file-hint">
+                @if (forms.selectedFiles().length > 0) {
+                  {{ forms.selectedFiles().length }} file(s) selected
+                } @else if (forms.isEditMode) {
+                  No new files — existing images will be kept
+                } @else {
+                  JPG, PNG, WebP accepted
+                }
+              </span>
+            </label>
+
+            @if (forms.previewUrls().length > 0) {
+              <div class="image-grid">
+                @for (url of forms.previewUrls(); track url; let i = $index) {
+                  <div class="thumb-wrapper">
+                    <img [src]="url" class="thumb" alt="New image preview" />
+                    <button
+                      type="button"
+                      class="thumb-remove"
+                      (click)="forms.removeFile(i)"
+                      aria-label="Remove image"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                }
+              </div>
+              @if (forms.selectedFiles().length > 1) {
+                <button type="button" class="btn-clear-all" (click)="clearAllFiles()">
+                  Clear all
+                </button>
+              }
+            }
+          </div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <a routerLink="/admin/catalog" class="btn-secondary">Cancel</a>
+        <button
+          type="submit"
+          class="btn-primary"
+          [disabled]="forms.adminProductService.isMutating()"
+        >
+          {{ forms.isEditMode ? 'Save Changes' : 'Create Product' }}
+        </button>
+      </div>
+    </form>
+  }
+</div>

@@ -43,6 +43,27 @@ export const ADMIN: Routes = [
           ),
       },
       {
+        path: `${AppRoutes.ADMIN_CATALOG}/new`,
+        loadComponent: () =>
+          import('./catalog/product-form/product-form.component').then(
+            (m) => m.ProductFormComponent
+          ),
+      },
+      {
+        path: `${AppRoutes.ADMIN_CATALOG}/:id/edit`,
+        loadComponent: () =>
+          import('./catalog/product-form/product-form.component').then(
+            (m) => m.ProductFormComponent
+          ),
+      },
+      {
+        path: `${AppRoutes.ADMIN_CATALOG}/:id/reviews`,
+        loadComponent: () =>
+          import('./catalog/product-reviews/product-reviews.component').then(
+            (m) => m.ProductReviewsComponent
+          ),
+      },
+      {
         path: AppRoutes.ADMIN_CATEGORIES,
         loadComponent: () =>
           import('./categories/category-list/category-list.component').then(

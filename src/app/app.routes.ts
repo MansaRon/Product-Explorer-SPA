@@ -68,6 +68,7 @@ export const routes: Routes = [
         path: AppRoutes.PAGE_NOT_FOUND,
         loadChildren: () =>
           import('./features/page-not-found/page-not-found.routing').then((r) => r.PAGE_NOT_FOUND),
+        data: { preload: false },
       },
     ],
   },

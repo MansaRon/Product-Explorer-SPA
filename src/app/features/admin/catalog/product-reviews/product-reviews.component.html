@@ -1,0 +1,122 @@
+<div class="container">
+  <a [routerLink]="['/admin/catalog']" class="back-link">← Back to Catalog</a>
+
+  <div class="page-header">
+    <div class="page-header__text">
+      <h1 class="page-title">
+        @if (reviews.selectedProduct()) {
+          {{ reviews.selectedProduct()!.title }} — Reviews
+        } @else {
+          Product Reviews
+        }
+      </h1>
+      <p class="page-description">Moderate customer reviews for this product</p>
+    </div>
+  </div>
+
+  @if (reviews.actionMessage()) {
+    <div
+      class="alert"
+      [class.alert--success]="reviews.actionMessage()!.ok"
+      [class.alert--error]="!reviews.actionMessage()!.ok"
+    >
+      {{ reviews.actionMessage()!.text }}
+    </div>
+  }
+
+  <div class="filter-tabs">
+    <button
+      type="button"
+      class="filter-tab"
+      [class.filter-tab--active]="reviews.reviewFilter() === 'ALL'"
+      (click)="reviews.reviewFilter.set('ALL')"
+    >
+      All ({{ reviews.reviews().length }})
+    </button>
+    <button
+      type="button"
+      class="filter-tab"
+      [class.filter-tab--active]="reviews.reviewFilter() === 'FLAGGED'"
+      (click)="reviews.reviewFilter.set('FLAGGED')"
+    >
+      Flagged ({{ reviews.flaggedCount() }})
+    </button>
+  </div>
+
+  @if (reviews.isLoadingReviews()) {
+    <div class="loading-state">Loading reviews...</div>
+  } @else if (reviews.filteredReviews().length === 0) {
+    <div class="empty-state">No reviews found.</div>
+  } @else {
+    <div class="review-list">
+      @for (review of reviews.filteredReviews(); track review.id) {
+        <div class="review-card" [class.review-card--flagged]="review.flagged">
+          <div class="review-card__header">
+            <div class="reviewer-info">
+              <div class="reviewer-avatar">
+                {{ review.userName.charAt(0).toUpperCase() }}
+              </div>
+              <div>
+                <div class="reviewer-name">{{ review.userName }}</div>
+                <div class="review-meta">
+                  <span class="stars">{{ review.rating | starRating }}</span>
+                  <span class="review-date">{{ review.reviewDate | date: 'dd MMM yyyy' }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="review-badges">
+              @if (review.flagged) {
+                <span class="badge badge--flagged">Flagged</span>
+              }
+              @if (review.verifiedPurchase) {
+                <span class="badge badge--verified">Verified</span>
+              }
+            </div>
+          </div>
+
+          <p class="review-comment">{{ review.comment }}</p>
+
+          <div class="review-card__actions">
+            @if (!review.flagged) {
+              <button
+                type="button"
+                class="btn-action btn-action--flag"
+                (click)="reviews.flagReview(review.id)"
+              >
+                Flag
+              </button>
+            } @else {
+              <button
+                type="button"
+                class="btn-action btn-action--approve"
+                (click)="reviews.approveReview(review.id)"
+              >
+                Approve
+              </button>
+            }
+            <button
+              type="button"
+              class="btn-action btn-action--remove"
+              (click)="reviews.openRemoveConfirm(review.id)"
+            >
+              Remove
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>
+
+@defer (when reviews.showRemoveConfirm()) {
+  @if (reviews.showRemoveConfirm()) {
+    <app-confirm-modal
+      title="Remove Review"
+      message="This review will be permanently deleted. This cannot be undone."
+      confirmLabel="Remove"
+      [dangerous]="true"
+      (confirmed)="reviews.executeRemove()"
+      (cancelled)="reviews.cancelRemove()"
+    />
+  }
+}
