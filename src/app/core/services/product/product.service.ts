@@ -73,7 +73,9 @@ export class ProductService {
     this.errorSignal.set(null);
 
     this.httpClient
-      .get<ApiResponse<PagedData<Product> | Product[]>>('/products')
+      .get<ApiResponse<PagedData<Product> | Product[]>>('/products', {
+        params: { page: 0, size: 500 },
+      })
       .pipe(
         delay(800),
         map((response) => this.extractProducts(response)),
