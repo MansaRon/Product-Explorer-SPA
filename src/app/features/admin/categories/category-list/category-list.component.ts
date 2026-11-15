@@ -1,22 +1,21 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { EmptyStateComponent } from '../../../../shared/components/empty-state/empty-state.component';
+import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
+import { AdminCategoryListService } from '../../../../core/services/admin/admin-category-list.service';
+import { DataTableComponent } from '../../../../shared/components/data-table/data-table.component';
+import { TableCellDirective } from '../../../../shared/components/data-table/table-cell.directive';
 
 @Component({
   selector: 'app-admin-category-list',
-  template: `
-    <div class="container">
-      <div class="page-header">
-        <h1 class="page-title">Categories</h1>
-        <p class="page-description">Manage product categories</p>
-      </div>
-      <app-empty-state
-        icon="info"
-        title="Coming soon"
-        description="Category management is being built and will be available shortly."
-      />
-    </div>
-  `,
+  templateUrl: './category-list.component.html',
+  styleUrls: ['./category-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [EmptyStateComponent],
+  providers: [AdminCategoryListService],
+  imports: [ReactiveFormsModule, DataTableComponent, TableCellDirective],
 })
-export class CategoryListComponent {}
+export class CategoryListComponent implements OnInit {
+  protected readonly list = inject(AdminCategoryListService);
+
+  ngOnInit(): void {
+    this.list.adminCategoryService.loadCategories();
+  }
+}

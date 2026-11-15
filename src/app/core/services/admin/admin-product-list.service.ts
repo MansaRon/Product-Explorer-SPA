@@ -3,18 +3,20 @@ import { FormControl } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, switchMap, timer } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AdminProductService } from './admin-product.service';
+import { AdminCategoryService } from './admin-category.service';
 import { Product } from '../../models/product';
 import { TableColumnDef } from '../../../shared/components/data-table/data-table.component';
 
 @Injectable()
 export class AdminProductListService {
   private readonly adminProductService = inject(AdminProductService);
+  private readonly adminCategoryService = inject(AdminCategoryService);
   private readonly destroyRef = inject(DestroyRef);
 
   readonly products = this.adminProductService.products;
   readonly totalCount = this.adminProductService.totalCount;
   readonly isLoading = this.adminProductService.isLoading;
-  readonly categories = this.adminProductService.categories;
+  readonly categories = this.adminCategoryService.activeCategories;
 
   readonly currentPage = computed(() => this.adminProductService.currentParams().page ?? 0);
   readonly pageSize = computed(() => this.adminProductService.currentParams().size ?? 20);

@@ -12,6 +12,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { timer } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AdminProductService } from './admin-product.service';
+import { AdminCategoryService } from './admin-category.service';
 
 type FeedbackState = { ok: boolean; msg: string } | null;
 
@@ -21,11 +22,12 @@ export class AdminProductFormService {
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
   readonly adminProductService = inject(AdminProductService);
+  readonly adminCategoryService = inject(AdminCategoryService);
 
   readonly productId: string | null = this.route.snapshot.paramMap.get('id');
   readonly isEditMode = !!this.productId;
 
-  readonly categories = this.adminProductService.categories;
+  readonly categories = this.adminCategoryService.activeCategories;
 
   readonly form = new FormGroup({
     title: new FormControl('', { nonNullable: true, validators: [Validators.required] }),

@@ -25,9 +25,6 @@ export class ProductFormComponent implements OnInit, OnDestroy {
   private readonly fileInputEl = viewChild<ElementRef<HTMLInputElement>>('fileInput');
 
   ngOnInit(): void {
-    if (this.forms.categories().length === 0) {
-      this.forms.adminProductService.loadProducts({ page: 0, size: 100 });
-    }
     if (this.forms.isEditMode && this.forms.productId) {
       this.forms.adminProductService.loadProduct(this.forms.productId);
     }
