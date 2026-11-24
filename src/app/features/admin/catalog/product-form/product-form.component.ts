@@ -6,6 +6,7 @@ import {
   OnDestroy,
   OnInit,
   viewChild,
+  ViewEncapsulation,
 } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -18,6 +19,7 @@ import { AdminProductFormService } from '../../../../core/services/admin/admin-p
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [AdminProductFormService],
   imports: [ReactiveFormsModule, RouterLink],
+  encapsulation: ViewEncapsulation.Emulated,
 })
 export class ProductFormComponent implements OnInit, OnDestroy {
   protected readonly forms = inject(AdminProductFormService);

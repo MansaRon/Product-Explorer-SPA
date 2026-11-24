@@ -5,6 +5,7 @@ import {
   effect,
   inject,
   signal,
+  ViewEncapsulation,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -39,6 +40,7 @@ import { MessageIconComponent } from '../../shared/components/icons/message-icon
     ChevronRightIconComponent,
     MessageIconComponent,
   ],
+  encapsulation: ViewEncapsulation.Emulated,
 })
 export class ProductDetailsComponent {
   private readonly favouriteService = inject(FavouriteService);

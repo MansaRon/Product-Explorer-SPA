@@ -1,4 +1,10 @@
-import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  input,
+  ViewEncapsulation,
+} from '@angular/core';
 import { Router } from '@angular/router';
 import { SearchIconComponent } from '../icons/search-icon/search-icon.component';
 import { HeartIconComponent } from '../icons/heart-icon/heart-icon.component';
@@ -11,7 +17,14 @@ import { InfoCircleIconComponent } from '../icons/info-circle-icon/info-circle-i
   templateUrl: './empty-state.component.html',
   styleUrls: ['./empty-state.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [SearchIconComponent, HeartIconComponent, TableIconComponent, CartIconComponent, InfoCircleIconComponent],
+  imports: [
+    SearchIconComponent,
+    HeartIconComponent,
+    TableIconComponent,
+    CartIconComponent,
+    InfoCircleIconComponent,
+  ],
+  encapsulation: ViewEncapsulation.Emulated,
 })
 export class EmptyStateComponent {
   private readonly router = inject(Router);

@@ -5,6 +5,7 @@ import {
   contentChildren,
   input,
   output,
+  ViewEncapsulation,
 } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
 import { TableCellDirective } from './table-cell.directive';
@@ -22,6 +23,7 @@ export interface TableColumnDef {
   styleUrls: ['./data-table.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [NgTemplateOutlet],
+  encapsulation: ViewEncapsulation.Emulated,
 })
 export class DataTableComponent {
   readonly columns = input.required<TableColumnDef[]>();

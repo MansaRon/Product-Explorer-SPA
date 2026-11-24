@@ -5,6 +5,7 @@ import {
   inject,
   OnDestroy,
   OnInit,
+  ViewEncapsulation,
 } from '@angular/core';
 import { CurrencyPipe, DatePipe, LowerCasePipe, TitleCasePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
@@ -40,6 +41,7 @@ import { ConfirmModalComponent } from '../../../../shared/components/confirm-mod
     CurrencyIconComponent,
     ConfirmModalComponent,
   ],
+  encapsulation: ViewEncapsulation.Emulated,
 })
 export class OrderDetailComponent implements OnInit, OnDestroy {
   private readonly adminOrderService = inject(AdminOrderService);

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ViewEncapsulation } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { HeaderComponent } from '../../shared/components/header/header.component';
 import { NavItem } from '../../core/models/navigation';
@@ -10,6 +10,7 @@ import { AppRoutes } from '../../shared/enums/app-routes-enum';
   styleUrls: ['./consumer-shell.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [RouterOutlet, HeaderComponent],
+  encapsulation: ViewEncapsulation.Emulated,
 })
 export class ConsumerShellComponent {
   readonly navItems: NavItem[] = [

@@ -1,4 +1,10 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  signal,
+  ViewEncapsulation,
+} from '@angular/core';
 import { OrderComponent } from '../../../shared/components/order-summary/order.component';
 import { CartService } from '../../../core/services/cart/cart.service';
 import { Router } from '@angular/router';
@@ -14,6 +20,7 @@ import { NotificationService } from '../../../core/services/notification/notific
   styleUrls: ['./review.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [OrderComponent, FooterComponent],
+  encapsulation: ViewEncapsulation.Emulated,
 })
 export class ReviewComponent {
   private readonly checkoutService = inject(CheckoutService);

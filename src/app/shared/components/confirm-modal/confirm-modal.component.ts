@@ -1,4 +1,10 @@
-import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  input,
+  output,
+  ViewEncapsulation,
+} from '@angular/core';
 
 @Component({
   selector: 'app-confirm-modal',
@@ -6,6 +12,7 @@ import { ChangeDetectionStrategy, Component, input, output } from '@angular/core
   styleUrls: ['./confirm-modal.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { '(document:keydown.escape)': 'onCancel()' },
+  encapsulation: ViewEncapsulation.Emulated,
 })
 export class ConfirmModalComponent {
   readonly title = input.required<string>();

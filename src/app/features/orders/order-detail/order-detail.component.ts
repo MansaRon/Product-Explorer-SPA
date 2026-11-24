@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnInit,
+  ViewEncapsulation,
+} from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CurrencyPipe, DatePipe } from '@angular/common';
 import { OrderService } from '../../../core/services/order/order.service';
@@ -22,6 +29,7 @@ import { ShippingMethodLabelPipe } from '../../../shared/pipes/shipping-method-l
     PaymentMethodLabelPipe,
     ShippingMethodLabelPipe,
   ],
+  encapsulation: ViewEncapsulation.Emulated,
 })
 export class OrderDetailComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);

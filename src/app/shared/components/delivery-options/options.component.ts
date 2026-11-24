@@ -1,5 +1,13 @@
 import { CurrencyPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, effect, inject, input, output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  effect,
+  inject,
+  input,
+  output,
+  ViewEncapsulation,
+} from '@angular/core';
 import { DeliveryOption } from '../../../core/models/checkout';
 import { LookupService } from '../../../core/services/lookup/lookup.service';
 
@@ -9,6 +17,7 @@ import { LookupService } from '../../../core/services/lookup/lookup.service';
   styleUrls: ['./options.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CurrencyPipe],
+  encapsulation: ViewEncapsulation.Emulated,
 })
 export class OptionsComponent {
   initialData = input<DeliveryOption | undefined>();

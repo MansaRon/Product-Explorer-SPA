@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  OnDestroy,
+  OnInit,
+  ViewEncapsulation,
+} from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { AdminProductReviewsService } from '../../../../core/services/admin/admin-product-reviews.service';
@@ -12,6 +19,7 @@ import { StarRatingPipe } from '../../../../shared/pipes/star-rating.pipe';
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [AdminProductReviewsService],
   imports: [DatePipe, RouterLink, ConfirmModalComponent, StarRatingPipe],
+  encapsulation: ViewEncapsulation.Emulated,
 })
 export class ProductReviewsComponent implements OnInit, OnDestroy {
   protected readonly reviews = inject(AdminProductReviewsService);

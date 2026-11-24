@@ -1,4 +1,10 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  OnInit,
+  ViewEncapsulation,
+} from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { AdminCategoryListService } from '../../../../core/services/admin/admin-category-list.service';
 import { DataTableComponent } from '../../../../shared/components/data-table/data-table.component';
@@ -11,6 +17,7 @@ import { TableCellDirective } from '../../../../shared/components/data-table/tab
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [AdminCategoryListService],
   imports: [ReactiveFormsModule, DataTableComponent, TableCellDirective],
+  encapsulation: ViewEncapsulation.Emulated,
 })
 export class CategoryListComponent implements OnInit {
   protected readonly list = inject(AdminCategoryListService);

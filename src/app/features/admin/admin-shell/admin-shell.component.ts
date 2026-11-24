@@ -1,4 +1,10 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  ViewEncapsulation,
+} from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { AuthService } from '../../../core/services/auth/auth.service';
 import { ThemeService } from '../../../core/services/theme/theme.service';
@@ -32,6 +38,7 @@ import { SunIconComponent } from '../../../shared/components/icons/sun-icon/sun-
     MoonIconComponent,
     SunIconComponent,
   ],
+  encapsulation: ViewEncapsulation.Emulated,
 })
 export class AdminShellComponent {
   private readonly authService = inject(AuthService);

@@ -5,6 +5,7 @@ import {
   inject,
   OnInit,
   signal,
+  ViewEncapsulation,
 } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -47,6 +48,7 @@ interface StepViewModel {
     OrderStatusClassPipe,
     ShippingMethodLabelPipe,
   ],
+  encapsulation: ViewEncapsulation.Emulated,
 })
 export class OrderTrackingComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);

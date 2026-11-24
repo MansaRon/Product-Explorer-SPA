@@ -167,4 +167,25 @@ export class ProductService {
       rate: parseFloat(String(product.rate)),
     };
   }
+
+  // instead of showing errors and asking to retry, angular can automatically retry the request when the user is back online.
+  // This is done using the `fromEvent` operator to listen for the `online` event and retrying the request after a delay.
+  // placeOrder(order: any): Observable<any> {
+  //   return this.httpClient.post('', order).pipe(
+  //     retryWhen(errors =>
+  //       errors.pipe(
+  //         mergeMap((error: any) => {
+  //           if (error instanceof HttpErrorResponse && error.status >= 400 && error.status < 500) {
+  //             return throwError(() => error);
+  //           }
+
+  //           return fromEvent(window, 'online').pipe(
+  //             mergeMap(() => timer(1000))
+  //           )
+  //         })
+  //       )
+  //     ),
+  //     catchError((error: any) => throwError(() => error))
+  //   );
+  // }
 }

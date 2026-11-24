@@ -1,4 +1,10 @@
-import { Component, inject, computed, ChangeDetectionStrategy } from '@angular/core';
+import {
+  Component,
+  inject,
+  computed,
+  ChangeDetectionStrategy,
+  ViewEncapsulation,
+} from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import { CheckoutService } from '../../core/services/checkout/checkout.service';
 import { CartService } from '../../core/services/cart/cart.service';
@@ -21,6 +27,7 @@ import { AppRoutes } from '../../shared/enums/app-routes-enum';
     CalendarIconComponent,
     CreditCardIconComponent,
   ],
+  encapsulation: ViewEncapsulation.Emulated,
 })
 export class CheckoutComponent {
   private readonly checkoutService = inject(CheckoutService);

@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnInit,
+  ViewEncapsulation,
+} from '@angular/core';
 import { CurrencyPipe, DatePipe, DecimalPipe, LowerCasePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { ProductService } from '../../../core/services/product/product.service';
@@ -33,6 +40,7 @@ import { BanknoteIconComponent } from '../../../shared/components/icons/banknote
     LowerCasePipe,
     DecimalPipe,
   ],
+  encapsulation: ViewEncapsulation.Emulated,
 })
 export class DashboardComponent implements OnInit {
   private readonly productService = inject(ProductService);

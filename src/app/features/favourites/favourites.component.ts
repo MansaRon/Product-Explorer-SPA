@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  signal,
+  ViewEncapsulation,
+} from '@angular/core';
 import { ProductCardComponent } from '../../shared/components/product-card/product-card.component';
 import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state.component';
 import { FavouriteService } from '../../core/services/favourite/favourite.service';
@@ -11,6 +18,7 @@ import { ConfirmModalComponent } from '../../shared/components/confirm-modal/con
   styleUrls: ['./favourites.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [ProductCardComponent, EmptyStateComponent, ConfirmModalComponent],
+  encapsulation: ViewEncapsulation.Emulated,
 })
 export class FavouritesComponent {
   private readonly favouriteService = inject(FavouriteService);

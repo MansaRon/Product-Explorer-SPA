@@ -1,4 +1,10 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  signal,
+  ViewEncapsulation,
+} from '@angular/core';
 import { CheckoutService } from '../../../core/services/checkout/checkout.service';
 import { Router } from '@angular/router';
 import { DeliveryOption } from '../../../core/models/checkout';
@@ -10,7 +16,8 @@ import { FooterComponent } from '../../../shared/components/footer/footer.compon
   templateUrl: './delivery.component.html',
   styleUrls: ['./delivery.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [OptionsComponent, FooterComponent]
+  imports: [OptionsComponent, FooterComponent],
+  encapsulation: ViewEncapsulation.Emulated,
 })
 export class DeliveryComponent {
   private readonly checkoutService = inject(CheckoutService);
@@ -22,7 +29,7 @@ export class DeliveryComponent {
   protected readonly isSubmitting = signal(false);
   protected readonly submitTrigger = signal(0);
   protected selectedOption: DeliveryOption | undefined;
-  
+
   protected handleOptionSelected(option: DeliveryOption): void {
     this.selectedOption = option;
   }
@@ -35,7 +42,7 @@ export class DeliveryComponent {
     this.checkoutService.previousStep();
     this.router.navigate(['/checkout/shipping']);
   }
-  
+
   protected handleContinue(): void {
     if (this.selectedOption) {
       this.isSubmitting.set(true);
@@ -44,7 +51,7 @@ export class DeliveryComponent {
       this.router.navigate(['/checkout/payment']);
       this.isSubmitting.set(false);
     } else {
-      this.submitTrigger.update(n => n + 1);
+      this.submitTrigger.update((n) => n + 1);
     }
   }
 }

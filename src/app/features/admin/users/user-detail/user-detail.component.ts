@@ -5,6 +5,7 @@ import {
   inject,
   OnDestroy,
   OnInit,
+  ViewEncapsulation,
 } from '@angular/core';
 import { CurrencyPipe, DatePipe, LowerCasePipe, TitleCasePipe } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -34,6 +35,7 @@ import { ArrowLeftIconComponent } from '../../../../shared/components/icons/arro
     ConfirmModalComponent,
     ArrowLeftIconComponent,
   ],
+  encapsulation: ViewEncapsulation.Emulated,
 })
 export class UserDetailComponent implements OnInit, OnDestroy {
   protected readonly adminUserService = inject(AdminUserService);
