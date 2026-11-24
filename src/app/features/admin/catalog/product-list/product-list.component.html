@@ -30,8 +30,8 @@
       aria-label="Filter by category"
     >
       <option value="">All Categories</option>
-      @for (cat of list.categories(); track cat) {
-        <option [value]="cat">{{ cat }}</option>
+      @for (cat of list.categories(); track cat.code) {
+        <option [value]="cat.code">{{ cat.label }}</option>
       }
     </select>
   </div>

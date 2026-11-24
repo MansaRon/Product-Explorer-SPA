@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  inject,
+  signal,
+  ViewEncapsulation,
+} from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth/auth.service';
 import { AuthFormData } from '../../../core/models/auth';
@@ -12,6 +19,7 @@ import { AppRoutes } from '../../../shared/enums/app-routes-enum';
   styleUrls: ['./login-page.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [AuthFormComponent, RouterLink],
+  encapsulation: ViewEncapsulation.Emulated,
 })
 export class LoginPageComponent {
   private readonly authService = inject(AuthService);

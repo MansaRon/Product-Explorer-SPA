@@ -1,5 +1,11 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
-import { CurrencyPipe, DatePipe, NgClass } from '@angular/common';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  OnInit,
+  ViewEncapsulation,
+} from '@angular/core';
+import { CurrencyPipe, NgClass } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { AdminProductListService } from '../../../../core/services/admin/admin-product-list.service';
@@ -19,7 +25,6 @@ import { StarRatingPipe } from '../../../../shared/pipes/star-rating.pipe';
   providers: [AdminProductListService],
   imports: [
     CurrencyPipe,
-    DatePipe,
     NgClass,
     ReactiveFormsModule,
     RouterLink,
@@ -30,6 +35,7 @@ import { StarRatingPipe } from '../../../../shared/pipes/star-rating.pipe';
     TrashIconComponent,
     StarRatingPipe,
   ],
+  encapsulation: ViewEncapsulation.Emulated,
 })
 export class ProductListComponent implements OnInit {
   protected readonly list = inject(AdminProductListService);

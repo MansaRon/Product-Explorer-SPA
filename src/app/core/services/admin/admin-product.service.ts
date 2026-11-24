@@ -11,11 +11,13 @@ import {
   AdminReviewListApiResponse,
 } from '../../models/admin-product';
 import { skipNotFoundRedirect } from '../interceptor/error/error.interceptor';
+import { ProductService } from '../product/product.service';
 
 @Injectable({ providedIn: 'root' })
 export class AdminProductService {
   private readonly http = inject(HttpClient);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly productService = inject(ProductService);
 
   private readonly productsSignal = signal<Product[]>([]);
   private readonly totalCountSignal = signal(0);
@@ -101,6 +103,7 @@ export class AdminProductService {
         tap((r) => {
           this.selectedProductSignal.set(r.data);
           this.isMutatingSignal.set(false);
+          this.productService.retryLoad();
         }),
         map((r) => r.data),
         takeUntilDestroyed(this.destroyRef),
@@ -121,6 +124,7 @@ export class AdminProductService {
         tap((r) => {
           this.selectedProductSignal.set(r.data);
           this.isMutatingSignal.set(false);
+          this.productService.retryLoad();
         }),
         map((r) => r.data),
         takeUntilDestroyed(this.destroyRef),
@@ -138,7 +142,10 @@ export class AdminProductService {
         context: skipNotFoundRedirect(),
       })
       .pipe(
-        tap(() => this.isMutatingSignal.set(false)),
+        tap(() => {
+          this.isMutatingSignal.set(false);
+          this.productService.retryLoad();
+        }),
         map(() => undefined),
         takeUntilDestroyed(this.destroyRef),
         catchError((err) => {

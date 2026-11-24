@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  input,
+  signal,
+  ViewEncapsulation,
+} from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { NavItem } from '../../../core/models/navigation';
 import { AuthService } from '../../../core/services/auth/auth.service';
@@ -28,6 +36,7 @@ import { BrandLogoComponent } from '../icons/brand-logo/brand-logo.component';
     UserCircleIconComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  encapsulation: ViewEncapsulation.Emulated,
 })
 export class HeaderComponent {
   private readonly authService = inject(AuthService);

@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, effect, inject, input, output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  effect,
+  inject,
+  input,
+  output,
+  ViewEncapsulation,
+} from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthFormData, AuthMode } from '../../../core/models/auth';
 import {
@@ -14,6 +22,7 @@ import {
   styleUrls: ['./auth-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [ReactiveFormsModule],
+  encapsulation: ViewEncapsulation.Emulated,
 })
 export class AuthFormComponent {
   private readonly fb = inject(FormBuilder);

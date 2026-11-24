@@ -1,9 +1,10 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, ViewEncapsulation } from '@angular/core';
 
 @Component({
   selector: 'app-calendar-icon',
   templateUrl: './calendar-icon.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  encapsulation: ViewEncapsulation.Emulated,
 })
 export class CalendarIconComponent {
   readonly width = input.required<number>();

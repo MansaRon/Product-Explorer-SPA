@@ -1,4 +1,10 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  signal,
+  ViewEncapsulation,
+} from '@angular/core';
 import { PaymentMethod } from '../../../core/models/checkout';
 import { Router } from '@angular/router';
 import { PaymentMethodComponent } from '../../../shared/components/payment-methods/payment.component';
@@ -11,6 +17,7 @@ import { FooterComponent } from '../../../shared/components/footer/footer.compon
   styleUrls: ['./payment.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [PaymentMethodComponent, FooterComponent],
+  encapsulation: ViewEncapsulation.Emulated,
 })
 export class PaymentComponent {
   private readonly checkoutService = inject(CheckoutService);

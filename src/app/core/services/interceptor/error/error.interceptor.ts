@@ -92,6 +92,10 @@ export const errorInterceptor: HttpInterceptorFn = (
             notifications.error(appError.message || 'A conflict occurred. Please try again.');
             break;
 
+          case 413:
+            notifications.error('Upload too large. Please reduce the file size and try again.');
+            break;
+
           case 422:
             notifications.error(appError.message || 'Unprocessable request.');
             break;
@@ -124,6 +128,8 @@ function normalise(error: HttpErrorResponse): AppError {
       message = error.error;
     } else if (error.error.message) {
       message = error.error.message;
+    } else if (error.error.detail) {
+      message = error.error.detail;
     } else if (error.error.error) {
       message = error.error.error;
     }

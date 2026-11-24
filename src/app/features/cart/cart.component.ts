@@ -1,5 +1,11 @@
 import { CurrencyPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  ViewEncapsulation,
+} from '@angular/core';
 import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state.component';
 import { CartService } from '../../core/services/cart/cart.service';
 import { Router } from '@angular/router';
@@ -11,6 +17,7 @@ import { TrashIconComponent } from '../../shared/components/icons/trash-icon/tra
   styleUrls: ['./cart.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CurrencyPipe, EmptyStateComponent, TrashIconComponent],
+  encapsulation: ViewEncapsulation.Emulated,
 })
 export class CartComponent {
   private readonly cartService = inject(CartService);

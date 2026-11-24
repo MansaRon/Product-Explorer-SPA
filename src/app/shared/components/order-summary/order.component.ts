@@ -6,6 +6,7 @@ import {
   inject,
   input,
   output,
+  ViewEncapsulation,
 } from '@angular/core';
 import { DeliveryOption, PaymentMethod, ShippingAddress } from '../../../core/models/checkout';
 import { CurrencyPipe } from '@angular/common';
@@ -16,6 +17,7 @@ import { CartService } from '../../../core/services/cart/cart.service';
   templateUrl: './order.component.html',
   styleUrls: ['./order.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  encapsulation: ViewEncapsulation.Emulated,
   imports: [CurrencyPipe],
 })
 export class OrderComponent {

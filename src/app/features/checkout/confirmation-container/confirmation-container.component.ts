@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnInit,
+  ViewEncapsulation,
+} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { OrderService, toOrderViewModel } from '../../../core/services/order/order.service';
 import { AppRoutes } from '../../../shared/enums/app-routes-enum';
@@ -11,6 +18,7 @@ import { OrderConfirmationComponent } from '../../../shared/components/order-con
   styleUrls: ['./confirmation-container.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [OrderConfirmationComponent],
+  encapsulation: ViewEncapsulation.Emulated,
 })
 export class ConfirmationContainerComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);

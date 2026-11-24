@@ -1,4 +1,10 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  OnInit,
+  ViewEncapsulation,
+} from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { DatePipe, LowerCasePipe } from '@angular/common';
@@ -24,6 +30,7 @@ import { SearchInputComponent } from '../../../../shared/components/search-input
     ConfirmModalComponent,
     SearchInputComponent,
   ],
+  encapsulation: ViewEncapsulation.Emulated,
 })
 export class UserListComponent implements OnInit {
   protected readonly list = inject(AdminUserListService);

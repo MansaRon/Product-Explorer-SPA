@@ -1,4 +1,10 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  signal,
+  ViewEncapsulation,
+} from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth/auth.service';
 import { AuthFormData } from '../../../core/models/auth';
@@ -11,6 +17,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   styleUrls: ['./register-page.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [AuthFormComponent, RouterLink],
+  encapsulation: ViewEncapsulation.Emulated,
 })
 export class RegisterPageComponent {
   private readonly authService = inject(AuthService);

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ViewEncapsulation } from '@angular/core';
 import { EmptyStateComponent } from '../../../../shared/components/empty-state/empty-state.component';
 
 @Component({
@@ -18,5 +18,6 @@ import { EmptyStateComponent } from '../../../../shared/components/empty-state/e
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [EmptyStateComponent],
+  encapsulation: ViewEncapsulation.Emulated,
 })
 export class CouponListComponent {}

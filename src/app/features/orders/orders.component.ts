@@ -1,4 +1,10 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  ViewEncapsulation,
+} from '@angular/core';
 import { CurrencyPipe, DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { OrderService } from '../../core/services/order/order.service';
@@ -12,6 +18,7 @@ import { AppRoutes } from '../../shared/enums/app-routes-enum';
   styleUrls: ['./orders.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CurrencyPipe, DatePipe, EmptyStateComponent],
+  encapsulation: ViewEncapsulation.Emulated,
 })
 export class OrdersComponent {
   private readonly orderService = inject(OrderService);

@@ -1,4 +1,10 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  signal,
+  ViewEncapsulation,
+} from '@angular/core';
 import { CheckoutService } from '../../../core/services/checkout/checkout.service';
 import { Router } from '@angular/router';
 import { ShippingAddress } from '../../../core/models/checkout';
@@ -10,7 +16,8 @@ import { FooterComponent } from '../../../shared/components/footer/footer.compon
   templateUrl: './shipping.component.html',
   styleUrls: ['./shipping.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ShippingDumbComponent, FooterComponent]
+  imports: [ShippingDumbComponent, FooterComponent],
+  encapsulation: ViewEncapsulation.Emulated,
 })
 export class ShippingComponent {
   private readonly checkoutService = inject(CheckoutService);
@@ -23,7 +30,7 @@ export class ShippingComponent {
   protected readonly submitTrigger = signal(0);
 
   protected handleContinue(): void {
-    this.submitTrigger.update(n => n + 1);
+    this.submitTrigger.update((n) => n + 1);
   }
 
   protected handleValidilityChange(isValid: boolean): void {

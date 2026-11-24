@@ -5,6 +5,7 @@ import {
   OnDestroy,
   OnInit,
   signal,
+  ViewEncapsulation,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HomeIconComponent } from '../../shared/components/icons/home-icon/home-icon.component';
@@ -23,6 +24,7 @@ import { AlertTriangleIconComponent } from '../../shared/components/icons/alert-
     SearchIconComponent,
     AlertTriangleIconComponent,
   ],
+  encapsulation: ViewEncapsulation.Emulated,
 })
 export class PageNotFoundComponent implements OnInit, OnDestroy {
   private readonly router = inject(Router);

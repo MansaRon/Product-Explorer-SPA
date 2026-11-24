@@ -113,8 +113,8 @@
             >
             <select id="category" class="form-input form-select" formControlName="category">
               <option value="">Select a category</option>
-              @for (cat of forms.categories(); track cat) {
-                <option [value]="cat">{{ cat }}</option>
+              @for (cat of forms.categories(); track cat.code) {
+                <option [value]="cat.code">{{ cat.label }}</option>
               }
             </select>
             @if (forms.form.controls.category.invalid && forms.form.controls.category.touched) {

@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, effect, inject, input, output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  effect,
+  inject,
+  input,
+  output,
+  ViewEncapsulation,
+} from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ShippingAddress } from '../../../core/models/checkout';
 import { CheckoutValidators, getFormErrorMessage, hasFormError } from '../../utils/validators.util';
@@ -9,6 +17,7 @@ import { LookupService } from '../../../core/services/lookup/lookup.service';
   templateUrl: './shipping.component.html',
   styleUrls: ['./shipping.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  encapsulation: ViewEncapsulation.Emulated,
   imports: [ReactiveFormsModule],
 })
 export class ShippingDumbComponent {

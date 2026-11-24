@@ -9,6 +9,7 @@ import {
   viewChild,
   ElementRef,
   afterNextRender,
+  ViewEncapsulation,
 } from '@angular/core';
 import {
   Chart,
@@ -29,6 +30,7 @@ Chart.register(CategoryScale, LinearScale, BarElement, BarController, Title, Too
   templateUrl: './sales-chart.component.html',
   styleUrls: ['./sales-chart.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  encapsulation: ViewEncapsulation.Emulated,
 })
 export class SalesChartComponent implements OnDestroy {
   readonly data = input.required<SalesByDay[]>();

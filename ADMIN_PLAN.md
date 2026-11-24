@@ -13,7 +13,7 @@ Branch strategy: all sub-branches merge into `feature/admin-panel`, which merges
 | ③ | `admin/orders` | ✅ Done | Order list, status/pricing updates, rebook, refunds, stale purge |
 | ④ | `admin/users` | ✅ Done | User list, user detail, block/unblock, reset | (not workinf 100%, need to circle back here)
 | ⑤ | `admin/catalog` | ✅ Done | Product CRUD, image management, review moderation |
-| ⑥ | `admin/categories` | 🔲 Pending | Category list + add/edit |
+| ⑥ | `admin/categories` | ✅ Done | Category list + add/edit |
 | ⑦ | `admin/coupons` | 🔲 Pending | Coupon/promo code create, manage, deactivate |
 | — | `feature/admin-panel` | 🔲 Pending | Integration branch — merge into `master` when all above done |
 

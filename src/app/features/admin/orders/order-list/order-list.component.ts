@@ -1,4 +1,10 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  OnInit,
+  ViewEncapsulation,
+} from '@angular/core';
 import { CurrencyPipe, DatePipe, LowerCasePipe } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -28,6 +34,7 @@ import { TrashIconComponent } from '../../../../shared/components/icons/trash-ic
     SearchInputComponent,
     TrashIconComponent,
   ],
+  encapsulation: ViewEncapsulation.Emulated,
 })
 export class OrderListComponent implements OnInit {
   protected readonly list = inject(AdminOrderListService);

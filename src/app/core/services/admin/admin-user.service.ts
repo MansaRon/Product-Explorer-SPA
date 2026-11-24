@@ -11,6 +11,7 @@ import {
   UserResetRequest,
 } from '../../models/admin-user';
 import { OrderApi, OrderListApiResponse } from '../../models/order';
+import { skipNotFoundRedirect } from '../interceptor/error/error.interceptor';
 
 const USER_STATUS_OPTIONS = ['ALL', 'ACTIVE', 'SUSPENDED', 'AWAITING_CONFIRMATION'] as const;
 
@@ -54,7 +55,10 @@ export class AdminUserService {
     if (merged.search?.trim()) httpParams = httpParams.set('search', merged.search.trim());
 
     this.http
-      .get<AdminUserListApiResponse>('/admin/users', { params: httpParams })
+      .get<AdminUserListApiResponse>('/admin/users', {
+        params: httpParams,
+        context: skipNotFoundRedirect(),
+      })
       .pipe(
         tap((r) => {
           this.usersSignal.set(r.data.users);
@@ -75,7 +79,7 @@ export class AdminUserService {
     this.isLoadingDetailSignal.set(true);
     this.selectedUserSignal.set(null);
     this.http
-      .get<AdminUserApiResponse>(`/admin/users/${id}`)
+      .get<AdminUserApiResponse>(`/admin/users/${id}`, { context: skipNotFoundRedirect() })
       .pipe(
         tap((r) => {
           this.selectedUserSignal.set(r.data);
@@ -95,7 +99,7 @@ export class AdminUserService {
     this.isLoadingOrdersSignal.set(true);
     this.userOrdersSignal.set([]);
     this.http
-      .get<OrderListApiResponse>(`/admin/users/${id}/orders`)
+      .get<OrderListApiResponse>(`/admin/users/${id}/orders`, { context: skipNotFoundRedirect() })
       .pipe(
         tap((r) => {
           this.userOrdersSignal.set(r.data);
@@ -114,64 +118,84 @@ export class AdminUserService {
   blockUser(id: string, reason?: string): Observable<AdminUserApi> {
     const body: UserBlockRequest = { blocked: true, ...(reason ? { reason } : {}) };
     this.isMutatingSignal.set(true);
-    return this.http.patch<AdminUserApiResponse>(`/admin/users/${id}/block`, body).pipe(
-      tap((r) => {
-        this.selectedUserSignal.set(r.data);
-        this.isMutatingSignal.set(false);
-      }),
-      map((r) => r.data),
-      takeUntilDestroyed(this.destroyRef),
-      catchError((err) => {
-        this.isMutatingSignal.set(false);
-        return throwError(() => err);
+    return this.http
+      .patch<AdminUserApiResponse>(`/admin/users/${id}/block`, body, {
+        context: skipNotFoundRedirect(),
       })
-    );
+      .pipe(
+        tap((r) => {
+          this.selectedUserSignal.set(r.data);
+          this.isMutatingSignal.set(false);
+        }),
+        map((r) => r.data),
+        takeUntilDestroyed(this.destroyRef),
+        catchError((err) => {
+          this.isMutatingSignal.set(false);
+          return throwError(() => err);
+        })
+      );
   }
 
   unblockUser(id: string): Observable<AdminUserApi> {
     const body: UserBlockRequest = { blocked: false };
     this.isMutatingSignal.set(true);
-    return this.http.patch<AdminUserApiResponse>(`/admin/users/${id}/block`, body).pipe(
-      tap((r) => {
-        this.selectedUserSignal.set(r.data);
-        this.isMutatingSignal.set(false);
-      }),
-      map((r) => r.data),
-      takeUntilDestroyed(this.destroyRef),
-      catchError((err) => {
-        this.isMutatingSignal.set(false);
-        return throwError(() => err);
+    return this.http
+      .patch<AdminUserApiResponse>(`/admin/users/${id}/block`, body, {
+        context: skipNotFoundRedirect(),
       })
-    );
+      .pipe(
+        tap((r) => {
+          this.selectedUserSignal.set(r.data);
+          this.isMutatingSignal.set(false);
+        }),
+        map((r) => r.data),
+        takeUntilDestroyed(this.destroyRef),
+        catchError((err) => {
+          this.isMutatingSignal.set(false);
+          return throwError(() => err);
+        })
+      );
   }
 
   resetUser(id: string, body: UserResetRequest): Observable<AdminUserApi> {
     this.isMutatingSignal.set(true);
-    return this.http.patch<AdminUserApiResponse>(`/admin/users/${id}/reset`, body).pipe(
-      tap((r) => {
-        this.selectedUserSignal.set(r.data);
-        this.isMutatingSignal.set(false);
-      }),
-      map((r) => r.data),
-      takeUntilDestroyed(this.destroyRef),
-      catchError((err) => {
-        this.isMutatingSignal.set(false);
-        return throwError(() => err);
+    return this.http
+      .patch<AdminUserApiResponse>(`/admin/users/${id}/reset`, body, {
+        context: skipNotFoundRedirect(),
       })
-    );
+      .pipe(
+        tap((r) => {
+          this.selectedUserSignal.set(r.data);
+          this.isMutatingSignal.set(false);
+        }),
+        map((r) => r.data),
+        takeUntilDestroyed(this.destroyRef),
+        catchError((err) => {
+          this.isMutatingSignal.set(false);
+          return throwError(() => err);
+        })
+      );
   }
 
   triggerPasswordReset(id: string): Observable<string> {
     this.isMutatingSignal.set(true);
-    return this.http.post<{ message: string }>(`/admin/users/${id}/reset-password`, {}).pipe(
-      tap(() => this.isMutatingSignal.set(false)),
-      map((r) => r.message),
-      takeUntilDestroyed(this.destroyRef),
-      catchError((err) => {
-        this.isMutatingSignal.set(false);
-        return throwError(() => err);
-      })
-    );
+    return this.http
+      .post<{ message: string }>(
+        `/admin/users/${id}/reset-password`,
+        {},
+        {
+          context: skipNotFoundRedirect(),
+        }
+      )
+      .pipe(
+        tap(() => this.isMutatingSignal.set(false)),
+        map((r) => r.message),
+        takeUntilDestroyed(this.destroyRef),
+        catchError((err) => {
+          this.isMutatingSignal.set(false);
+          return throwError(() => err);
+        })
+      );
   }
 
   clearSelectedUser(): void {
