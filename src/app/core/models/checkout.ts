@@ -62,6 +62,7 @@ export interface CheckoutApiData {
   id: string;
   subtotal: number;
   discount: number;
+  couponCode: string | null;
   tax: number;
   shippingCost: number;
   totalAmount: number;

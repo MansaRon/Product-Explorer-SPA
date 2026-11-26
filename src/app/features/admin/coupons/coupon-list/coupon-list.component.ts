@@ -1,23 +1,37 @@
-import { ChangeDetectionStrategy, Component, ViewEncapsulation } from '@angular/core';
-import { EmptyStateComponent } from '../../../../shared/components/empty-state/empty-state.component';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  OnInit,
+  ViewEncapsulation,
+} from '@angular/core';
+import { CurrencyPipe, DatePipe } from '@angular/common';
+import { ReactiveFormsModule } from '@angular/forms';
+import { AdminCouponListService } from '../../../../core/services/admin/admin-coupon-list.service';
+import { DataTableComponent } from '../../../../shared/components/data-table/data-table.component';
+import { TableCellDirective } from '../../../../shared/components/data-table/table-cell.directive';
+import { ConfirmModalComponent } from '../../../../shared/components/confirm-modal/confirm-modal.component';
 
 @Component({
   selector: 'app-admin-coupon-list',
-  template: `
-    <div class="container">
-      <div class="page-header">
-        <h1 class="page-title">Coupons</h1>
-        <p class="page-description">Create and manage promo codes and discount coupons</p>
-      </div>
-      <app-empty-state
-        icon="info"
-        title="Coming soon"
-        description="Coupon management is being built and will be available shortly."
-      />
-    </div>
-  `,
+  templateUrl: './coupon-list.component.html',
+  styleUrls: ['./coupon-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [EmptyStateComponent],
+  providers: [AdminCouponListService],
+  imports: [
+    ReactiveFormsModule,
+    DataTableComponent,
+    TableCellDirective,
+    ConfirmModalComponent,
+    CurrencyPipe,
+    DatePipe,
+  ],
   encapsulation: ViewEncapsulation.Emulated,
 })
-export class CouponListComponent {}
+export class CouponListComponent implements OnInit {
+  protected readonly list = inject(AdminCouponListService);
+
+  ngOnInit(): void {
+    this.list.adminCouponService.loadCoupons();
+  }
+}

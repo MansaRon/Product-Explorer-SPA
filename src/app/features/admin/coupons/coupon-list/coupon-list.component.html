@@ -1,0 +1,212 @@
+<div class="container">
+  <div class="page-header">
+    <div class="page-header__text">
+      <h1 class="page-title">Coupons</h1>
+      <p class="page-description">Create and manage promo codes and discount coupons</p>
+    </div>
+    <button type="button" class="btn-primary" (click)="list.openCreate()">+ Add Coupon</button>
+  </div>
+
+  @if (list.feedback()) {
+    <div
+      class="alert"
+      [class.alert--success]="list.feedback()!.ok"
+      [class.alert--error]="!list.feedback()!.ok"
+    >
+      {{ list.feedback()!.msg }}
+    </div>
+  }
+
+  @if (list.isFormOpen()) {
+    <div class="form-panel">
+      <div class="form-panel__header">
+        <h2 class="form-panel__title">
+          {{ list.isEditing() ? 'Edit Coupon' : 'New Coupon' }}
+        </h2>
+        <button type="button" class="form-panel__close" (click)="list.closeForm()">✕</button>
+      </div>
+
+      <form [formGroup]="list.form" (ngSubmit)="list.submit()" class="form-panel__body">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="code">
+              Code <span class="required">*</span>
+              @if (list.isEditing()) {
+                <span class="form-label__hint">(cannot be changed)</span>
+              }
+            </label>
+            <input
+              id="code"
+              type="text"
+              class="form-input"
+              formControlName="code"
+              placeholder="e.g. SAVE50"
+            />
+            @if (list.form.controls.code.invalid && list.form.controls.code.touched) {
+              <span class="form-error"
+                >Code is required (uppercase letters, numbers, hyphens, underscores).</span
+              >
+            }
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="amount"
+              >Amount (ZAR) <span class="required">*</span></label
+            >
+            <input
+              id="amount"
+              type="number"
+              class="form-input"
+              formControlName="amount"
+              placeholder="0.00"
+              min="0.01"
+              step="0.01"
+            />
+            @if (list.form.controls.amount.invalid && list.form.controls.amount.touched) {
+              <span class="form-error">Amount must be greater than 0.</span>
+            }
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="minSpend">Min Spend (ZAR)</label>
+            <input
+              id="minSpend"
+              type="number"
+              class="form-input"
+              formControlName="minSpend"
+              placeholder="0.00"
+              min="0"
+              step="0.01"
+            />
+            @if (list.form.controls.minSpend.invalid && list.form.controls.minSpend.touched) {
+              <span class="form-error">Min spend cannot be negative.</span>
+            }
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="usageLimit"
+              >Usage Limit <span class="required">*</span></label
+            >
+            <input
+              id="usageLimit"
+              type="number"
+              class="form-input"
+              formControlName="usageLimit"
+              placeholder="100"
+              min="1"
+              step="1"
+            />
+            @if (list.form.controls.usageLimit.invalid && list.form.controls.usageLimit.touched) {
+              <span class="form-error">Usage limit must be at least 1.</span>
+            }
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="expiresAt"
+              >Expires At <span class="required">*</span></label
+            >
+            <input
+              id="expiresAt"
+              type="datetime-local"
+              class="form-input"
+              formControlName="expiresAt"
+            />
+            @if (list.form.controls.expiresAt.invalid && list.form.controls.expiresAt.touched) {
+              <span class="form-error">Expiry date is required.</span>
+            }
+          </div>
+
+          <div class="form-group form-group--check">
+            <label class="form-check">
+              <input type="checkbox" formControlName="active" class="check-input" />
+              <span class="check-label">Active</span>
+            </label>
+            <p class="form-hint">Only active coupons can be applied at checkout.</p>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" (click)="list.closeForm()">Cancel</button>
+          <button type="submit" class="btn-primary" [disabled]="list.isMutating()">
+            {{ list.isEditing() ? 'Save Changes' : 'Create Coupon' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  }
+
+  <div class="panel">
+    <app-data-table
+      [columns]="list.columns"
+      [rows]="list.coupons()"
+      [totalCount]="list.coupons().length"
+      [isLoading]="list.isLoading()"
+      [pageSize]="list.coupons().length || 20"
+    >
+      <ng-template appTableCell="amount" let-row>
+        {{ list.asCoupon(row).amount | currency: 'ZAR' : 'symbol-narrow' : '1.2-2' }}
+      </ng-template>
+
+      <ng-template appTableCell="minSpend" let-row>
+        @if (list.asCoupon(row).minSpend > 0) {
+          {{ list.asCoupon(row).minSpend | currency: 'ZAR' : 'symbol-narrow' : '1.2-2' }}
+        } @else {
+          <span class="text-muted">None</span>
+        }
+      </ng-template>
+
+      <ng-template appTableCell="expiresAt" let-row>
+        {{ list.asCoupon(row).expiresAt | date: 'dd MMM yyyy' }}
+      </ng-template>
+
+      <ng-template appTableCell="usage" let-row>
+        {{ list.asCoupon(row).usedCount }} / {{ list.asCoupon(row).usageLimit }}
+      </ng-template>
+
+      <ng-template appTableCell="status" let-row>
+        <span
+          class="status-badge"
+          [class.status-badge--active]="list.asCoupon(row).active"
+          [class.status-badge--inactive]="!list.asCoupon(row).active"
+        >
+          {{ list.asCoupon(row).active ? 'active' : 'inactive' }}
+        </span>
+      </ng-template>
+
+      <ng-template appTableCell="actions" let-row>
+        <div class="action-cell">
+          <button
+            type="button"
+            class="btn-action btn-action--edit"
+            (click)="list.openEdit(list.asCoupon(row))"
+          >
+            Edit
+          </button>
+          <button
+            type="button"
+            class="btn-action btn-action--delete"
+            [disabled]="list.isMutating()"
+            (click)="list.openDeleteConfirm(list.asCoupon(row).id)"
+          >
+            Delete
+          </button>
+        </div>
+      </ng-template>
+    </app-data-table>
+  </div>
+</div>
+
+@if (list.showDeleteConfirm()) {
+  <app-confirm-modal
+    title="Delete Coupon"
+    message="This coupon will be permanently deleted and can no longer be applied at checkout."
+    confirmLabel="Delete"
+    [dangerous]="true"
+    (confirmed)="list.executeDelete()"
+    (cancelled)="list.cancelDelete()"
+  />
+}

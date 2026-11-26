@@ -27,7 +27,6 @@ export class CartService {
       .map((item) => item.productDTO?.id)
       .filter((id): id is string => !!id)
   );
-
   readonly subTotal = computed(() =>
     this.cartItemsSignal().reduce((total, item) => total + item.productPrice, 0)
   );
@@ -35,7 +34,6 @@ export class CartService {
     this.cartItemsSignal().reduce((total, item) => total + item.tax, 0)
   );
   readonly total = computed(() => this.subTotal() + this.tax());
-
   readonly getCartSummary = computed(() => ({
     totalItems: this.itemCount(),
     uniqueProducts: this.uniqueProductCount(),
@@ -135,7 +133,6 @@ export class CartService {
     this.updateQuantity(productId, this.getQuantity(productId) - 1);
   }
 
-  /** Immediately clears the cart signal without an API call. Use after order confirmation. */
   localClear(): void {
     this.cartItemsSignal.set([]);
   }
@@ -151,8 +148,6 @@ export class CartService {
         takeUntilDestroyed(this.destroyRef),
         catchError((err) => {
           console.error('Failed to clear cart:', err);
-          // Backend may have already cleared the cart (e.g. during order confirmation).
-          // Clear the local signal regardless so the UI stays in sync.
           this.cartItemsSignal.set([]);
           return EMPTY;
         })
@@ -168,7 +163,6 @@ export class CartService {
         takeUntilDestroyed(this.destroyRef),
         catchError((err) => {
           console.error('Failed to load cart:', err);
-          // Cart doesn't exist yet or is in an error state — show empty cart.
           this.cartItemsSignal.set([]);
           return EMPTY;
         })

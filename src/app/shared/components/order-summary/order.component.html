@@ -1,6 +1,7 @@
 @let shipping = shippingAddress();
 @let delivery = deliveryOption();
 @let payment = paymentMethod();
+@let validation = couponValidation();
 
 <div class="review-sections">
   <!-- Shipping Address -->
@@ -107,6 +108,49 @@
     </div>
   </section>
 
+  <section class="review-section review-section--full" aria-labelledby="coupon-heading">
+    <h2 id="coupon-heading" class="section-title">Promo Code</h2>
+
+    @if (appliedCouponCode()) {
+      <div class="coupon-applied">
+        <span class="coupon-applied__code">{{ appliedCouponCode() }}</span>
+        <span class="coupon-applied__saving"> − {{ appliedDiscount() | currency: 'R' }} off </span>
+        <button type="button" class="coupon-remove" (click)="removeCoupon()">Remove</button>
+      </div>
+    } @else {
+      <div class="coupon-input-row">
+        <input
+          type="text"
+          class="coupon-input"
+          placeholder="Enter promo code"
+          [formControl]="couponControl"
+          autocomplete="off"
+          aria-label="Promo code"
+        />
+        <button
+          type="button"
+          class="coupon-apply"
+          [disabled]="!couponValidation()?.valid || isCouponApplying()"
+          (click)="applyCoupon()"
+        >
+          Apply
+        </button>
+      </div>
+
+      @if (isCouponValidating()) {
+        <p class="coupon-hint">Checking code…</p>
+      } @else if (validation) {
+        @if (validation.valid) {
+          <p class="coupon-hint coupon-hint--valid">
+            ✓ {{ validation.code }} — saves {{ validation.discountAmount | currency: 'R' }}
+          </p>
+        } @else {
+          <p class="coupon-hint coupon-hint--invalid">{{ validation.reason }}</p>
+        }
+      }
+    }
+  </section>
+
   <!-- Order Summary -->
   <section class="review-section review-section--full" aria-labelledby="summary-heading">
     <h2 id="summary-heading" class="section-title">Order Summary</h2>
@@ -115,6 +159,12 @@
         <span class="summary-label">Subtotal</span>
         <span class="summary-value">{{ subTotal() | currency: 'R' }}</span>
       </div>
+      @if (appliedDiscount() > 0) {
+        <div class="summary-line summary-line--discount">
+          <span class="summary-label">Discount ({{ appliedCouponCode() }})</span>
+          <span class="summary-value">− {{ appliedDiscount() | currency: 'R' }}</span>
+        </div>
+      }
       <div class="summary-line">
         <span class="summary-label">Tax (15% VAT)</span>
         <span class="summary-value">{{ tax() | currency: 'R' }}</span>
@@ -122,7 +172,7 @@
       <div class="summary-divider"></div>
       <div class="summary-line summary-total">
         <span class="summary-label">Total</span>
-        <span class="summary-value">{{ total() | currency: 'R' }}</span>
+        <span class="summary-value">{{ discountedTotal() | currency: 'R' }}</span>
       </div>
     </div>
   </section>

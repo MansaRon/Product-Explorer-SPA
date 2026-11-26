@@ -1,9 +1,10 @@
 import { computed, DestroyRef, inject, Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { catchError, EMPTY, switchMap, tap } from 'rxjs';
+import { catchError, EMPTY, map, Observable, switchMap, tap, throwError } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AuthService } from '../auth/auth.service';
 import {
+  CheckoutApiData,
   CheckoutApiResponse,
   CheckoutState,
   CheckoutStep,
@@ -16,6 +17,7 @@ import {
   ShippingAddress,
 } from '../../models/checkout';
 import { OrderApi, OrderApiResponse } from '../../models/order';
+import { ApplyCouponRequest, CouponValidationDTO } from '../../models/coupon';
 
 @Injectable({
   providedIn: 'root',
@@ -29,11 +31,15 @@ export class CheckoutService {
     currentStep: 'shipping',
     completedSteps: new Set<CheckoutStep>(),
   });
-
+  private readonly appliedCouponCodeSignal = signal<string | null>(null);
+  private readonly appliedDiscountSignal = signal<number>(0);
   private readonly checkoutIdSignal = signal<string | null>(null);
-  readonly checkoutId = this.checkoutIdSignal.asReadonly();
 
+  readonly checkoutId = this.checkoutIdSignal.asReadonly();
+  readonly appliedCouponCode = this.appliedCouponCodeSignal.asReadonly();
+  readonly appliedDiscount = this.appliedDiscountSignal.asReadonly();
   readonly state = this.checkoutState.asReadonly();
+
   readonly currentStep = computed(() => this.checkoutState().currentStep);
   readonly shippingAddress = computed(() => this.checkoutState().shipping);
   readonly deliveryOption = computed(() => this.checkoutState().delivery);
@@ -130,10 +136,53 @@ export class CheckoutService {
 
   resetCheckout(): void {
     this.checkoutIdSignal.set(null);
+    this.appliedCouponCodeSignal.set(null);
+    this.appliedDiscountSignal.set(0);
     this.checkoutState.set({
       currentStep: 'shipping',
       completedSteps: new Set<CheckoutStep>(),
     });
+  }
+
+  validateCoupon(code: string): Observable<CouponValidationDTO> {
+    const checkoutId = this.checkoutIdSignal();
+    if (!checkoutId) return throwError(() => new Error('No active checkout session.'));
+    const body: ApplyCouponRequest = { code };
+    return this.http
+      .post<{ data: CouponValidationDTO }>(`/checkout/${checkoutId}/validate-coupon`, body)
+      .pipe(
+        map((r) => r.data),
+        takeUntilDestroyed(this.destroyRef)
+      );
+  }
+
+  applyCoupon(code: string): Observable<CheckoutApiData> {
+    const checkoutId = this.checkoutIdSignal();
+    if (!checkoutId) return throwError(() => new Error('No active checkout session.'));
+    const body: ApplyCouponRequest = { code };
+    return this.http.post<CheckoutApiResponse>(`/checkout/${checkoutId}/apply-coupon`, body).pipe(
+      tap((r) => {
+        this.appliedCouponCodeSignal.set(r.data.couponCode);
+        this.appliedDiscountSignal.set(r.data.discount);
+      }),
+      map((r) => r.data),
+      takeUntilDestroyed(this.destroyRef),
+      catchError((err) => throwError(() => err))
+    );
+  }
+
+  removeCoupon(): Observable<CheckoutApiData> {
+    const checkoutId = this.checkoutIdSignal();
+    if (!checkoutId) return throwError(() => new Error('No active checkout session.'));
+    return this.http.delete<CheckoutApiResponse>(`/checkout/${checkoutId}/coupon`).pipe(
+      tap(() => {
+        this.appliedCouponCodeSignal.set(null);
+        this.appliedDiscountSignal.set(0);
+      }),
+      map((r) => r.data),
+      takeUntilDestroyed(this.destroyRef),
+      catchError((err) => throwError(() => err))
+    );
   }
 
   initiateCheckout(): void {

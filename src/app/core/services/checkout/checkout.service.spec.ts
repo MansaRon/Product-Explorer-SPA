@@ -47,6 +47,7 @@ const mockCheckoutData: CheckoutApiData = {
   id: 'checkout-456',
   subtotal: 100,
   discount: 0,
+  couponCode: null,
   tax: 15,
   shippingCost: 0,
   totalAmount: 115,
