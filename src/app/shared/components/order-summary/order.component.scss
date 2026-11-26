@@ -131,6 +131,15 @@
 .summary-label {
   font-size: var(--font-size-base);
   color: var(--color-text-secondary);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.summary-label__sub {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  font-weight: 400;
 }
 
 .summary-value {
