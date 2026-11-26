@@ -1,4 +1,4 @@
-import { computed, DestroyRef, inject, Injectable, signal } from '@angular/core';
+import { computed, DestroyRef, effect, inject, Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { catchError, EMPTY, map, Observable, switchMap, tap, throwError } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -23,6 +23,8 @@ import { ApplyCouponRequest, CouponValidationDTO } from '../../models/coupon';
   providedIn: 'root',
 })
 export class CheckoutService {
+  private static readonly SESSION_KEY = 'pe_checkout';
+
   private readonly http = inject(HttpClient);
   private readonly authService = inject(AuthService);
   private readonly destroyRef = inject(DestroyRef);
@@ -44,6 +46,23 @@ export class CheckoutService {
   readonly shippingAddress = computed(() => this.checkoutState().shipping);
   readonly deliveryOption = computed(() => this.checkoutState().delivery);
   readonly paymentMethod = computed(() => this.checkoutState().payment);
+
+  constructor() {
+    this.restoreSession();
+    effect(() => {
+      const state = this.checkoutState();
+      this.saveSession({
+        checkoutId: this.checkoutIdSignal(),
+        currentStep: state.currentStep,
+        completedSteps: [...state.completedSteps],
+        shipping: state.shipping,
+        delivery: state.delivery,
+        payment: state.payment,
+        appliedCouponCode: this.appliedCouponCodeSignal(),
+        appliedDiscount: this.appliedDiscountSignal(),
+      });
+    });
+  }
 
   readonly isStepCompleted = computed(
     () => (step: CheckoutStep) => this.checkoutState().completedSteps.has(step)
@@ -142,6 +161,11 @@ export class CheckoutService {
       currentStep: 'shipping',
       completedSteps: new Set<CheckoutStep>(),
     });
+    try {
+      sessionStorage.removeItem(CheckoutService.SESSION_KEY);
+    } catch {
+      /* unavailable */
+    }
   }
 
   validateCoupon(code: string): Observable<CouponValidationDTO> {
@@ -185,6 +209,45 @@ export class CheckoutService {
     );
   }
 
+  private saveSession(data: {
+    checkoutId: string | null;
+    currentStep: CheckoutStep;
+    completedSteps: CheckoutStep[];
+    shipping: ShippingAddress | undefined;
+    delivery: DeliveryOption | undefined;
+    payment: PaymentMethod | undefined;
+    appliedCouponCode: string | null;
+    appliedDiscount: number;
+  }): void {
+    try {
+      sessionStorage.setItem(CheckoutService.SESSION_KEY, JSON.stringify(data));
+    } catch {
+      /* unavailable */
+    }
+  }
+
+  private restoreSession(): void {
+    try {
+      const raw = sessionStorage.getItem(CheckoutService.SESSION_KEY);
+      if (!raw) return;
+      const session = JSON.parse(raw);
+      if (session.checkoutId) this.checkoutIdSignal.set(session.checkoutId);
+      this.checkoutState.set({
+        currentStep: session.currentStep ?? 'shipping',
+        completedSteps: new Set<CheckoutStep>(session.completedSteps ?? []),
+        shipping: session.shipping,
+        delivery: session.delivery,
+        payment: session.payment,
+      });
+      if (session.appliedCouponCode) {
+        this.appliedCouponCodeSignal.set(session.appliedCouponCode);
+        this.appliedDiscountSignal.set(session.appliedDiscount ?? 0);
+      }
+    } catch {
+      sessionStorage.removeItem(CheckoutService.SESSION_KEY);
+    }
+  }
+
   initiateCheckout(): void {
     const user = this.authService.currentUser();
     if (!user?.id || this.checkoutIdSignal()) return;
@@ -223,7 +286,14 @@ export class CheckoutService {
       .patch<CheckoutApiResponse>(`/checkout/${user.id}`, updateRequest)
       .pipe(
         switchMap(() => this.http.post<OrderApiResponse>(`/checkout/${checkoutId}/confirm`, null)),
-        tap((response) => callbacks.onSuccess(response.data)),
+        tap((response) => {
+          try {
+            sessionStorage.removeItem(CheckoutService.SESSION_KEY);
+          } catch {
+            /* unavailable */
+          }
+          callbacks.onSuccess(response.data);
+        }),
         takeUntilDestroyed(this.destroyRef),
         catchError((err) => {
           console.error('Failed to confirm checkout:', err);

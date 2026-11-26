@@ -15,11 +15,13 @@ export class CartService {
   private readonly destroyRef = inject(DestroyRef);
 
   private readonly cartItemsSignal = signal<CartItem[]>([]);
+  private readonly isLoadedSignal = signal(false);
 
   readonly itemCount = computed(() =>
     this.cartItemsSignal().reduce((total, item) => total + item.quantity, 0)
   );
   readonly items = this.cartItemsSignal.asReadonly();
+  readonly isLoaded = this.isLoadedSignal.asReadonly();
   readonly uniqueProductCount = computed(() => this.cartItemsSignal().length);
   readonly isEmpty = computed(() => this.cartItemsSignal().length === 0);
   readonly productIds = computed(() =>
@@ -172,5 +174,6 @@ export class CartService {
 
   private syncFromResponse(response: CartResponse): void {
     this.cartItemsSignal.set(response?.data?.cartItems ?? []);
+    this.isLoadedSignal.set(true);
   }
 }

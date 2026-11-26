@@ -2,6 +2,7 @@ import {
   Component,
   inject,
   computed,
+  effect,
   ChangeDetectionStrategy,
   ViewEncapsulation,
 } from '@angular/core';
@@ -83,11 +84,16 @@ export class CheckoutComponent {
   ]);
 
   constructor() {
-    if (this.isEmpty()) {
-      this.router.navigate(['/cart']);
-      return;
-    }
-    this.checkoutService.initiateCheckout();
+    let handled = false;
+    effect(() => {
+      if (!this.cartService.isLoaded() || handled) return;
+      handled = true;
+      if (this.cartService.isEmpty() && !this.checkoutService.checkoutId()) {
+        this.router.navigate(['/cart']);
+        return;
+      }
+      this.checkoutService.initiateCheckout();
+    });
   }
 
   protected goToStep(step: CheckoutStep, route: string): void {
