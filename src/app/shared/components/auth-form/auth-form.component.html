@@ -80,16 +80,31 @@
       <label for="password" class="form-label">
         Password <span class="required" aria-label="required">*</span>
       </label>
-      <input
-        type="password"
-        id="password"
-        formControlName="password"
-        class="form-input"
-        [class.form-input--error]="hasError('password')"
-        [attr.aria-invalid]="hasError('password')"
-        [attr.aria-describedby]="hasError('password') ? 'password-error' : null"
-        autocomplete="current-password"
-      />
+      <div class="input-wrapper">
+        <input
+          [type]="showPassword() ? 'text' : 'password'"
+          id="password"
+          formControlName="password"
+          class="form-input"
+          [class.form-input--error]="hasError('password')"
+          [attr.aria-invalid]="hasError('password')"
+          [attr.aria-describedby]="hasError('password') ? 'password-error' : null"
+          autocomplete="current-password"
+        />
+        <button
+          type="button"
+          class="password-toggle"
+          (click)="showPassword.set(!showPassword())"
+          [attr.aria-label]="showPassword() ? 'Hide password' : 'Show password'"
+        >
+          <app-eye-icon
+            [width]="18"
+            [height]="18"
+            color="currentColor"
+            [visible]="showPassword()"
+          />
+        </button>
+      </div>
       @if (hasError('password')) {
         <span id="password-error" class="error-message" role="alert">{{
           getErrorMessage('password')
@@ -103,16 +118,31 @@
       <label for="confirmPassword" class="form-label">
         Confirm Password <span class="required" aria-label="required">*</span>
       </label>
-      <input
-        type="password"
-        id="confirmPassword"
-        formControlName="confirmPassword"
-        class="form-input"
-        [class.form-input--error]="hasError('confirmPassword') || hasPasswordMismatch"
-        [attr.aria-invalid]="hasError('confirmPassword') || hasPasswordMismatch"
-        [attr.aria-describedby]="'confirmPassword-error'"
-        autocomplete="new-password"
-      />
+      <div class="input-wrapper">
+        <input
+          [type]="showConfirmPassword() ? 'text' : 'password'"
+          id="confirmPassword"
+          formControlName="confirmPassword"
+          class="form-input"
+          [class.form-input--error]="hasError('confirmPassword') || hasPasswordMismatch"
+          [attr.aria-invalid]="hasError('confirmPassword') || hasPasswordMismatch"
+          [attr.aria-describedby]="'confirmPassword-error'"
+          autocomplete="new-password"
+        />
+        <button
+          type="button"
+          class="password-toggle"
+          (click)="showConfirmPassword.set(!showConfirmPassword())"
+          [attr.aria-label]="showConfirmPassword() ? 'Hide password' : 'Show password'"
+        >
+          <app-eye-icon
+            [width]="18"
+            [height]="18"
+            color="currentColor"
+            [visible]="showConfirmPassword()"
+          />
+        </button>
+      </div>
       @if (hasError('confirmPassword')) {
         <span id="confirmPassword-error" class="error-message" role="alert">{{
           getErrorMessage('confirmPassword')

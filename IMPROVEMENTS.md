@@ -702,6 +702,7 @@ Items will be tackled in the following sequence, one at a time:
 | 11 | Update README & SOLUTION.md | Pending |
 | 12 | Backend Gaps — Checkout Integration | Done |
 | 13 | Order Tracking Page | Pending |
+| 14 | Admin List Pages — Pagination Footer | Pending |
 
 > Each item will be completed, tested, and committed before the next begins.
 
@@ -735,3 +736,57 @@ The "Track Order" button exists on the order detail page (`OrderDetailComponent`
 - Create `TrackOrderComponent` under `src/app/features/orders/track-order/`
 - Wire the "Track Order" button in `order-detail.component.ts` to navigate to the new route
 - Remove the `notifications.info('Order tracking is coming soon.')` placeholder and the TODO comment once implemented
+
+---
+
+## 14. Admin List Pages — Pagination Footer 🔲 Pending
+
+### What
+Add a full pagination footer to all five admin list pages with:
+- Items-per-page selector: **5 / 10 / 20** options
+- Page navigation controls: previous, next, and direct page number buttons
+
+### Why
+All five admin list pages (Orders, Users, Catalog, Categories, Coupons) share the same layout pattern — header, optional filters, data table — but the current `DataTableComponent` only exposes a basic `(pageChange)` output with no way to change the page size. Users are stuck at whatever the service default is (20 for server-paginated pages, the full list for flat-list pages).
+
+### Pages affected
+
+| Page | Component path | Has server pagination? |
+|------|---------------|----------------------|
+| Orders | `features/admin/orders/order-list/` | Yes |
+| Users | `features/admin/users/user-list/` | Yes |
+| Catalog | `features/admin/catalog/product-list/` | Yes |
+| Categories | `features/admin/categories/category-list/` | No — loads all |
+| Coupons | `features/admin/coupons/coupon-list/` | No — loads all |
+
+### Current `DataTableComponent` interface
+
+```typescript
+// Inputs
+[columns]      TableColumnDef[]
+[rows]         unknown[]
+[totalCount]   number
+[currentPage]  number          // 0-indexed
+[pageSize]     number
+[isLoading]    boolean
+
+// Outputs
+(pageChange)   EventEmitter<number>
+
+// Missing — to be added:
+[pageSizeOptions]   number[]          // e.g. [5, 10, 20]
+(pageSizeChange)    EventEmitter<number>
+```
+
+### Implementation steps
+1. Add `pageSizeOptions = input<number[]>([5, 10, 20])` and `pageSizeChange = output<number>()` to `DataTableComponent`.
+2. Render a `<select>` for page size alongside the existing page navigation in the table footer.
+3. For server-paginated pages (Orders, Users, Catalog): emit `pageSizeChange`, the list service picks it up and re-fetches with the new `size` param.
+4. For flat-list pages (Categories, Coupons): handle client-side slicing inside `DataTableComponent` or add BE pagination — decision to be made when this item is tackled.
+5. Update all five list page templates to pass `[pageSizeOptions]="[5, 10, 20]"` and handle `(pageSizeChange)`.
+
+### Definition of Done
+- All five admin list pages show a page-size selector and full page navigation.
+- Changing page size resets to page 1.
+- Selected page size is reflected in the visible rows immediately.
+- No regressions on existing pagination behaviour.

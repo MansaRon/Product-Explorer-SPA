@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  DestroyRef,
   inject,
   signal,
   ViewEncapsulation,
@@ -24,6 +25,7 @@ export class OtpConfirmationPageComponent {
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly fb = inject(FormBuilder);
+  private readonly destroyRef = inject(DestroyRef);
 
   protected readonly phone = this.route.snapshot.queryParamMap.get('phone') ?? '';
 
@@ -50,7 +52,7 @@ export class OtpConfirmationPageComponent {
 
     this.authService
       .confirmOtp(this.phone, this.form.value.otp!)
-      .pipe(takeUntilDestroyed())
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
           this.router.navigate(['/login'], {

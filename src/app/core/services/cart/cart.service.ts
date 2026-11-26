@@ -15,11 +15,13 @@ export class CartService {
   private readonly destroyRef = inject(DestroyRef);
 
   private readonly cartItemsSignal = signal<CartItem[]>([]);
+  private readonly isLoadedSignal = signal(false);
 
   readonly itemCount = computed(() =>
     this.cartItemsSignal().reduce((total, item) => total + item.quantity, 0)
   );
   readonly items = this.cartItemsSignal.asReadonly();
+  readonly isLoaded = this.isLoadedSignal.asReadonly();
   readonly uniqueProductCount = computed(() => this.cartItemsSignal().length);
   readonly isEmpty = computed(() => this.cartItemsSignal().length === 0);
   readonly productIds = computed(() =>
@@ -27,7 +29,6 @@ export class CartService {
       .map((item) => item.productDTO?.id)
       .filter((id): id is string => !!id)
   );
-
   readonly subTotal = computed(() =>
     this.cartItemsSignal().reduce((total, item) => total + item.productPrice, 0)
   );
@@ -35,7 +36,6 @@ export class CartService {
     this.cartItemsSignal().reduce((total, item) => total + item.tax, 0)
   );
   readonly total = computed(() => this.subTotal() + this.tax());
-
   readonly getCartSummary = computed(() => ({
     totalItems: this.itemCount(),
     uniqueProducts: this.uniqueProductCount(),
@@ -135,7 +135,6 @@ export class CartService {
     this.updateQuantity(productId, this.getQuantity(productId) - 1);
   }
 
-  /** Immediately clears the cart signal without an API call. Use after order confirmation. */
   localClear(): void {
     this.cartItemsSignal.set([]);
   }
@@ -151,8 +150,6 @@ export class CartService {
         takeUntilDestroyed(this.destroyRef),
         catchError((err) => {
           console.error('Failed to clear cart:', err);
-          // Backend may have already cleared the cart (e.g. during order confirmation).
-          // Clear the local signal regardless so the UI stays in sync.
           this.cartItemsSignal.set([]);
           return EMPTY;
         })
@@ -168,7 +165,6 @@ export class CartService {
         takeUntilDestroyed(this.destroyRef),
         catchError((err) => {
           console.error('Failed to load cart:', err);
-          // Cart doesn't exist yet or is in an error state — show empty cart.
           this.cartItemsSignal.set([]);
           return EMPTY;
         })
@@ -178,5 +174,6 @@ export class CartService {
 
   private syncFromResponse(response: CartResponse): void {
     this.cartItemsSignal.set(response?.data?.cartItems ?? []);
+    this.isLoadedSignal.set(true);
   }
 }

@@ -131,6 +131,15 @@
 .summary-label {
   font-size: var(--font-size-base);
   color: var(--color-text-secondary);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.summary-label__sub {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  font-weight: 400;
 }
 
 .summary-value {
@@ -158,5 +167,114 @@
     font-size: var(--font-size-2xl);
     font-weight: 700;
     color: var(--color-primary);
+  }
+}
+
+.summary-line--discount {
+  .summary-label,
+  .summary-value {
+    color: var(--color-success);
+  }
+}
+
+// ── Coupon ────────────────────────────────────────────────────────────────────
+
+.coupon-input-row {
+  display: flex;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-sm);
+}
+
+.coupon-input {
+  flex: 1;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-size: var(--font-size-sm);
+  font-family: inherit;
+  outline: none;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: border-color 0.15s;
+
+  &:focus {
+    border-color: var(--color-border-focus);
+  }
+}
+
+.coupon-apply {
+  padding: var(--spacing-sm) var(--spacing-lg);
+  background-color: var(--color-primary);
+  color: var(--color-bg);
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.15s;
+
+  &:hover:not(:disabled) {
+    background-color: var(--color-primary-dark);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
+}
+
+.coupon-hint {
+  margin-top: var(--spacing-xs);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+
+  &--valid {
+    color: var(--color-success);
+  }
+
+  &--invalid {
+    color: var(--color-danger);
+  }
+}
+
+.coupon-applied {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  background-color: var(--color-success-tint);
+  border: 1px solid var(--color-success);
+  border-radius: var(--radius-md);
+  flex-wrap: wrap;
+}
+
+.coupon-applied__code {
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: var(--color-success);
+  letter-spacing: 0.05em;
+}
+
+.coupon-applied__saving {
+  font-size: var(--font-size-sm);
+  color: var(--color-success);
+  flex: 1;
+}
+
+.coupon-remove {
+  background: transparent;
+  border: none;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+
+  &:hover {
+    color: var(--color-danger);
   }
 }

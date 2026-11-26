@@ -2,15 +2,22 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  DestroyRef,
   effect,
   inject,
   input,
   output,
+  signal,
   ViewEncapsulation,
 } from '@angular/core';
 import { DeliveryOption, PaymentMethod, ShippingAddress } from '../../../core/models/checkout';
 import { CurrencyPipe } from '@angular/common';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { debounceTime, filter, switchMap } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CartService } from '../../../core/services/cart/cart.service';
+import { CheckoutService } from '../../../core/services/checkout/checkout.service';
+import { CouponValidationDTO } from '../../../core/models/coupon';
 
 @Component({
   selector: 'app-order',
@@ -18,10 +25,12 @@ import { CartService } from '../../../core/services/cart/cart.service';
   styleUrls: ['./order.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.Emulated,
-  imports: [CurrencyPipe],
+  imports: [CurrencyPipe, ReactiveFormsModule],
 })
 export class OrderComponent {
   private readonly cartService = inject(CartService);
+  private readonly checkoutService = inject(CheckoutService);
+  private readonly destroyRef = inject(DestroyRef);
 
   shippingAddress = input<ShippingAddress | undefined>();
   deliveryOption = input<DeliveryOption | undefined>();
@@ -38,6 +47,18 @@ export class OrderComponent {
   protected readonly subTotal = this.cartService.subTotal;
   protected readonly tax = this.cartService.tax;
   protected readonly total = this.cartService.total;
+
+  protected readonly shippingCost = computed(() => this.deliveryOption()?.price ?? 0);
+  protected readonly appliedCouponCode = this.checkoutService.appliedCouponCode;
+  protected readonly appliedDiscount = this.checkoutService.appliedDiscount;
+  protected readonly discountedTotal = computed(
+    () => this.total() + this.shippingCost() - this.checkoutService.appliedDiscount()
+  );
+
+  protected readonly couponControl = new FormControl('', { nonNullable: true });
+  protected readonly couponValidation = signal<CouponValidationDTO | null>(null);
+  protected readonly isCouponValidating = signal(false);
+  protected readonly isCouponApplying = signal(false);
 
   protected readonly cartWithProducts = computed(() =>
     this.cartItems()
@@ -67,6 +88,43 @@ export class OrderComponent {
         this.onPlaceOrder();
       }
     });
+
+    this.couponControl.valueChanges
+      .pipe(
+        debounceTime(300),
+        filter((code) => code.trim().length > 0),
+        switchMap((code) => {
+          this.isCouponValidating.set(true);
+          this.couponValidation.set(null);
+          return this.checkoutService.validateCoupon(code.trim().toUpperCase());
+        }),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe({
+        next: (result) => {
+          this.couponValidation.set(result);
+          this.isCouponValidating.set(false);
+        },
+        error: () => this.isCouponValidating.set(false),
+      });
+  }
+
+  protected applyCoupon(): void {
+    const code = this.couponControl.value.trim().toUpperCase();
+    if (!code) return;
+    this.isCouponApplying.set(true);
+    this.checkoutService.applyCoupon(code).subscribe({
+      next: () => {
+        this.couponValidation.set(null);
+        this.couponControl.setValue('');
+        this.isCouponApplying.set(false);
+      },
+      error: () => this.isCouponApplying.set(false),
+    });
+  }
+
+  protected removeCoupon(): void {
+    this.checkoutService.removeCoupon().subscribe();
   }
 
   private onPlaceOrder(): void {
