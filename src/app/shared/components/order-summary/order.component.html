@@ -169,6 +169,12 @@
         <span class="summary-label">Tax (15% VAT)</span>
         <span class="summary-value">{{ tax() | currency: 'R' }}</span>
       </div>
+      <div class="summary-line">
+        <span class="summary-label">Shipping</span>
+        <span class="summary-value">
+          {{ shippingCost() === 0 ? 'FREE' : (shippingCost() | currency: 'R') }}
+        </span>
+      </div>
       <div class="summary-divider"></div>
       <div class="summary-line summary-total">
         <span class="summary-label">Total</span>

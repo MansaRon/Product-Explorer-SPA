@@ -48,10 +48,11 @@ export class OrderComponent {
   protected readonly tax = this.cartService.tax;
   protected readonly total = this.cartService.total;
 
+  protected readonly shippingCost = computed(() => this.deliveryOption()?.price ?? 0);
   protected readonly appliedCouponCode = this.checkoutService.appliedCouponCode;
   protected readonly appliedDiscount = this.checkoutService.appliedDiscount;
   protected readonly discountedTotal = computed(
-    () => this.total() - this.checkoutService.appliedDiscount()
+    () => this.total() + this.shippingCost() - this.checkoutService.appliedDiscount()
   );
 
   protected readonly couponControl = new FormControl('', { nonNullable: true });
