@@ -5,6 +5,7 @@ import {
   inject,
   input,
   output,
+  signal,
   ViewEncapsulation,
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -15,13 +16,14 @@ import {
   hasFormError,
   passwordMatchValidator,
 } from '../../utils/validators.util';
+import { EyeIconComponent } from '../icons/eye-icon/eye-icon.component';
 
 @Component({
   selector: 'app-auth-form',
   templateUrl: './auth-form.component.html',
   styleUrls: ['./auth-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, EyeIconComponent],
   encapsulation: ViewEncapsulation.Emulated,
 })
 export class AuthFormComponent {
@@ -32,6 +34,9 @@ export class AuthFormComponent {
   readonly error = input<string | null>(null);
 
   readonly formSubmit = output<AuthFormData>();
+
+  protected readonly showPassword = signal(false);
+  protected readonly showConfirmPassword = signal(false);
 
   protected readonly form = this.fb.group(
     {

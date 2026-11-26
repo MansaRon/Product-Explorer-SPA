@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  DestroyRef,
   inject,
   signal,
   ViewEncapsulation,
@@ -22,6 +23,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 export class RegisterPageComponent {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly destroyRef = inject(DestroyRef);
 
   protected readonly loading = signal(false);
   protected readonly error = signal<string | null>(null);
@@ -40,7 +42,7 @@ export class RegisterPageComponent {
 
     this.authService
       .register({ name: data.name, email: data.email, phone: data.phone, password: data.password })
-      .pipe(takeUntilDestroyed())
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
           this.router.navigate(['/otp-confirmation'], {
